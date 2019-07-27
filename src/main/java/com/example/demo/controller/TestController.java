@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.annotation.Resource;
 
 //@Controller
-@RestController
-@RequestMapping("/")
+@Controller
+//@RequestMapping("/")
 public class TestController {
 
     private final UserMapper userMapper;
@@ -21,7 +21,7 @@ public class TestController {
         this.userMapper = userMapper;
     }
 
-    @RequestMapping("/")
+    @RequestMapping("test")
     public String hello(){
         User user=userMapper.selectByPrimaryKey( 1 );
         return "hello word!"+user.getUserName();

@@ -4,14 +4,14 @@ spring:
     username: root
     password: Zhiku_qr_123
     driver-class-name: com.mysql.cj.jdbc.Driver
-  servlet:
-    multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
-      location: /AnimationMasterData/upload
+#  servlet:
+#    multipart:
+#      max-file-size: 100MB
+#      max-request-size: 100MB
+#      location: /AnimationMasterData/upload
 mybatis:
   type-aliases-package: com.example.demo.entity
-  mapper-locations: classpath:com/example/demo/mapper/*.xml
+  mapper-locations: classpath:mybatis/mapper/*.xml
 server:
   port: 8080
 #logging:
