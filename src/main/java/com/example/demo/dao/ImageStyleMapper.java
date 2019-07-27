@@ -1,9 +1,7 @@
 package com.example.demo.dao;
 
 import com.example.demo.entity.ImageStyle;
-import org.springframework.stereotype.Component;
 
-@Component
 public interface ImageStyleMapper {
     int deleteByPrimaryKey(Integer imsId);
 

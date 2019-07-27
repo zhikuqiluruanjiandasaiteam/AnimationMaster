@@ -1,9 +1,7 @@
 package com.example.demo.dao;
 
 import com.example.demo.entity.AudioStyle;
-import org.springframework.stereotype.Component;
 
-@Component
 public interface AudioStyleMapper {
     int deleteByPrimaryKey(Integer ausId);
 

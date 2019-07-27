@@ -9,6 +9,10 @@ public class AudioStyle {
 
     private Integer ausEstimatedTime;
 
+    private Integer ausAortPriority;
+
+    private String ausShowPath;
+
     private String ausDescription;
 
     public Integer getAusId() {
@@ -41,6 +45,22 @@ public class AudioStyle {
 
     public void setAusEstimatedTime(Integer ausEstimatedTime) {
         this.ausEstimatedTime = ausEstimatedTime;
+    }
+
+    public Integer getAusAortPriority() {
+        return ausAortPriority;
+    }
+
+    public void setAusAortPriority(Integer ausAortPriority) {
+        this.ausAortPriority = ausAortPriority;
+    }
+
+    public String getAusShowPath() {
+        return ausShowPath;
+    }
+
+    public void setAusShowPath(String ausShowPath) {
+        this.ausShowPath = ausShowPath == null ? null : ausShowPath.trim();
     }
 
     public String getAusDescription() {

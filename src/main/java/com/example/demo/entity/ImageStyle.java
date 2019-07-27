@@ -9,6 +9,10 @@ public class ImageStyle {
 
     private Integer imsEstimatedTime;
 
+    private Integer imsAortPriority;
+
+    private String imsShowPath;
+
     private String imsDescription;
 
     public Integer getImsId() {
@@ -41,6 +45,22 @@ public class ImageStyle {
 
     public void setImsEstimatedTime(Integer imsEstimatedTime) {
         this.imsEstimatedTime = imsEstimatedTime;
+    }
+
+    public Integer getImsAortPriority() {
+        return imsAortPriority;
+    }
+
+    public void setImsAortPriority(Integer imsAortPriority) {
+        this.imsAortPriority = imsAortPriority;
+    }
+
+    public String getImsShowPath() {
+        return imsShowPath;
+    }
+
+    public void setImsShowPath(String imsShowPath) {
+        this.imsShowPath = imsShowPath == null ? null : imsShowPath.trim();
     }
 
     public String getImsDescription() {

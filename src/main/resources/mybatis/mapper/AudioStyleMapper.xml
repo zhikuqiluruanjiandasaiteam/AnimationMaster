@@ -6,12 +6,14 @@
     <result column="aus_name" jdbcType="VARCHAR" property="ausName" />
     <result column="aus_used_count" jdbcType="INTEGER" property="ausUsedCount" />
     <result column="aus_estimated_time" jdbcType="INTEGER" property="ausEstimatedTime" />
+    <result column="aus_aort_priority" jdbcType="INTEGER" property="ausAortPriority" />
+    <result column="aus_show_path" jdbcType="VARCHAR" property="ausShowPath" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.example.demo.entity.AudioStyle">
     <result column="aus_description" jdbcType="LONGVARCHAR" property="ausDescription" />
   </resultMap>
   <sql id="Base_Column_List">
-    aus_id, aus_name, aus_used_count, aus_estimated_time
+    aus_id, aus_name, aus_used_count, aus_estimated_time, aus_aort_priority, aus_show_path
   </sql>
   <sql id="Blob_Column_List">
     aus_description
@@ -30,9 +32,11 @@
   </delete>
   <insert id="insert" parameterType="com.example.demo.entity.AudioStyle">
     insert into audio_style (aus_id, aus_name, aus_used_count, 
-      aus_estimated_time, aus_description)
+      aus_estimated_time, aus_aort_priority, aus_show_path, 
+      aus_description)
     values (#{ausId,jdbcType=INTEGER}, #{ausName,jdbcType=VARCHAR}, #{ausUsedCount,jdbcType=INTEGER}, 
-      #{ausEstimatedTime,jdbcType=INTEGER}, #{ausDescription,jdbcType=LONGVARCHAR})
+      #{ausEstimatedTime,jdbcType=INTEGER}, #{ausAortPriority,jdbcType=INTEGER}, #{ausShowPath,jdbcType=VARCHAR}, 
+      #{ausDescription,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.example.demo.entity.AudioStyle">
     insert into audio_style
@@ -48,6 +52,12 @@
       </if>
       <if test="ausEstimatedTime != null">
         aus_estimated_time,
+      </if>
+      <if test="ausAortPriority != null">
+        aus_aort_priority,
+      </if>
+      <if test="ausShowPath != null">
+        aus_show_path,
       </if>
       <if test="ausDescription != null">
         aus_description,
@@ -66,6 +76,12 @@
       <if test="ausEstimatedTime != null">
         #{ausEstimatedTime,jdbcType=INTEGER},
       </if>
+      <if test="ausAortPriority != null">
+        #{ausAortPriority,jdbcType=INTEGER},
+      </if>
+      <if test="ausShowPath != null">
+        #{ausShowPath,jdbcType=VARCHAR},
+      </if>
       <if test="ausDescription != null">
         #{ausDescription,jdbcType=LONGVARCHAR},
       </if>
@@ -83,6 +99,12 @@
       <if test="ausEstimatedTime != null">
         aus_estimated_time = #{ausEstimatedTime,jdbcType=INTEGER},
       </if>
+      <if test="ausAortPriority != null">
+        aus_aort_priority = #{ausAortPriority,jdbcType=INTEGER},
+      </if>
+      <if test="ausShowPath != null">
+        aus_show_path = #{ausShowPath,jdbcType=VARCHAR},
+      </if>
       <if test="ausDescription != null">
         aus_description = #{ausDescription,jdbcType=LONGVARCHAR},
       </if>
@@ -94,6 +116,8 @@
     set aus_name = #{ausName,jdbcType=VARCHAR},
       aus_used_count = #{ausUsedCount,jdbcType=INTEGER},
       aus_estimated_time = #{ausEstimatedTime,jdbcType=INTEGER},
+      aus_aort_priority = #{ausAortPriority,jdbcType=INTEGER},
+      aus_show_path = #{ausShowPath,jdbcType=VARCHAR},
       aus_description = #{ausDescription,jdbcType=LONGVARCHAR}
     where aus_id = #{ausId,jdbcType=INTEGER}
   </update>
@@ -101,7 +125,9 @@
     update audio_style
     set aus_name = #{ausName,jdbcType=VARCHAR},
       aus_used_count = #{ausUsedCount,jdbcType=INTEGER},
-      aus_estimated_time = #{ausEstimatedTime,jdbcType=INTEGER}
+      aus_estimated_time = #{ausEstimatedTime,jdbcType=INTEGER},
+      aus_aort_priority = #{ausAortPriority,jdbcType=INTEGER},
+      aus_show_path = #{ausShowPath,jdbcType=VARCHAR}
     where aus_id = #{ausId,jdbcType=INTEGER}
   </update>
 </mapper>
