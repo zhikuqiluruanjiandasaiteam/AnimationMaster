@@ -24,6 +24,7 @@ public class TestController {
     @RequestMapping("test")
     public String hello(){
         User user=userMapper.selectByPrimaryKey( 1 );
-        return "hello word!"+user.getUserName();
+        System.out.println(user.getUserName());
+        return "hello word!";
     }
 }
