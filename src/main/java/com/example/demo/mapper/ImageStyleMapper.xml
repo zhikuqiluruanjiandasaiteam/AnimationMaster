@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.ImageStyleMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.ImageStyle">
+    <id column="ims_id" jdbcType="INTEGER" property="imsId" />
+    <result column="ims_name" jdbcType="VARCHAR" property="imsName" />
+    <result column="ims_used_count" jdbcType="INTEGER" property="imsUsedCount" />
+    <result column="ims_estimated_time" jdbcType="INTEGER" property="imsEstimatedTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.example.demo.entity.ImageStyle">
+    <result column="ims_description" jdbcType="LONGVARCHAR" property="imsDescription" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    ims_id, ims_name, ims_used_count, ims_estimated_time
+  </sql>
+  <sql id="Blob_Column_List">
+    ims_description
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from image_style
+    where ims_id = #{imsId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from image_style
+    where ims_id = #{imsId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.entity.ImageStyle">
+    insert into image_style (ims_id, ims_name, ims_used_count, 
+      ims_estimated_time, ims_description)
+    values (#{imsId,jdbcType=INTEGER}, #{imsName,jdbcType=VARCHAR}, #{imsUsedCount,jdbcType=INTEGER}, 
+      #{imsEstimatedTime,jdbcType=INTEGER}, #{imsDescription,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.entity.ImageStyle">
+    insert into image_style
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="imsId != null">
+        ims_id,
+      </if>
+      <if test="imsName != null">
+        ims_name,
+      </if>
+      <if test="imsUsedCount != null">
+        ims_used_count,
+      </if>
+      <if test="imsEstimatedTime != null">
+        ims_estimated_time,
+      </if>
+      <if test="imsDescription != null">
+        ims_description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="imsId != null">
+        #{imsId,jdbcType=INTEGER},
+      </if>
+      <if test="imsName != null">
+        #{imsName,jdbcType=VARCHAR},
+      </if>
+      <if test="imsUsedCount != null">
+        #{imsUsedCount,jdbcType=INTEGER},
+      </if>
+      <if test="imsEstimatedTime != null">
+        #{imsEstimatedTime,jdbcType=INTEGER},
+      </if>
+      <if test="imsDescription != null">
+        #{imsDescription,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.ImageStyle">
+    update image_style
+    <set>
+      <if test="imsName != null">
+        ims_name = #{imsName,jdbcType=VARCHAR},
+      </if>
+      <if test="imsUsedCount != null">
+        ims_used_count = #{imsUsedCount,jdbcType=INTEGER},
+      </if>
+      <if test="imsEstimatedTime != null">
+        ims_estimated_time = #{imsEstimatedTime,jdbcType=INTEGER},
+      </if>
+      <if test="imsDescription != null">
+        ims_description = #{imsDescription,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where ims_id = #{imsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.example.demo.entity.ImageStyle">
+    update image_style
+    set ims_name = #{imsName,jdbcType=VARCHAR},
+      ims_used_count = #{imsUsedCount,jdbcType=INTEGER},
+      ims_estimated_time = #{imsEstimatedTime,jdbcType=INTEGER},
+      ims_description = #{imsDescription,jdbcType=LONGVARCHAR}
+    where ims_id = #{imsId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.ImageStyle">
+    update image_style
+    set ims_name = #{imsName,jdbcType=VARCHAR},
+      ims_used_count = #{imsUsedCount,jdbcType=INTEGER},
+      ims_estimated_time = #{imsEstimatedTime,jdbcType=INTEGER}
+    where ims_id = #{imsId,jdbcType=INTEGER}
+  </update>
+</mapper>

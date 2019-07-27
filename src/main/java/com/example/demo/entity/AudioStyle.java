@@ -1,0 +1,53 @@
+package com.example.demo.entity;
+
+public class AudioStyle {
+    private Integer ausId;
+
+    private String ausName;
+
+    private Integer ausUsedCount;
+
+    private Integer ausEstimatedTime;
+
+    private String ausDescription;
+
+    public Integer getAusId() {
+        return ausId;
+    }
+
+    public void setAusId(Integer ausId) {
+        this.ausId = ausId;
+    }
+
+    public String getAusName() {
+        return ausName;
+    }
+
+    public void setAusName(String ausName) {
+        this.ausName = ausName == null ? null : ausName.trim();
+    }
+
+    public Integer getAusUsedCount() {
+        return ausUsedCount;
+    }
+
+    public void setAusUsedCount(Integer ausUsedCount) {
+        this.ausUsedCount = ausUsedCount;
+    }
+
+    public Integer getAusEstimatedTime() {
+        return ausEstimatedTime;
+    }
+
+    public void setAusEstimatedTime(Integer ausEstimatedTime) {
+        this.ausEstimatedTime = ausEstimatedTime;
+    }
+
+    public String getAusDescription() {
+        return ausDescription;
+    }
+
+    public void setAusDescription(String ausDescription) {
+        this.ausDescription = ausDescription == null ? null : ausDescription.trim();
+    }
+}

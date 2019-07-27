@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.TaskMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.Task">
+    <id column="task_id" jdbcType="INTEGER" property="taskId" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="file_id" jdbcType="INTEGER" property="fileId" />
+    <result column="ims_id" jdbcType="INTEGER" property="imsId" />
+    <result column="aus_id" jdbcType="INTEGER" property="ausId" />
+    <result column="clarity" jdbcType="INTEGER" property="clarity" />
+    <result column="is_frame_speed" jdbcType="BIT" property="isFrameSpeed" />
+    <result column="create_time" jdbcType="TIMESTAMP" property="createTime" />
+    <result column="estimate_time" jdbcType="INTEGER" property="estimateTime" />
+    <result column="start_time" jdbcType="TIMESTAMP" property="startTime" />
+    <result column="finish_time" jdbcType="TIMESTAMP" property="finishTime" />
+    <result column="task_type" jdbcType="CHAR" property="taskType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    task_id, user_id, file_id, ims_id, aus_id, clarity, is_frame_speed, create_time, 
+    estimate_time, start_time, finish_time, task_type
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from task
+    where task_id = #{taskId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from task
+    where task_id = #{taskId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.entity.Task">
+    insert into task (task_id, user_id, file_id, 
+      ims_id, aus_id, clarity, 
+      is_frame_speed, create_time, estimate_time, 
+      start_time, finish_time, task_type
+      )
+    values (#{taskId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{fileId,jdbcType=INTEGER}, 
+      #{imsId,jdbcType=INTEGER}, #{ausId,jdbcType=INTEGER}, #{clarity,jdbcType=INTEGER}, 
+      #{isFrameSpeed,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{estimateTime,jdbcType=INTEGER}, 
+      #{startTime,jdbcType=TIMESTAMP}, #{finishTime,jdbcType=TIMESTAMP}, #{taskType,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.entity.Task">
+    insert into task
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="taskId != null">
+        task_id,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="fileId != null">
+        file_id,
+      </if>
+      <if test="imsId != null">
+        ims_id,
+      </if>
+      <if test="ausId != null">
+        aus_id,
+      </if>
+      <if test="clarity != null">
+        clarity,
+      </if>
+      <if test="isFrameSpeed != null">
+        is_frame_speed,
+      </if>
+      <if test="createTime != null">
+        create_time,
+      </if>
+      <if test="estimateTime != null">
+        estimate_time,
+      </if>
+      <if test="startTime != null">
+        start_time,
+      </if>
+      <if test="finishTime != null">
+        finish_time,
+      </if>
+      <if test="taskType != null">
+        task_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="taskId != null">
+        #{taskId,jdbcType=INTEGER},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="fileId != null">
+        #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="imsId != null">
+        #{imsId,jdbcType=INTEGER},
+      </if>
+      <if test="ausId != null">
+        #{ausId,jdbcType=INTEGER},
+      </if>
+      <if test="clarity != null">
+        #{clarity,jdbcType=INTEGER},
+      </if>
+      <if test="isFrameSpeed != null">
+        #{isFrameSpeed,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="estimateTime != null">
+        #{estimateTime,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null">
+        #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finishTime != null">
+        #{finishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="taskType != null">
+        #{taskType,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.Task">
+    update task
+    <set>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="fileId != null">
+        file_id = #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="imsId != null">
+        ims_id = #{imsId,jdbcType=INTEGER},
+      </if>
+      <if test="ausId != null">
+        aus_id = #{ausId,jdbcType=INTEGER},
+      </if>
+      <if test="clarity != null">
+        clarity = #{clarity,jdbcType=INTEGER},
+      </if>
+      <if test="isFrameSpeed != null">
+        is_frame_speed = #{isFrameSpeed,jdbcType=BIT},
+      </if>
+      <if test="createTime != null">
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="estimateTime != null">
+        estimate_time = #{estimateTime,jdbcType=INTEGER},
+      </if>
+      <if test="startTime != null">
+        start_time = #{startTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="finishTime != null">
+        finish_time = #{finishTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="taskType != null">
+        task_type = #{taskType,jdbcType=CHAR},
+      </if>
+    </set>
+    where task_id = #{taskId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.Task">
+    update task
+    set user_id = #{userId,jdbcType=INTEGER},
+      file_id = #{fileId,jdbcType=INTEGER},
+      ims_id = #{imsId,jdbcType=INTEGER},
+      aus_id = #{ausId,jdbcType=INTEGER},
+      clarity = #{clarity,jdbcType=INTEGER},
+      is_frame_speed = #{isFrameSpeed,jdbcType=BIT},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      estimate_time = #{estimateTime,jdbcType=INTEGER},
+      start_time = #{startTime,jdbcType=TIMESTAMP},
+      finish_time = #{finishTime,jdbcType=TIMESTAMP},
+      task_type = #{taskType,jdbcType=CHAR}
+    where task_id = #{taskId,jdbcType=INTEGER}
+  </update>
+</mapper>

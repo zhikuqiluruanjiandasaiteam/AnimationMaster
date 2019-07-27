@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.FilesMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.Files">
+    <id column="file_id" jdbcType="INTEGER" property="fileId" />
+    <result column="upload_time" jdbcType="TIMESTAMP" property="uploadTime" />
+    <result column="store_name" jdbcType="VARCHAR" property="storeName" />
+    <result column="origin_name" jdbcType="VARCHAR" property="originName" />
+    <result column="user_id" jdbcType="INTEGER" property="userId" />
+    <result column="file_type" jdbcType="CHAR" property="fileType" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    file_id, upload_time, store_name, origin_name, user_id, file_type
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+    select 
+    <include refid="Base_Column_List" />
+    from files
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from files
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.entity.Files">
+    insert into files (file_id, upload_time, store_name, 
+      origin_name, user_id, file_type
+      )
+    values (#{fileId,jdbcType=INTEGER}, #{uploadTime,jdbcType=TIMESTAMP}, #{storeName,jdbcType=VARCHAR}, 
+      #{originName,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{fileType,jdbcType=CHAR}
+      )
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.entity.Files">
+    insert into files
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="fileId != null">
+        file_id,
+      </if>
+      <if test="uploadTime != null">
+        upload_time,
+      </if>
+      <if test="storeName != null">
+        store_name,
+      </if>
+      <if test="originName != null">
+        origin_name,
+      </if>
+      <if test="userId != null">
+        user_id,
+      </if>
+      <if test="fileType != null">
+        file_type,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="fileId != null">
+        #{fileId,jdbcType=INTEGER},
+      </if>
+      <if test="uploadTime != null">
+        #{uploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="storeName != null">
+        #{storeName,jdbcType=VARCHAR},
+      </if>
+      <if test="originName != null">
+        #{originName,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="fileType != null">
+        #{fileType,jdbcType=CHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.Files">
+    update files
+    <set>
+      <if test="uploadTime != null">
+        upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="storeName != null">
+        store_name = #{storeName,jdbcType=VARCHAR},
+      </if>
+      <if test="originName != null">
+        origin_name = #{originName,jdbcType=VARCHAR},
+      </if>
+      <if test="userId != null">
+        user_id = #{userId,jdbcType=INTEGER},
+      </if>
+      <if test="fileType != null">
+        file_type = #{fileType,jdbcType=CHAR},
+      </if>
+    </set>
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.Files">
+    update files
+    set upload_time = #{uploadTime,jdbcType=TIMESTAMP},
+      store_name = #{storeName,jdbcType=VARCHAR},
+      origin_name = #{originName,jdbcType=VARCHAR},
+      user_id = #{userId,jdbcType=INTEGER},
+      file_type = #{fileType,jdbcType=CHAR}
+    where file_id = #{fileId,jdbcType=INTEGER}
+  </update>
+</mapper>

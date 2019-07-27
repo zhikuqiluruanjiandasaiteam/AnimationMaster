@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.demo.dao.AudioStyleMapper">
+  <resultMap id="BaseResultMap" type="com.example.demo.entity.AudioStyle">
+    <id column="aus_id" jdbcType="INTEGER" property="ausId" />
+    <result column="aus_name" jdbcType="VARCHAR" property="ausName" />
+    <result column="aus_used_count" jdbcType="INTEGER" property="ausUsedCount" />
+    <result column="aus_estimated_time" jdbcType="INTEGER" property="ausEstimatedTime" />
+  </resultMap>
+  <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.example.demo.entity.AudioStyle">
+    <result column="aus_description" jdbcType="LONGVARCHAR" property="ausDescription" />
+  </resultMap>
+  <sql id="Base_Column_List">
+    aus_id, aus_name, aus_used_count, aus_estimated_time
+  </sql>
+  <sql id="Blob_Column_List">
+    aus_description
+  </sql>
+  <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="ResultMapWithBLOBs">
+    select 
+    <include refid="Base_Column_List" />
+    ,
+    <include refid="Blob_Column_List" />
+    from audio_style
+    where aus_id = #{ausId,jdbcType=INTEGER}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
+    delete from audio_style
+    where aus_id = #{ausId,jdbcType=INTEGER}
+  </delete>
+  <insert id="insert" parameterType="com.example.demo.entity.AudioStyle">
+    insert into audio_style (aus_id, aus_name, aus_used_count, 
+      aus_estimated_time, aus_description)
+    values (#{ausId,jdbcType=INTEGER}, #{ausName,jdbcType=VARCHAR}, #{ausUsedCount,jdbcType=INTEGER}, 
+      #{ausEstimatedTime,jdbcType=INTEGER}, #{ausDescription,jdbcType=LONGVARCHAR})
+  </insert>
+  <insert id="insertSelective" parameterType="com.example.demo.entity.AudioStyle">
+    insert into audio_style
+    <trim prefix="(" suffix=")" suffixOverrides=",">
+      <if test="ausId != null">
+        aus_id,
+      </if>
+      <if test="ausName != null">
+        aus_name,
+      </if>
+      <if test="ausUsedCount != null">
+        aus_used_count,
+      </if>
+      <if test="ausEstimatedTime != null">
+        aus_estimated_time,
+      </if>
+      <if test="ausDescription != null">
+        aus_description,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides=",">
+      <if test="ausId != null">
+        #{ausId,jdbcType=INTEGER},
+      </if>
+      <if test="ausName != null">
+        #{ausName,jdbcType=VARCHAR},
+      </if>
+      <if test="ausUsedCount != null">
+        #{ausUsedCount,jdbcType=INTEGER},
+      </if>
+      <if test="ausEstimatedTime != null">
+        #{ausEstimatedTime,jdbcType=INTEGER},
+      </if>
+      <if test="ausDescription != null">
+        #{ausDescription,jdbcType=LONGVARCHAR},
+      </if>
+    </trim>
+  </insert>
+  <update id="updateByPrimaryKeySelective" parameterType="com.example.demo.entity.AudioStyle">
+    update audio_style
+    <set>
+      <if test="ausName != null">
+        aus_name = #{ausName,jdbcType=VARCHAR},
+      </if>
+      <if test="ausUsedCount != null">
+        aus_used_count = #{ausUsedCount,jdbcType=INTEGER},
+      </if>
+      <if test="ausEstimatedTime != null">
+        aus_estimated_time = #{ausEstimatedTime,jdbcType=INTEGER},
+      </if>
+      <if test="ausDescription != null">
+        aus_description = #{ausDescription,jdbcType=LONGVARCHAR},
+      </if>
+    </set>
+    where aus_id = #{ausId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKeyWithBLOBs" parameterType="com.example.demo.entity.AudioStyle">
+    update audio_style
+    set aus_name = #{ausName,jdbcType=VARCHAR},
+      aus_used_count = #{ausUsedCount,jdbcType=INTEGER},
+      aus_estimated_time = #{ausEstimatedTime,jdbcType=INTEGER},
+      aus_description = #{ausDescription,jdbcType=LONGVARCHAR}
+    where aus_id = #{ausId,jdbcType=INTEGER}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.example.demo.entity.AudioStyle">
+    update audio_style
+    set aus_name = #{ausName,jdbcType=VARCHAR},
+      aus_used_count = #{ausUsedCount,jdbcType=INTEGER},
+      aus_estimated_time = #{ausEstimatedTime,jdbcType=INTEGER}
+    where aus_id = #{ausId,jdbcType=INTEGER}
+  </update>
+</mapper>
