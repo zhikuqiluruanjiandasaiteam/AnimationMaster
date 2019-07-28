@@ -1,9 +1,8 @@
-package com.example.demo.severice;
+package com.example.demo.service;
 
 import com.example.demo.dao.ImageStyleMapper;
 import com.example.demo.entity.ImageStyle;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package com.example.demo.severice;
+package com.example.demo.service;
 
 import org.springframework.stereotype.Service;
 
