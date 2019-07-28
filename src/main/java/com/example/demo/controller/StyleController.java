@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.severice.StyleSeverice;
+import com.example.demo.service.StyleSeverice;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
