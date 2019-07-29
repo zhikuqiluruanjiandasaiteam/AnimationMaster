@@ -1,7 +1,11 @@
 package com.example.demo.dao;
 
 import com.example.demo.entity.ImageStyle;
+import org.springframework.stereotype.Component;
 
+import java.util.List;
+
+@Component
 public interface ImageStyleMapper {
     int deleteByPrimaryKey(Integer imsId);
 
@@ -16,4 +20,6 @@ public interface ImageStyleMapper {
     int updateByPrimaryKeyWithBLOBs(ImageStyle record);
 
     int updateByPrimaryKey(ImageStyle record);
+
+    List<ImageStyle> selectAll();
 }

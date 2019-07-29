@@ -1,7 +1,11 @@
 package com.example.demo.dao;
 
 import com.example.demo.entity.AudioStyle;
+import org.springframework.stereotype.Component;
 
+import java.util.List;
+
+@Component
 public interface AudioStyleMapper {
     int deleteByPrimaryKey(Integer ausId);
 
@@ -16,4 +20,7 @@ public interface AudioStyleMapper {
     int updateByPrimaryKeyWithBLOBs(AudioStyle record);
 
     int updateByPrimaryKey(AudioStyle record);
+
+
+    List<AudioStyle> selectAll();
 }
