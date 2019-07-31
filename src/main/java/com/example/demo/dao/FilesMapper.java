@@ -16,4 +16,6 @@ public interface FilesMapper {
     int updateByPrimaryKeySelective(Files record);
 
     int updateByPrimaryKey(Files record);
+
+    int insertGetId(Files record);
 }

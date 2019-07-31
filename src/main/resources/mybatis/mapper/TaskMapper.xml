@@ -41,6 +41,20 @@
       #{startTime,jdbcType=TIMESTAMP}, #{finishTime,jdbcType=TIMESTAMP}, #{taskType,jdbcType=CHAR}
       )
   </insert>
+
+  <insert id="insertGetId" useGeneratedKeys="true" keyProperty="taskId" parameterType="com.example.demo.entity.Task">
+    insert into task (task_id, user_id, file_id,
+      ims_id, aus_id, clarity,
+      is_frame_speed, create_time, estimate_time,
+      start_time, finish_time, task_type
+      )
+    values (#{taskId,jdbcType=INTEGER}, #{userId,jdbcType=INTEGER}, #{fileId,jdbcType=INTEGER},
+      #{imsId,jdbcType=INTEGER}, #{ausId,jdbcType=INTEGER}, #{clarity,jdbcType=INTEGER},
+      #{isFrameSpeed,jdbcType=BIT}, #{createTime,jdbcType=TIMESTAMP}, #{estimateTime,jdbcType=INTEGER},
+      #{startTime,jdbcType=TIMESTAMP}, #{finishTime,jdbcType=TIMESTAMP}, #{taskType,jdbcType=CHAR}
+      )
+  </insert>
+
   <insert id="insertSelective" parameterType="com.example.demo.entity.Task">
     insert into task
     <trim prefix="(" suffix=")" suffixOverrides=",">

@@ -16,4 +16,6 @@ public interface TaskMapper {
     int updateByPrimaryKeySelective(Task record);
 
     int updateByPrimaryKey(Task record);
+
+    int insertGetId(Task record);
 }

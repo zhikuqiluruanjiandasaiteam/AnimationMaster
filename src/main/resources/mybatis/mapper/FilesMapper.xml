@@ -30,6 +30,16 @@
       #{originName,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{fileType,jdbcType=CHAR}
       )
   </insert>
+
+  <insert id="insertGetId" useGeneratedKeys="true" keyProperty="fileId"  parameterType="com.example.demo.entity.Files">
+    insert into files (file_id, upload_time, store_name,
+      origin_name, user_id, file_type
+      )
+    values (#{fileId,jdbcType=INTEGER}, #{uploadTime,jdbcType=TIMESTAMP}, #{storeName,jdbcType=VARCHAR},
+      #{originName,jdbcType=VARCHAR}, #{userId,jdbcType=INTEGER}, #{fileType,jdbcType=CHAR}
+      )
+  </insert>
+
   <insert id="insertSelective" parameterType="com.example.demo.entity.Files">
     insert into files
     <trim prefix="(" suffix=")" suffixOverrides=",">
