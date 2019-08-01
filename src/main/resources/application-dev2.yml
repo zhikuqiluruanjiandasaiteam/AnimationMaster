@@ -13,7 +13,12 @@ mybatis:
   type-aliases-package: com.example.demo.entity
   mapper-locations: classpath:mybatis/mapper/*.xml
 server:
-  port: 8080
+  port: 80
+  tomcat:
+      uri-encoding: UTF-8
+  servlet:
+      context-path: /
 #logging:
 #  level:
 #    com.zhiku.*: debug
+
