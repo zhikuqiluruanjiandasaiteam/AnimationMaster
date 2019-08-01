@@ -1,10 +1,23 @@
 package com.example.demo.service;
 
+import com.example.demo.dao.UserMapper;
 import com.example.demo.entity.User;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-public interface UserService {
+@Service
+public class UserService {
 
-    public User findByUserName(String userName);
+    @Autowired
+    private UserMapper userMapper;
 
-    int save(User user);
+
+    public User findByUserName(String userName) {
+        return userMapper.selectByUserName(userName);
+    }
+
+
+    public int save(User user) {
+        return userMapper.insert(user);
+    }
 }
