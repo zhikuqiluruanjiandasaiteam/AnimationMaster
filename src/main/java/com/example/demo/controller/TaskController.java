@@ -1,7 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.config.ParameterConfiguration;
-import com.example.demo.service.FilesSever;
+
+import com.example.demo.service.FilesService;
 import com.example.demo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.Cacheable;
@@ -21,7 +22,7 @@ import java.util.Map;
 public class TaskController {
 
     @Autowired
-    private FilesSever filesSever;
+    private FilesService filesService;
     @Autowired
     private TaskService taskService;
 
@@ -84,7 +85,7 @@ public class TaskController {
             re.put("error_msg","没有这种模式");
             return re;
         }
-        Integer filesId=filesSever.createFile( type,file,userId );
+        Integer filesId=filesService.createFile( type,file,userId );
         if(filesId==null){
             re.put("error_code",3);
             re.put("error_msg","上传失败或文件类型不符合选择转换模式要求");
