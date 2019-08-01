@@ -13,7 +13,7 @@ import java.util.Arrays;
 import java.util.Date;
 
 @Service
-public class FilesSever {
+public class FilesService {
 
     @Autowired
     private FilesMapper filesMapper;
@@ -97,5 +97,9 @@ public class FilesSever {
     private synchronized String getUniqueStr(){
         long nTime=System.nanoTime();//纳秒时间戳，不是以固定的开时间开始，可能会重复
         return ""+System.currentTimeMillis()+(nTime%1000000);
+    }
+
+    public Files queryFileByID(int id) {
+        return  filesMapper.selectByPrimaryKey(id);
     }
 }
