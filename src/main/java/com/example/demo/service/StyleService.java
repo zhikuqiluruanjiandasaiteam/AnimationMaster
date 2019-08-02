@@ -14,7 +14,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class StyleSeverice {
+public class StyleService {
 
     @Autowired
     private ImageStyleMapper imageStyleMapper;

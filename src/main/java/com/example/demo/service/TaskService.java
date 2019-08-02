@@ -12,7 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Date;
+import java.util.*;
 
 @Service
 public class TaskService {
@@ -48,5 +48,32 @@ public class TaskService {
         return task.getTaskId();
     }
 
+    /**
+     * 获得任务列表
+     * @param userId 用户id
+     * @return 任务列表
+     */
+    public Map[] getList(int userId){
+        List<Task> list=taskMapper.selectsByUserId( userId );
+        Map[] maps=new HashMap[list.size()];
+        int i=0;
+        for (Task task : list) {
+            Map<String,Object> map=new HashMap<>();
+            map.put("task_id",task.getTaskId());
+            map.put("task_type",task.getTaskType());
+            map.put("ims_id",task.getImsId());
+            map.put("aus_id",task.getAusId());
+            map.put("clarity",task.getClarity());
+            map.put("is_frame_speed",task.getIsFrameSpeed());
+            map.put("estimate_time",task.getEstimateTime());
+            map.put("file_id",task.getFileId());
+            map.put("start_time",task.getStartTime());
+            map.put("final_time",task.getFinishTime());
+            map.put("create_time",task.getCreateTime());
+            maps[i++]=map;
+        }
+
+        return maps;
+    }
 
 }

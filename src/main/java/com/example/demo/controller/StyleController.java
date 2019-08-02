@@ -1,7 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.config.ParameterConfiguration;
-import com.example.demo.service.StyleSeverice;
+import com.example.demo.service.StyleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,7 +17,7 @@ import java.util.Map;
 public class StyleController {
 
     @Autowired
-    private StyleSeverice styleSeverice;
+    private StyleService styleService;
 
     /**获取风格类型
      * @param type 转换类型：video,image,audio
@@ -31,7 +31,7 @@ public class StyleController {
         re.put("data","");
         Map<String,Object> data=new HashMap<>(  );
         if(type.equals( ParameterConfiguration.Type.video )||type.equals( ParameterConfiguration.Type.image )) {
-            Map[] map=styleSeverice.getImsList();
+            Map[] map= styleService.getImsList();
             if(map.length==0){
                 re.put("error_code",1);
                 re.put("error_msg","查询失败");
@@ -41,7 +41,7 @@ public class StyleController {
             data.put("clarity",ParameterConfiguration.clarity);
         }
         if(type.equals( ParameterConfiguration.Type.video )||type.equals( ParameterConfiguration.Type.audio )) {
-            Map[] map=styleSeverice.getAusList();
+            Map[] map= styleService.getAusList();
             if(map.length==0){
                 re.put("error_code",1);
                 re.put("error_msg","查询失败");
