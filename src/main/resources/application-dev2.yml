@@ -22,3 +22,10 @@ server:
 #  level:
 #    com.zhiku.*: debug
 
+
+DLServerIP :
+DLServerUserName: ubuntu
+DLServerPassword: 123456
+DLServerSecretKey: C:\\Users\\Dell\\Downloads\\miyao1.pem
+ExecShell: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test.sh
+
