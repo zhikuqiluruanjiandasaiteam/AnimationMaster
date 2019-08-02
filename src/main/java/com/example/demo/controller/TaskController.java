@@ -30,8 +30,8 @@ public class TaskController {
      *创建任务
      * @param file
      * @param userId
-     * @param image
-     * @param audio
+     * @param imsId
+     * @param ausId
      * @param clarity
      * @param type
      * @param estimateTime
@@ -41,45 +41,40 @@ public class TaskController {
      */
     @ResponseBody
     @RequestMapping(value = "create",method = RequestMethod.POST)
-    public Map create(@RequestParam("file") MultipartFile file,@RequestParam("usr_id") Integer userId,
-                      @RequestParam("ims_id") String image, @RequestParam("aus_id") String audio,
-                      @RequestParam("clarity") String clarity, @RequestParam("type") String type,
-                      @RequestParam("estimate_time")Integer estimateTime,@RequestParam("is_frame_speed")Integer isFrameSpeed)
+    public Map create(@RequestParam(value = "file", required = true) MultipartFile file,
+                      @RequestParam(value ="usr_id", required = true) Integer userId,
+                      @RequestParam(value ="ims_id", required = false) Integer imsId,
+                      @RequestParam(value ="aus_id", required = false) Integer ausId,
+                      @RequestParam(value ="clarity", required = false) Integer clarity,
+                      @RequestParam(value ="type", required = true) String type,
+                      @RequestParam(value ="estimate_time", required = true)Integer estimateTime,
+                      @RequestParam(value ="is_frame_speed", required = false)Integer isFrameSpeed)
             throws Exception {
-        HashMap re=new HashMap(  );
+        HashMap<String,Object> re=new HashMap<>(  );
         re.put("data","");
-        Integer imsId=null,
-                ausId=null,
-                clarityVaule=null;
-        if(userId==null){
-            re.put("error_code",1);
-            re.put("error_msg","没有用户id");
-            return re;
-        }
+//        if(userId==null){
+//            re.put("error_code",1);
+//            re.put("error_msg","没有用户id");
+//            return re;
+//        }
         if(type.equals( ParameterConfiguration.Type.video )){
-            if(image==null||audio==null||clarity==null){
+            if(imsId==null||ausId==null||clarity==null||isFrameSpeed==null){
                 re.put("error_code",1);
-                re.put("error_msg","没有选择图片或音频风格或清晰度");
+                re.put("error_msg","没有选择图片或音频风格或清晰度或是否补帧加速");
                 return re;
             }
-            imsId=Integer.parseInt( image );
-            ausId=Integer.parseInt( audio );
-            clarityVaule=Integer.parseInt( clarity );
         }else if(type.equals( ParameterConfiguration.Type.image )){
-            if(image==null||clarity==null){
+            if(imsId==null||clarity==null){
                 re.put("error_code",1);
                 re.put("error_msg","没有选择图片风格或清晰度");
                 return re;
             }
-            imsId=Integer.parseInt( image );
-            clarityVaule=Integer.parseInt( clarity );
         }else if(type.equals( ParameterConfiguration.Type.audio )){
-            if(audio==null){
+            if(ausId==null){
                 re.put("error_code",1);
                 re.put("error_msg","没有选择音频风格");
                 return re;
             }
-            ausId=Integer.parseInt( audio );
         }else{
             re.put("error_code",2);
             re.put("error_msg","没有这种模式");
@@ -91,19 +86,36 @@ public class TaskController {
             re.put("error_msg","上传失败或文件类型不符合选择转换模式要求");
             return re;
         }
-        taskService.createTask( userId,
-                filesId,
-                imsId,
-                ausId,
-                clarityVaule,
-                estimateTime,
-                isFrameSpeed==1,
-                type);
+        taskService.createTask( userId, filesId, imsId, ausId, clarity, estimateTime,
+                isFrameSpeed==1, type);
         //开启任务
 
         re.put("error_code",0);
         re.put("error_msg","");
 
+        return re;
+    }
+
+    /**
+     * 获取任务列表
+     * @param userId 用户id
+     * @return map
+     */
+    @ResponseBody
+    @RequestMapping(value = "list")
+    public Map list(@RequestParam(value ="usr_id", required = true) Integer userId){
+        HashMap<String,Object> re=new HashMap<>(  );
+        Map[] data=taskService.getList( userId );
+        if(data==null){
+            re.put("error_code",3);
+            re.put("error_msg","查询失败");
+            re.put("data","");
+            return re;
+        }
+
+        re.put("error_code",0);
+        re.put("error_msg","");
+        re.put("data",data);
         return re;
     }
 }

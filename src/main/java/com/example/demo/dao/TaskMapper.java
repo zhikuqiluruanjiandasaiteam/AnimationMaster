@@ -3,6 +3,8 @@ package com.example.demo.dao;
 import com.example.demo.entity.Task;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public interface TaskMapper {
     int deleteByPrimaryKey(Integer taskId);
@@ -18,4 +20,6 @@ public interface TaskMapper {
     int updateByPrimaryKey(Task record);
 
     int insertGetId(Task record);
+
+    List<Task> selectsByUserId(Integer userId);
 }
