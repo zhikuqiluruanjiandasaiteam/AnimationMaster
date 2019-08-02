@@ -22,20 +22,7 @@ public class TaskService {
     @Autowired
     private TaskMapper taskMapper;
 
-    @Value("${DLServerIP}")
-    private String DLServerIP;
 
-    @Value("${DLServerUserName}")
-    private String DLServerUserName;
-
-    @Value("${DLServerPassword}")
-    private String DLServerPassword;
-
-    @Value("${DLServerSecretKey}")
-    private String DLServerSecretKey;
-
-    @Value("${ExecShell}")
-    private String ExecShell;
 
     /**
      * 创建任务（仅创建记录，未开启任务）
