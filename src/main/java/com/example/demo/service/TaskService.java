@@ -21,6 +21,13 @@ public class TaskService {
 
     @Autowired
     private TaskMapper taskMapper;
+    @Autowired
+    private ImgProcessing imgProcessing;
+
+    @Value(value = "#{${typle2Value.audio}}")
+    private Map<String,Integer> audioStyle2Value;
+    @Value(value = "#{${typle2Value.image}}")
+    private Map<String,String> imageStyle2Value;
 
 
 
@@ -78,6 +85,40 @@ public class TaskService {
         }
 
         return maps;
+    }
+
+
+    /**
+     * 开启任务
+     * @param fileName
+     * @param taskId
+     * @param type
+     * @param imsId
+     * @param ausId
+     * @param clarity
+     * @param is
+     * @throws Exception
+     */
+    //todo:还未完全测试
+    public void startTask(String fileName,int taskId,String type,
+                          Integer imsId,Integer ausId,Integer clarity,boolean is) throws Exception {
+        //储存文件夹不存在则创建
+        File dir =new File( ParameterConfiguration.FilePath.finalSave);
+        if  (!dir .exists()&&!dir .isDirectory()) {
+            dir .mkdirs();
+        }
+        if(type.equals( ParameterConfiguration.Type.video )){
+
+        }else if(type.equals( ParameterConfiguration.Type.image )){
+            imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSava+"/"+fileName,
+                    ParameterConfiguration.FilePath.finalSave+"/"+fileName,
+                    imageStyle2Value.get(imsId.toString()),clarity );
+        }else if(type.equals( ParameterConfiguration.Type.audio )){
+            //ausId需要用ausId.toString,不用int不会自动转化string，只会返回null
+            //todo:mp3 to wav待写
+            AudioProcessing.changePitch(ParameterConfiguration.FilePath.uploadSava+"/"+fileName,
+                    ParameterConfiguration.FilePath.finalSave+"/"+fileName,audioStyle2Value.get(ausId.toString()) );
+        }
     }
 
 

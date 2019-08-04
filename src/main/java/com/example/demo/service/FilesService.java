@@ -26,8 +26,7 @@ public class FilesService {
      * @return 文件记录id
      * @throws IOException .
      */
-    public Integer createFile(String type, MultipartFile file, Integer userId) throws IOException {
-        Integer fileId=null;
+    public Files createFile(String type, MultipartFile file, Integer userId) throws IOException {
         String storeName=saveFile(type,file);
         if(storeName==null)
             return null;//储存失败
@@ -39,8 +38,7 @@ public class FilesService {
         files.setUploadTime( new Date() );
         files.setUserId( userId );
         filesMapper.insertGetId( files );
-        fileId=files.getFileId();
-        return fileId;
+        return files;
     }
 
     /**

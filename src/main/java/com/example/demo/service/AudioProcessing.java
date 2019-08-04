@@ -9,11 +9,16 @@ import java.net.URLDecoder;
 public class AudioProcessing {
 
     /**改变音调
-     * @param inflie 输入wav文件路径
+     * @param infile 输入wav文件路径
      * @param outfile 输出wav文件路径
      * @param relPitch 相对音调值，-3==降低3个（半音）
      */
-    public static void changePitch(String inflie,String outfile,int relPitch){
+    public static void changePitch(String infile,String outfile,Integer relPitch){
+        System.out.println(infile);////////////////////////
+        System.out.println(outfile);//////////////////////
+        System.out.println(relPitch);///////////////////////
+        if(relPitch==null)
+            return;
         new Thread(  ){
             @Override
             public void run() {
@@ -28,12 +33,13 @@ public class AudioProcessing {
                 }
                 if(os.toLowerCase().startsWith("win")){
                     String str=getWebRootAbsolutePath()+"static/tools/soundstretch.exe";
-                    strShell=str+" "+inflie+" "+outfile+" -pitch="+strPitch;
+                    strShell=str+" "+infile+" "+outfile+" -pitch="+strPitch;
                 }else{
-                    strShell="soundstretch "+inflie+" "+outfile+" -pitch="+strPitch;
+                    strShell="soundstretch "+infile+" "+outfile+" -pitch="+strPitch;
                 }
 
                 try {
+                    System.out.println(strShell);///////////////////////
                     Runtime.getRuntime().exec(strShell);
                 } catch (IOException e) {
                     e.printStackTrace();
