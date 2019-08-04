@@ -4,10 +4,10 @@ spring:
     username: root
     password: Zhiku_qr_123
     driver-class-name: com.mysql.cj.jdbc.Driver
-#  servlet:
-#    multipart:
-#      max-file-size: 100MB
-#      max-request-size: 100MB
+  servlet:
+    multipart:
+      max-file-size: 100MB
+      max-request-size: 100MB
 #      location: /AnimationMasterData/upload
 mybatis:
   type-aliases-package: com.example.demo.entity
@@ -22,10 +22,15 @@ server:
 #  level:
 #    com.zhiku.*: debug
 
+#配置变量
 
 DLServerIP :
 DLServerUserName: ubuntu
 DLServerPassword: 123456
 DLServerSecretKey: C:\\Users\\Dell\\Downloads\\miyao1.pem
 ExecShell: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test.sh
+#风格类型对应实际风格决定参数值
+typle2Value:
+  audio: "{1: 0,2: 7,3: -7}" #风格id对应音调变化量
+  image: "{1: 'Shinkai',2: 'Hosoda',3: 'Paprika',4: 'Hayao'}"
 

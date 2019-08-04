@@ -5,6 +5,7 @@ import com.example.demo.config.ParameterConfiguration;
 import com.example.demo.service.FilesService;
 import com.example.demo.service.TaskService;
 import org.springframework.beans.factory.annotation.Autowired;
+import com.example.demo.entity.Files;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,11 +53,6 @@ public class TaskController {
             throws Exception {
         HashMap<String,Object> re=new HashMap<>(  );
         re.put("data","");
-//        if(userId==null){
-//            re.put("error_code",1);
-//            re.put("error_msg","没有用户id");
-//            return re;
-//        }
         if(type.equals( ParameterConfiguration.Type.video )){
             if(imsId==null||ausId==null||clarity==null||isFrameSpeed==null){
                 re.put("error_code",1);
@@ -80,15 +76,21 @@ public class TaskController {
             re.put("error_msg","没有这种模式");
             return re;
         }
-        Integer filesId=filesService.createFile( type,file,userId );
-        if(filesId==null){
+        Files saveFiles=filesService.createFile( type,file,userId );
+        if(saveFiles==null){
             re.put("error_code",3);
             re.put("error_msg","上传失败或文件类型不符合选择转换模式要求");
             return re;
         }
-        taskService.createTask( userId, filesId, imsId, ausId, clarity, estimateTime,
+        Integer taskId=taskService.createTask( userId, saveFiles.getFileId(), imsId, ausId, clarity, estimateTime,
                 isFrameSpeed==1, type);
+        if(taskId==null){
+            re.put("error_code",3);
+            re.put("error_msg","任务创建失败");
+            return re;
+        }
         //开启任务
+        taskService.startTask( saveFiles.getStoreName(),taskId,type,imsId,ausId,clarity,isFrameSpeed==1);
 
         re.put("error_code",0);
         re.put("error_msg","");
