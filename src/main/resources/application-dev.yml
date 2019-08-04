@@ -23,7 +23,7 @@ server:
 #    com.zhiku.*: debug
 
 
-DLServerIP :
+DLServerIP: 3.93.190.93
 DLServerUserName: ubuntu
 DLServerPassword: 123456
 DLServerSecretKey: C:\\Users\\Dell\\Downloads\\miyao1.pem
