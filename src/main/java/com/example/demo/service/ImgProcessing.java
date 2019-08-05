@@ -25,9 +25,9 @@ public class ImgProcessing {
     @Value("${ExecShell}")
     private String ExecShell;
 
-    public void ProcessSinglePic(String initFilePath,String outputPath,String style,Integer longEdgeLength)throws Exception{
+    public void ProcessSinglePic(String initFilePath,String outputPath,String style,Integer longEdgeLength,Integer taskId)throws Exception{
         RemoteShellExecutor executor = new RemoteShellExecutor(DLServerIP, DLServerUserName, DLServerPassword,new File(DLServerSecretKey));
-        System.out.println(executor.exec(ExecShell+" "+initFilePath+" "+outputPath+" "+longEdgeLength+" "+style));
+        System.out.println(executor.exec(ExecShell+" "+initFilePath+" "+outputPath+" "+longEdgeLength+" "+style+" "+taskId));
     }
 
 
