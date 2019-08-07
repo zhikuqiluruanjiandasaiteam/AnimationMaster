@@ -13,6 +13,8 @@ public class AudioStyle {
 
     private String ausShowPath;
 
+    private String ausParameterValues;
+
     private String ausDescription;
 
     public Integer getAusId() {
@@ -61,6 +63,14 @@ public class AudioStyle {
 
     public void setAusShowPath(String ausShowPath) {
         this.ausShowPath = ausShowPath == null ? null : ausShowPath.trim();
+    }
+
+    public String getAusParameterValues() {
+        return ausParameterValues;
+    }
+
+    public void setAusParameterValues(String ausParameterValues) {
+        this.ausParameterValues = ausParameterValues == null ? null : ausParameterValues.trim();
     }
 
     public String getAusDescription() {

@@ -8,12 +8,14 @@
     <result column="ims_estimated_time" jdbcType="INTEGER" property="imsEstimatedTime" />
     <result column="ims_aort_priority" jdbcType="INTEGER" property="imsAortPriority" />
     <result column="ims_show_path" jdbcType="VARCHAR" property="imsShowPath" />
+    <result column="ims_parameter_values" jdbcType="VARCHAR" property="imsParameterValues" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.example.demo.entity.ImageStyle">
     <result column="ims_description" jdbcType="LONGVARCHAR" property="imsDescription" />
   </resultMap>
   <sql id="Base_Column_List">
-    ims_id, ims_name, ims_used_count, ims_estimated_time, ims_aort_priority, ims_show_path
+    ims_id, ims_name, ims_used_count, ims_estimated_time, ims_aort_priority, ims_show_path, 
+    ims_parameter_values
   </sql>
   <sql id="Blob_Column_List">
     ims_description
@@ -43,10 +45,10 @@
   <insert id="insert" parameterType="com.example.demo.entity.ImageStyle">
     insert into image_style (ims_id, ims_name, ims_used_count, 
       ims_estimated_time, ims_aort_priority, ims_show_path, 
-      ims_description)
+      ims_parameter_values, ims_description)
     values (#{imsId,jdbcType=INTEGER}, #{imsName,jdbcType=VARCHAR}, #{imsUsedCount,jdbcType=INTEGER}, 
       #{imsEstimatedTime,jdbcType=INTEGER}, #{imsAortPriority,jdbcType=INTEGER}, #{imsShowPath,jdbcType=VARCHAR}, 
-      #{imsDescription,jdbcType=LONGVARCHAR})
+      #{imsParameterValues,jdbcType=VARCHAR}, #{imsDescription,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.example.demo.entity.ImageStyle">
     insert into image_style
@@ -68,6 +70,9 @@
       </if>
       <if test="imsShowPath != null">
         ims_show_path,
+      </if>
+      <if test="imsParameterValues != null">
+        ims_parameter_values,
       </if>
       <if test="imsDescription != null">
         ims_description,
@@ -92,6 +97,9 @@
       <if test="imsShowPath != null">
         #{imsShowPath,jdbcType=VARCHAR},
       </if>
+      <if test="imsParameterValues != null">
+        #{imsParameterValues,jdbcType=VARCHAR},
+      </if>
       <if test="imsDescription != null">
         #{imsDescription,jdbcType=LONGVARCHAR},
       </if>
@@ -115,6 +123,9 @@
       <if test="imsShowPath != null">
         ims_show_path = #{imsShowPath,jdbcType=VARCHAR},
       </if>
+      <if test="imsParameterValues != null">
+        ims_parameter_values = #{imsParameterValues,jdbcType=VARCHAR},
+      </if>
       <if test="imsDescription != null">
         ims_description = #{imsDescription,jdbcType=LONGVARCHAR},
       </if>
@@ -128,6 +139,7 @@
       ims_estimated_time = #{imsEstimatedTime,jdbcType=INTEGER},
       ims_aort_priority = #{imsAortPriority,jdbcType=INTEGER},
       ims_show_path = #{imsShowPath,jdbcType=VARCHAR},
+      ims_parameter_values = #{imsParameterValues,jdbcType=VARCHAR},
       ims_description = #{imsDescription,jdbcType=LONGVARCHAR}
     where ims_id = #{imsId,jdbcType=INTEGER}
   </update>
@@ -137,7 +149,8 @@
       ims_used_count = #{imsUsedCount,jdbcType=INTEGER},
       ims_estimated_time = #{imsEstimatedTime,jdbcType=INTEGER},
       ims_aort_priority = #{imsAortPriority,jdbcType=INTEGER},
-      ims_show_path = #{imsShowPath,jdbcType=VARCHAR}
+      ims_show_path = #{imsShowPath,jdbcType=VARCHAR},
+      ims_parameter_values = #{imsParameterValues,jdbcType=VARCHAR}
     where ims_id = #{imsId,jdbcType=INTEGER}
   </update>
 </mapper>

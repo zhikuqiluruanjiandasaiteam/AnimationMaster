@@ -21,6 +21,5 @@ public interface AudioStyleMapper {
 
     int updateByPrimaryKey(AudioStyle record);
 
-
     List<AudioStyle> selectAll();
 }

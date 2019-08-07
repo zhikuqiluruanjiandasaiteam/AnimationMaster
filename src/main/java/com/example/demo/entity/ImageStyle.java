@@ -13,6 +13,8 @@ public class ImageStyle {
 
     private String imsShowPath;
 
+    private String imsParameterValues;
+
     private String imsDescription;
 
     public Integer getImsId() {
@@ -61,6 +63,14 @@ public class ImageStyle {
 
     public void setImsShowPath(String imsShowPath) {
         this.imsShowPath = imsShowPath == null ? null : imsShowPath.trim();
+    }
+
+    public String getImsParameterValues() {
+        return imsParameterValues;
+    }
+
+    public void setImsParameterValues(String imsParameterValues) {
+        this.imsParameterValues = imsParameterValues == null ? null : imsParameterValues.trim();
     }
 
     public String getImsDescription() {

@@ -8,12 +8,14 @@
     <result column="aus_estimated_time" jdbcType="INTEGER" property="ausEstimatedTime" />
     <result column="aus_aort_priority" jdbcType="INTEGER" property="ausAortPriority" />
     <result column="aus_show_path" jdbcType="VARCHAR" property="ausShowPath" />
+    <result column="aus_parameter_values" jdbcType="VARCHAR" property="ausParameterValues" />
   </resultMap>
   <resultMap extends="BaseResultMap" id="ResultMapWithBLOBs" type="com.example.demo.entity.AudioStyle">
     <result column="aus_description" jdbcType="LONGVARCHAR" property="ausDescription" />
   </resultMap>
   <sql id="Base_Column_List">
-    aus_id, aus_name, aus_used_count, aus_estimated_time, aus_aort_priority, aus_show_path
+    aus_id, aus_name, aus_used_count, aus_estimated_time, aus_aort_priority, aus_show_path, 
+    aus_parameter_values
   </sql>
   <sql id="Blob_Column_List">
     aus_description
@@ -43,10 +45,10 @@
   <insert id="insert" parameterType="com.example.demo.entity.AudioStyle">
     insert into audio_style (aus_id, aus_name, aus_used_count, 
       aus_estimated_time, aus_aort_priority, aus_show_path, 
-      aus_description)
+      aus_parameter_values, aus_description)
     values (#{ausId,jdbcType=INTEGER}, #{ausName,jdbcType=VARCHAR}, #{ausUsedCount,jdbcType=INTEGER}, 
       #{ausEstimatedTime,jdbcType=INTEGER}, #{ausAortPriority,jdbcType=INTEGER}, #{ausShowPath,jdbcType=VARCHAR}, 
-      #{ausDescription,jdbcType=LONGVARCHAR})
+      #{ausParameterValues,jdbcType=VARCHAR}, #{ausDescription,jdbcType=LONGVARCHAR})
   </insert>
   <insert id="insertSelective" parameterType="com.example.demo.entity.AudioStyle">
     insert into audio_style
@@ -68,6 +70,9 @@
       </if>
       <if test="ausShowPath != null">
         aus_show_path,
+      </if>
+      <if test="ausParameterValues != null">
+        aus_parameter_values,
       </if>
       <if test="ausDescription != null">
         aus_description,
@@ -92,6 +97,9 @@
       <if test="ausShowPath != null">
         #{ausShowPath,jdbcType=VARCHAR},
       </if>
+      <if test="ausParameterValues != null">
+        #{ausParameterValues,jdbcType=VARCHAR},
+      </if>
       <if test="ausDescription != null">
         #{ausDescription,jdbcType=LONGVARCHAR},
       </if>
@@ -115,6 +123,9 @@
       <if test="ausShowPath != null">
         aus_show_path = #{ausShowPath,jdbcType=VARCHAR},
       </if>
+      <if test="ausParameterValues != null">
+        aus_parameter_values = #{ausParameterValues,jdbcType=VARCHAR},
+      </if>
       <if test="ausDescription != null">
         aus_description = #{ausDescription,jdbcType=LONGVARCHAR},
       </if>
@@ -128,6 +139,7 @@
       aus_estimated_time = #{ausEstimatedTime,jdbcType=INTEGER},
       aus_aort_priority = #{ausAortPriority,jdbcType=INTEGER},
       aus_show_path = #{ausShowPath,jdbcType=VARCHAR},
+      aus_parameter_values = #{ausParameterValues,jdbcType=VARCHAR},
       aus_description = #{ausDescription,jdbcType=LONGVARCHAR}
     where aus_id = #{ausId,jdbcType=INTEGER}
   </update>
@@ -137,7 +149,8 @@
       aus_used_count = #{ausUsedCount,jdbcType=INTEGER},
       aus_estimated_time = #{ausEstimatedTime,jdbcType=INTEGER},
       aus_aort_priority = #{ausAortPriority,jdbcType=INTEGER},
-      aus_show_path = #{ausShowPath,jdbcType=VARCHAR}
+      aus_show_path = #{ausShowPath,jdbcType=VARCHAR},
+      aus_parameter_values = #{ausParameterValues,jdbcType=VARCHAR}
     where aus_id = #{ausId,jdbcType=INTEGER}
   </update>
 </mapper>
