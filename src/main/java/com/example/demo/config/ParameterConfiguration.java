@@ -36,6 +36,7 @@ public class ParameterConfiguration {
         public static final String root=getRoot();
         public static final String uploadSava=root+"/UploadFiles";
         public static final String finalSave=root+"/FinalFiles";
+        public static final String intermediateSave=root+"/IntermediateFiles";
 
         private static String getRoot(){
             String os = System.getProperty("os.name");//判断操作系统

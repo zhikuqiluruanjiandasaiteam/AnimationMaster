@@ -14,38 +14,43 @@ public class AudioProcessing {
      * @param relPitch 相对音调值，-3==降低3个（半音）
      */
     public static void changePitch(String infile,String outfile,Integer relPitch){
-        System.out.println(infile);////////////////////////
-        System.out.println(outfile);//////////////////////
-        System.out.println(relPitch);///////////////////////
         if(relPitch==null)
             return;
-        new Thread(  ){
-            @Override
-            public void run() {
-                super.run();
-                String os = System.getProperty("os.name");//判断操作系统
-                String strShell;
-                String strPitch;
-                if(relPitch>=0){
-                    strPitch="+"+relPitch;
-                }else{
-                    strPitch=""+relPitch;
-                }
-                if(os.toLowerCase().startsWith("win")){
-                    String str=getWebRootAbsolutePath()+"static/tools/soundstretch.exe";
-                    strShell=str+" "+infile+" "+outfile+" -pitch="+strPitch;
-                }else{
-                    strShell="soundstretch "+infile+" "+outfile+" -pitch="+strPitch;
-                }
+        String os = System.getProperty("os.name");//判断操作系统
+        String strShell;
+        String strPitch;
+        if(relPitch>=0){
+            strPitch="+"+relPitch;
+        }else{
+            strPitch=""+relPitch;
+        }
+        if(os.toLowerCase().startsWith("win")){
+            String str=getWebRootAbsolutePath()+"static/tools/soundstretch.exe";
+            strShell=str+" "+infile+" "+outfile+" -pitch="+strPitch;
+        }else{
+            strShell="soundstretch "+infile+" "+outfile+" -pitch="+strPitch;
+        }
 
-                try {
-                    System.out.println(strShell);///////////////////////
-                    Runtime.getRuntime().exec(strShell);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }.start();
+        try {
+            System.out.println(strShell);///////////////////////
+            Runtime.getRuntime().exec(strShell);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static Process audio2Wav(String fromType,String fromFile,String toType,String toFile){
+        String str=getWebRootAbsolutePath()+"static/tools/video2wav.py";
+        String strShell="python "+str+" --from_type "+fromType+" --from_file "+fromFile
+                +" --to_type "+toType+" --to_file "+toFile;
+        Process process=null;
+        try {
+            System.out.println(strShell);
+            process= Runtime.getRuntime().exec(strShell);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return process;
     }
     /**
      * 得到WebRoot文件夹下的根路径，及web项目的根路径--classes的绝对路径,

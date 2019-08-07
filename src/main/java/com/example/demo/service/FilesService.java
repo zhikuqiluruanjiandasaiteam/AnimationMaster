@@ -92,7 +92,7 @@ public class FilesService {
     }
 
     //加锁可能会使整个类加锁
-    private synchronized String getUniqueStr(){
+    public synchronized String getUniqueStr(){
         long nTime=System.nanoTime();//纳秒时间戳，不是以固定的开时间开始，可能会重复
         return ""+System.currentTimeMillis()+(nTime%1000000);
     }

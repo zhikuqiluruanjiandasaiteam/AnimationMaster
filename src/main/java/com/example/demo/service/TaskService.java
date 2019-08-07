@@ -12,8 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.util.*;
 
 @Service
@@ -102,24 +101,70 @@ public class TaskService {
     //todo:还未完全测试
     public void startTask(String fileName,int taskId,String type,
                           Integer imsId,Integer ausId,Integer clarity,boolean is) throws Exception {
-        //储存文件夹不存在则创建
-        File dir =new File( ParameterConfiguration.FilePath.finalSave);
-        if  (!dir .exists()&&!dir .isDirectory()) {
-            dir .mkdirs();
-        }
-        if(type.equals( ParameterConfiguration.Type.video )){
+        new Thread(  ){
+            @Override
+            public void run() {
+                super.run();
+                //储存文件夹不存在则创建
+                newFolder(ParameterConfiguration.FilePath.finalSave);
+                newFolder(ParameterConfiguration.FilePath.intermediateSave);
+                if(type.equals( ParameterConfiguration.Type.video )){
+                    runVideo();;
+                }else if(type.equals( ParameterConfiguration.Type.image )){
+                    runImage(fileName,imsId,clarity,taskId);
+                }else if(type.equals( ParameterConfiguration.Type.audio )){
+                    runAudio(fileName,ausId);
+                }
+            }
+        }.start();
+    }
+    private void runVideo(){
 
-        }else if(type.equals( ParameterConfiguration.Type.image )){
+    }
+    private void runImage(String fileName,Integer imsId,int clarity,int taskId){
+        try {
             imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSava+"/"+fileName,
                     ParameterConfiguration.FilePath.finalSave+"/"+fileName,
-                    imageStyle2Value.get(imsId.toString()),clarity );
-        }else if(type.equals( ParameterConfiguration.Type.audio )){
-            //ausId需要用ausId.toString,不用int不会自动转化string，只会返回null
-            //todo:mp3 to wav待写
-            AudioProcessing.changePitch(ParameterConfiguration.FilePath.uploadSava+"/"+fileName,
-                    ParameterConfiguration.FilePath.finalSave+"/"+fileName,audioStyle2Value.get(ausId.toString()) );
+                    imageStyle2Value.get(imsId.toString()),clarity ,taskId);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
+    private void runAudio(String fileName,Integer ausId){
+        String suffix = fileName.substring(fileName.lastIndexOf('.')+1);
+        String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
+        String intermedPath=ParameterConfiguration.FilePath.intermediateSave+"/"+fileFrontName;
+        newFolder(intermedPath);
+        intermedPath+="/";
+        FilesService filesService=new FilesService();////////////////////
+        System.out.println(filesService.getUniqueStr());
+        //转音频为wav
+        Process process=AudioProcessing.audio2Wav( suffix,
+                ParameterConfiguration.FilePath.uploadSava+"/"+fileName,
+                "wav",intermedPath+fileFrontName+".wav");
+        System.out.println(filesService.getUniqueStr());
+        //取得命令结果的输出流
+        InputStream fis=process.getInputStream();
+        System.out.println(filesService.getUniqueStr());
+        //改变音调
+        // ausId需要用ausId.toString,不用int不会自动转化string，只会返回null
+        AudioProcessing.changePitch(intermedPath+fileFrontName+".wav",
+                intermedPath+fileFrontName+"_out.wav",
+                audioStyle2Value.get(ausId.toString()) );
+        System.out.println(filesService.getUniqueStr());
+        //转wav为原类型
+        AudioProcessing.audio2Wav( "wav", intermedPath+fileFrontName+"_out.wav",
+                suffix,ParameterConfiguration.FilePath.finalSave+"/"+fileName);
+
+    }
+
+    //创建文件夹
+    private void newFolder(String path){
+        File dir =new File( path);
+        if  (!dir .exists()&&!dir .isDirectory()) {
+            dir .mkdirs();
+        }
+    }
 
 }

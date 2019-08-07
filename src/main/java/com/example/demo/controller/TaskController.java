@@ -90,7 +90,7 @@ public class TaskController {
             return re;
         }
         //开启任务
-      //  taskService.startTask( saveFiles.getStoreName(),taskId,type,imsId,ausId,clarity,isFrameSpeed==1);
+        taskService.startTask( saveFiles.getStoreName(),taskId,type,imsId,ausId,clarity,isFrameSpeed==1);
 
         re.put("error_code",0);
         re.put("error_msg","");
