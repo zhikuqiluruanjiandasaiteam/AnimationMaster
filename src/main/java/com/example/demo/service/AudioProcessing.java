@@ -2,20 +2,22 @@ package com.example.demo.service;
 
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.URLDecoder;
 
 @Service
 public class AudioProcessing {
 
-    /**改变音调
+    /**
+     * 改变音调
      * @param infile 输入wav文件路径
      * @param outfile 输出wav文件路径
      * @param relPitch 相对音调值，-3==降低3个（半音）
+     * @return int 运行结果状态码
      */
-    public static void changePitch(String infile,String outfile,Integer relPitch){
+    public static int changePitch(String infile,String outfile,Integer relPitch){
         if(relPitch==null)
-            return;
+            return -1;
         String os = System.getProperty("os.name");//判断操作系统
         String strShell;
         String strPitch;
@@ -30,28 +32,61 @@ public class AudioProcessing {
         }else{
             strShell="soundstretch "+infile+" "+outfile+" -pitch="+strPitch;
         }
-
-        try {
-            System.out.println(strShell);///////////////////////
-            Runtime.getRuntime().exec(strShell);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        int re=-1;
+        System.out.println(strShell);///////////////////////
+        re=runExec( strShell );
+        return re;
     }
 
-    public static Process audio2Wav(String fromType,String fromFile,String toType,String toFile){
+    /**
+     * wav文件与别的文件转化
+     * @param fromType
+     * @param fromFile
+     * @param toType
+     * @param toFile
+     * @return
+     */
+    public static int file2Wav(String fromType, String fromFile, String toType, String toFile){
         String str=getWebRootAbsolutePath()+"static/tools/video2wav.py";
         String strShell="python "+str+" --from_type "+fromType+" --from_file "+fromFile
                 +" --to_type "+toType+" --to_file "+toFile;
         Process process=null;
-        try {
-            System.out.println(strShell);
-            process= Runtime.getRuntime().exec(strShell);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return process;
+        int re=-1;
+        System.out.println(strShell);
+        re= runExec(strShell);
+        return re;
     }
+
+    //运行命令并等待命令执行完
+    public static int runExec(String shell) {
+        try{
+            final Process process = Runtime.getRuntime().exec(shell);//生成一个新的进程去运行调用的程序
+            printMessage(process.getInputStream());
+            printMessage(process.getErrorStream());
+            return process.waitFor();//得到进程运行结束后的返回状态，如果进程未运行完毕则等待知道执行完毕
+        }catch (Exception e){
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    private static void printMessage(final InputStream input) {
+        new Thread(new Runnable() {
+            public void run() {
+                Reader reader = new InputStreamReader(input);
+                BufferedReader bf = new BufferedReader(reader);
+                String line = null;
+                try {
+                    while((line=bf.readLine())!=null) {
+                        System.out.println(line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
+    }
+
     /**
      * 得到WebRoot文件夹下的根路径，及web项目的根路径--classes的绝对路径,
      * 注意返回...../classes/最后有‘/’，再加一个‘/’，‘...//...’会报错

@@ -1,5 +1,8 @@
 package com.example.demo.config;
 
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 
 public class ParameterConfiguration {
@@ -34,16 +37,16 @@ public class ParameterConfiguration {
      */
     public static class FilePath{
         public static final String root=getRoot();
-        public static final String uploadSava=root+"/UploadFiles";
-        public static final String finalSave=root+"/FinalFiles";
-        public static final String intermediateSave=root+"/IntermediateFiles";
+        public static final String uploadSava= root+File.separator+"UploadFiles";
+        public static final String finalSave=root+File.separator+"FinalFiles";
+        public static final String intermediateSave=root+File.separator+"IntermediateFiles";
 
         private static String getRoot(){
             String os = System.getProperty("os.name");//判断操作系统
             if(os.toLowerCase().startsWith("win")){
-                return "E:/AnimationMaster";
+                return "E:"+ File.separator+"AnimationMaster";
             }else{
-                return "~/AnimationMaster";
+                return "~"+ File.separator+"AnimationMaster";
             }
         }
 

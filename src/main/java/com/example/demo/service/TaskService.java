@@ -1,16 +1,13 @@
 package com.example.demo.service;
 
 import com.example.demo.config.ParameterConfiguration;
-import com.example.demo.dao.FilesMapper;
+import com.example.demo.dao.AudioStyleMapper;
+import com.example.demo.dao.ImageStyleMapper;
 import com.example.demo.dao.TaskMapper;
-import com.example.demo.entity.Files;
 import com.example.demo.entity.Task;
-import com.example.demo.util.RemoteShellExecutor;
-import org.omg.PortableInterceptor.INACTIVE;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.util.*;
@@ -22,11 +19,10 @@ public class TaskService {
     private TaskMapper taskMapper;
     @Autowired
     private ImgProcessing imgProcessing;
-
-    @Value(value = "#{${typle2Value.audio}}")
-    private Map<String,Integer> audioStyle2Value;
-    @Value(value = "#{${typle2Value.image}}")
-    private Map<String,String> imageStyle2Value;
+    @Autowired
+    private ImageStyleMapper imageStyleMapper;
+    @Autowired
+    private AudioStyleMapper audioStyleMapper;
 
 
 
@@ -118,52 +114,76 @@ public class TaskService {
             }
         }.start();
     }
+
     private void runVideo(){
 
     }
     private void runImage(String fileName,Integer imsId,int clarity,int taskId){
+        String parameterValues= imageStyleMapper.selectByPrimaryKey( imsId ).getImsParameterValues();
+        System.out.println("<<<<<<<<<<<<<");
+        System.out.println(parameterValues);
+        System.out.println(">>>>>>>>>>>>>>");
+        if(parameterValues==null){
+            String ml="cp -f";
+            if( System.getProperty("os.name").toLowerCase().startsWith("win")){//判断操作系统
+                ml="copy /y";
+            }
+            String shell=ml+" "+ParameterConfiguration.FilePath.uploadSava+File.separator+fileName+" "
+                    +ParameterConfiguration.FilePath.finalSave+File.separator+fileName;
+            System.out.println(shell);/////////////////
+            AudioProcessing.runExec( shell );
+            return;
+        }
         try {
-            imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSava+"/"+fileName,
-                    ParameterConfiguration.FilePath.finalSave+"/"+fileName,
-                    imageStyle2Value.get(imsId.toString()),clarity ,taskId);
+            imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSava+File.separator+fileName,
+                    ParameterConfiguration.FilePath.finalSave+File.separator+fileName,
+                    parameterValues,clarity ,taskId);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
     private void runAudio(String fileName,Integer ausId){
+        String parameterValues= audioStyleMapper.selectByPrimaryKey( ausId ).getAusParameterValues();
+        if(parameterValues==null){
+            String ml="cp";
+            if( System.getProperty("os.name").toLowerCase().startsWith("win")){//判断操作系统
+                ml="copy";
+            }
+            String shell=ml+" "+ParameterConfiguration.FilePath.uploadSava+File.separator+fileName+" "
+                    +ParameterConfiguration.FilePath.finalSave+File.separator+fileName;
+            AudioProcessing.runExec( shell );
+            return;
+        }
         String suffix = fileName.substring(fileName.lastIndexOf('.')+1);
         String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
-        String intermedPath=ParameterConfiguration.FilePath.intermediateSave+"/"+fileFrontName;
+        String intermedPath=ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName;
         newFolder(intermedPath);
-        intermedPath+="/";
-        FilesService filesService=new FilesService();////////////////////
-        System.out.println(filesService.getUniqueStr());
+        intermedPath+=File.separator;
         //转音频为wav
-        Process process=AudioProcessing.audio2Wav( suffix,
-                ParameterConfiguration.FilePath.uploadSava+"/"+fileName,
+        int state=AudioProcessing.file2Wav( suffix,
+                ParameterConfiguration.FilePath.uploadSava+File.separator+fileName,
                 "wav",intermedPath+fileFrontName+".wav");
-        System.out.println(filesService.getUniqueStr());
-        //取得命令结果的输出流
-        InputStream fis=process.getInputStream();
-        System.out.println(filesService.getUniqueStr());
+        if(state!=0)
+            return;
         //改变音调
-        // ausId需要用ausId.toString,不用int不会自动转化string，只会返回null
-        AudioProcessing.changePitch(intermedPath+fileFrontName+".wav",
-                intermedPath+fileFrontName+"_out.wav",
-                audioStyle2Value.get(ausId.toString()) );
-        System.out.println(filesService.getUniqueStr());
-        //转wav为原类型
-        AudioProcessing.audio2Wav( "wav", intermedPath+fileFrontName+"_out.wav",
-                suffix,ParameterConfiguration.FilePath.finalSave+"/"+fileName);
 
+        // ausId需要用ausId.toString,不用int不会自动转化string，只会返回null
+        state=AudioProcessing.changePitch(intermedPath+fileFrontName+".wav",
+                intermedPath+fileFrontName+"_out.wav",
+                Integer.parseInt( parameterValues ));
+        if(state!=0)
+            return;
+        //转wav为原类型System.out.println(filesService.getUniqueStr());
+        AudioProcessing.file2Wav( "wav", intermedPath+fileFrontName+"_out.wav",
+                suffix,ParameterConfiguration.FilePath.finalSave+File.separator+fileName);
     }
 
     //创建文件夹
     private void newFolder(String path){
         File dir =new File( path);
         if  (!dir .exists()&&!dir .isDirectory()) {
-            dir .mkdirs();
+            dir.mkdirs();
         }
     }
 

@@ -63,7 +63,7 @@ public class FilesService {
         }
         String suffix = filename.substring(filename.lastIndexOf('.')+1);
         saveName=getUniqueStr()+"."+suffix;
-        String path=ParameterConfiguration.FilePath.uploadSava+"/"+saveName;
+        String path=ParameterConfiguration.FilePath.uploadSava+File.separator+saveName;
         //上传
         file.transferTo(new File(path));
 
