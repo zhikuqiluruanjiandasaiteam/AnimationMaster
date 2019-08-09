@@ -115,19 +115,27 @@ public class TaskService {
         }.start();
     }
 
+    public void finishRecord(int taskId){
+        Task task=taskMapper.selectByPrimaryKey( taskId );
+        if(task==null)
+            return;
+        task.setFinishTime( new Date(  ) );
+        //todo:
+    }
+
     private void runVideo(){
 
     }
+
     private void runImage(String fileName,Integer imsId,int clarity,int taskId){
         String parameterValues= imageStyleMapper.selectByPrimaryKey( imsId ).getImsParameterValues();
         if(parameterValues==null){
-            String ml="cp -f";
+            String ml="sudo cp -f";
             if( System.getProperty("os.name").toLowerCase().startsWith("win")){//判断操作系统
-                ml="copy /y";
+                ml="cmd /c copy /y";//windoes,执行命令前要加“cmd /c”
             }
             String shell=ml+" "+ParameterConfiguration.FilePath.uploadSava+File.separator+fileName+" "
                     +ParameterConfiguration.FilePath.finalSave+File.separator+fileName;
-            System.out.println(shell);/////////////////
             AudioProcessing.runExec( shell );
             return;
         }
@@ -143,9 +151,9 @@ public class TaskService {
     private void runAudio(String fileName,Integer ausId){
         String parameterValues= audioStyleMapper.selectByPrimaryKey( ausId ).getAusParameterValues();
         if(parameterValues==null){
-            String ml="cp";
+            String ml="sudo cp -f";
             if( System.getProperty("os.name").toLowerCase().startsWith("win")){//判断操作系统
-                ml="copy";
+                ml="cmd.exe /c copy /y";//windoes,执行命令前要加“cmd.exe /c”
             }
             String shell=ml+" "+ParameterConfiguration.FilePath.uploadSava+File.separator+fileName+" "
                     +ParameterConfiguration.FilePath.finalSave+File.separator+fileName;
@@ -175,6 +183,7 @@ public class TaskService {
         AudioProcessing.file2Wav( "wav", intermedPath+fileFrontName+"_out.wav",
                 suffix,ParameterConfiguration.FilePath.finalSave+File.separator+fileName);
     }
+
 
     //创建文件夹
     private void newFolder(String path){

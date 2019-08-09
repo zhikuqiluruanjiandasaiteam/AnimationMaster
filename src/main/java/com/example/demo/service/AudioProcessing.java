@@ -50,10 +50,9 @@ public class AudioProcessing {
         String str=getWebRootAbsolutePath()+"static/tools/video2wav.py";
         String strShell="python "+str+" --from_type "+fromType+" --from_file "+fromFile
                 +" --to_type "+toType+" --to_file "+toFile;
-        Process process=null;
         int re=-1;
         System.out.println(strShell);
-        re= runExec(strShell);
+        re = runExec(strShell);
         return re;
     }
 
