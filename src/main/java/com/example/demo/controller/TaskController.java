@@ -4,6 +4,7 @@ import com.example.demo.config.ParameterConfiguration;
 
 import com.example.demo.service.FilesService;
 import com.example.demo.service.TaskService;
+import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.demo.entity.Files;
 import org.springframework.cache.annotation.Cacheable;
@@ -101,13 +102,17 @@ public class TaskController {
     /**
      * 获取任务列表
      * @param userId 用户id
-     * @return map
+     * @param isDesc true("true"/1)：按创建时间倒序排序，false("false"/0)；正序排序
+     * @param finishState 1：完成，-1：未完成，0:全部
+     * @return 任务列表
      */
     @ResponseBody
     @RequestMapping(value = "list")
-    public Map list(@RequestParam(value ="usr_id", required = true) Integer userId){
+    public Map list(@RequestParam(value ="usr_id", required = true) Integer userId,
+                    @RequestParam(value ="is_desc", required = false,defaultValue = "true") boolean isDesc,
+                    @RequestParam(value ="finish_state", required = false,defaultValue = "0") Integer finishState){
         HashMap<String,Object> re=new HashMap<>(  );
-        Map[] data=taskService.getList( userId );
+        Map[] data=taskService.getList( userId,isDesc,finishState==0,finishState==1 );
         if(data==null){
             re.put("error_code",3);
             re.put("error_msg","查询失败");

@@ -1,6 +1,7 @@
 package com.example.demo.dao;
 
 import com.example.demo.entity.Task;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
@@ -21,5 +22,8 @@ public interface TaskMapper {
 
     int insertGetId(Task record);
 
-    List<Task> selectsByUserId(Integer userId);
+    List<Task> selectsByUserId(@Param( "userId" ) Integer userId,
+                               @Param( "isDesc" ) boolean isDesc,
+                               @Param( "isAll" ) boolean isAll,
+                               @Param( "isFinish" ) boolean isFinish);
 }

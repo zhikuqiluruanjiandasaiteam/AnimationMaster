@@ -31,6 +31,17 @@
     <include refid="Base_Column_List" />
     from task
     where user_id = #{userId,jdbcType=INTEGER}
+    <if test="isAll == false">
+      and finish_time is
+      <if test="isFinish == true">
+        not
+      </if>
+      null
+    </if>
+    order by create_time
+    <if test="isDesc == true">
+      desc
+    </if>
   </select>
 
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">

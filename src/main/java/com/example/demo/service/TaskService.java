@@ -59,8 +59,8 @@ public class TaskService {
      * @param userId 用户id
      * @return 任务列表
      */
-    public Map[] getList(int userId){
-        List<Task> list=taskMapper.selectsByUserId( userId );
+    public Map[] getList(int userId,boolean isDesc,boolean isAll,boolean isFinish){
+        List<Task> list=taskMapper.selectsByUserId( userId ,isDesc,isAll,isFinish);
         Map[] maps=new HashMap[list.size()];
         int i=0;
         for (Task task : list) {
@@ -120,9 +120,6 @@ public class TaskService {
     }
     private void runImage(String fileName,Integer imsId,int clarity,int taskId){
         String parameterValues= imageStyleMapper.selectByPrimaryKey( imsId ).getImsParameterValues();
-        System.out.println("<<<<<<<<<<<<<");
-        System.out.println(parameterValues);
-        System.out.println(">>>>>>>>>>>>>>");
         if(parameterValues==null){
             String ml="cp -f";
             if( System.getProperty("os.name").toLowerCase().startsWith("win")){//判断操作系统
