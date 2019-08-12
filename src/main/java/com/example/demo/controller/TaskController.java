@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 @Controller
-@RequestMapping(value = "task")
+@RequestMapping(value = "/task")
 public class TaskController {
 
     @Autowired
@@ -127,6 +127,11 @@ public class TaskController {
     }
 
 
+    /**
+     *
+     * @param taskId  每处理完一张图片返回的通知(任务Id)
+     * @param fileName 每处理完一张图片返回的通知(处理后的文件名：默认为 初始文件名_风格名.jpg)
+     */
     @RequestMapping("/inform")
     public void inform(Integer taskId,String fileName){
         System.out.println(taskId+"----------"+fileName);
