@@ -5,7 +5,7 @@ import com.example.demo.util.RemoteShellExecutor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
+import java.io.*;
 
 @Service
 public class ImgProcessing {
@@ -25,10 +25,9 @@ public class ImgProcessing {
     @Value("${ExecShell}")
     private String ExecShell;
 
-    public void ProcessSinglePic(String initFilePath,String outputPath,String style,Integer longEdgeLength,Integer taskId)throws Exception{
+    public void ProcessSinglePic(String initFilePath,String outputPath,String style,Integer longEdgeLength,int taskId)throws Exception{
         RemoteShellExecutor executor = new RemoteShellExecutor(DLServerIP, DLServerUserName, DLServerPassword,new File(DLServerSecretKey));
         System.out.println(executor.exec(ExecShell+" "+initFilePath+" "+outputPath+" "+longEdgeLength+" "+style+" "+taskId));
     }
-
 
 }
