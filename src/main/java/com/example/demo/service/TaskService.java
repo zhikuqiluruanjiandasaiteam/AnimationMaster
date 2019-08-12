@@ -4,7 +4,11 @@ import com.example.demo.config.ParameterConfiguration;
 import com.example.demo.dao.AudioStyleMapper;
 import com.example.demo.dao.ImageStyleMapper;
 import com.example.demo.dao.TaskMapper;
+import com.example.demo.entity.AudioStyle;
+import com.example.demo.entity.ImageStyle;
 import com.example.demo.entity.Task;
+import it.sauronsoftware.jave.Encoder;
+import it.sauronsoftware.jave.MultimediaInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -105,29 +109,62 @@ public class TaskService {
                 newFolder(ParameterConfiguration.FilePath.finalSave);
                 newFolder(ParameterConfiguration.FilePath.intermediateSave);
                 if(type.equals( ParameterConfiguration.Type.video )){
-                    runVideo();;
+                    Task task=initialRecord(taskId);
+                    if(runVideo()){
+                        finishRecord(task,fileName);
+                    }
                 }else if(type.equals( ParameterConfiguration.Type.image )){
-                    runImage(fileName,imsId,clarity,taskId);
+                    Task task=initialRecord(taskId);
+                    if(runImage(fileName,imsId,clarity,taskId)){
+                        finishRecord(task,fileName);
+                    }
                 }else if(type.equals( ParameterConfiguration.Type.audio )){
-                    runAudio(fileName,ausId);
+                    Task task=initialRecord(taskId);
+                    if(runAudio(fileName,ausId)){
+                        finishRecord(task,fileName);
+                    }
                 }
             }
         }.start();
     }
 
-    public void finishRecord(int taskId){
-        Task task=taskMapper.selectByPrimaryKey( taskId );
+    public void finishRecord(Task task,String fileName){
         if(task==null)
             return;
         task.setFinishTime( new Date(  ) );
-        //todo:
+        //调整风格平均耗时
+        long spendingTime=task.getStartTime().getTime()-task.getFinishTime().getTime();
+        spendingTime*=1000;//数据库中储存微秒级
+        if(task.getTaskType().equals( ParameterConfiguration.Type.video )){
+
+        }else if(task.getTaskType().equals( ParameterConfiguration.Type.image )){
+
+        }else if(task.getTaskType().equals( ParameterConfiguration.Type.audio )){
+            int estimatedTime=(int)(spendingTime/getDuration(ParameterConfiguration.FilePath.uploadSava
+                    +File.separator+fileName));
+            AudioStyle audioStyle=audioStyleMapper.selectByPrimaryKey( task.getAusId() );
+            int nowet=(audioStyle.getAusUsedCount()*audioStyle.getAusEstimatedTime()+estimatedTime)/
+                    (audioStyle.getAusUsedCount()+1);
+            audioStyle.setAusEstimatedTime( nowet );
+            audioStyle.setAusUsedCount( audioStyle.getAusUsedCount()+1 );
+        }
+
+        //todo:删除中间文件，节省储存空间
     }
 
-    private void runVideo(){
-
+    private Task initialRecord(int taskId){
+        Task task=taskMapper.selectByPrimaryKey( taskId );
+        if(task==null)
+            return null;
+        task.setStartTime( new Date(  ) );
+        return task;
     }
 
-    private void runImage(String fileName,Integer imsId,int clarity,int taskId){
+    private boolean runVideo(){
+        return false;
+    }
+
+    private boolean runImage(String fileName,Integer imsId,int clarity,int taskId){
         String parameterValues= imageStyleMapper.selectByPrimaryKey( imsId ).getImsParameterValues();
         if(parameterValues==null){
             String ml="sudo cp -f";
@@ -137,7 +174,7 @@ public class TaskService {
             String shell=ml+" "+ParameterConfiguration.FilePath.uploadSava+File.separator+fileName+" "
                     +ParameterConfiguration.FilePath.finalSave+File.separator+fileName;
             AudioProcessing.runExec( shell );
-            return;
+            return false;
         }
         try {
             imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSava+File.separator+fileName,
@@ -145,10 +182,12 @@ public class TaskService {
                     parameterValues,clarity ,taskId);
         } catch (Exception e) {
             e.printStackTrace();
+            return false;
         }
+        return true;
     }
 
-    private void runAudio(String fileName,Integer ausId){
+    private boolean runAudio(String fileName,Integer ausId){
         String parameterValues= audioStyleMapper.selectByPrimaryKey( ausId ).getAusParameterValues();
         if(parameterValues==null){
             String ml="sudo cp -f";
@@ -158,7 +197,7 @@ public class TaskService {
             String shell=ml+" "+ParameterConfiguration.FilePath.uploadSava+File.separator+fileName+" "
                     +ParameterConfiguration.FilePath.finalSave+File.separator+fileName;
             AudioProcessing.runExec( shell );
-            return;
+            return false;
         }
         String suffix = fileName.substring(fileName.lastIndexOf('.')+1);
         String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
@@ -170,7 +209,7 @@ public class TaskService {
                 ParameterConfiguration.FilePath.uploadSava+File.separator+fileName,
                 "wav",intermedPath+fileFrontName+".wav");
         if(state!=0)
-            return;
+            return false;
         //改变音调
 
         // ausId需要用ausId.toString,不用int不会自动转化string，只会返回null
@@ -178,12 +217,31 @@ public class TaskService {
                 intermedPath+fileFrontName+"_out.wav",
                 Integer.parseInt( parameterValues ));
         if(state!=0)
-            return;
+            return false;
         //转wav为原类型System.out.println(filesService.getUniqueStr());
         AudioProcessing.file2Wav( "wav", intermedPath+fileFrontName+"_out.wav",
                 suffix,ParameterConfiguration.FilePath.finalSave+File.separator+fileName);
+        return true;
     }
 
+    /**
+     * 音频文件获取文件时长 秒
+     * @param source
+     * @return
+     */
+    public static long getDuration(String source) {
+        File file=new File( source );
+        Encoder encoder = new Encoder();
+        long ls = 0;
+        MultimediaInfo m;
+        try {
+            m = encoder.getInfo(file);
+            ls = m.getDuration()/1000;
+        } catch (Exception e) {
+            System.out.println("获取音频时长有误：" + e.getMessage());
+        }
+        return ls;
+    }
 
     //创建文件夹
     private void newFolder(String path){
