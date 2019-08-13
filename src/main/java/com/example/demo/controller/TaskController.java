@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.config.ParameterConfiguration;
 
+import com.example.demo.entity.Task;
 import com.example.demo.service.FilesService;
 import com.example.demo.service.TaskService;
 import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
@@ -83,15 +84,15 @@ public class TaskController {
             re.put("error_msg","上传失败或文件类型不符合选择转换模式要求");
             return re;
         }
-        Integer taskId=taskService.createTask( userId, saveFiles.getFileId(), imsId, ausId, clarity, estimateTime,
+        Task task=taskService.createTask( userId, saveFiles.getFileId(), imsId, ausId, clarity, estimateTime,
                 isFrameSpeed==1, type);
-        if(taskId==null){
+        if(task==null){
             re.put("error_code",3);
             re.put("error_msg","任务创建失败");
             return re;
         }
         //开启任务
-        taskService.startTask( saveFiles.getStoreName(),taskId,type,imsId,ausId,clarity,isFrameSpeed==1);
+        taskService.startTask( saveFiles.getStoreName(),task);
 
         re.put("error_code",0);
         re.put("error_msg","");

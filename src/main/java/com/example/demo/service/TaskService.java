@@ -10,11 +10,14 @@ import com.example.demo.entity.Task;
 import it.sauronsoftware.jave.Encoder;
 import it.sauronsoftware.jave.MultimediaInfo;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import javax.imageio.ImageIO;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 
 @Service
 public class TaskService {
@@ -32,17 +35,17 @@ public class TaskService {
 
     /**
      * 创建任务（仅创建记录，未开启任务）
-     * @param userId
-     * @param fileId
-     * @param imsId
-     * @param ausId
-     * @param clarity
-     * @param estimateTime
-     * @param isFrameSpeed
-     * @param taskType
-     * @return 任务id
+     * @param userId 用户id
+     * @param fileId 文件id
+     * @param imsId 使用图像风格
+     * @param ausId 使用音频风格
+     * @param clarity 清晰度
+     * @param estimateTime 预计耗时
+     * @param isFrameSpeed 是否采用补帧加速
+     * @param taskType 任务类型
+     * @return 任务对象（带自增id值）
      */
-    public Integer createTask(Integer userId,Integer fileId,Integer imsId,Integer ausId,Integer clarity,Integer estimateTime,
+    public Task createTask(Integer userId,Integer fileId,Integer imsId,Integer ausId,Integer clarity,Integer estimateTime,
                            Boolean isFrameSpeed,String taskType){
         Task task=new Task();
         task.setUserId( userId );
@@ -55,7 +58,7 @@ public class TaskService {
         task.setTaskType( taskType );
         task.setCreateTime( new Date(  ) );
         taskMapper.insertGetId( task );
-        return task.getTaskId();
+        return task;
     }
 
     /**
@@ -89,18 +92,11 @@ public class TaskService {
 
     /**
      * 开启任务
-     * @param fileName
-     * @param taskId
-     * @param type
-     * @param imsId
-     * @param ausId
-     * @param clarity
-     * @param is
-     * @throws Exception
+     * @param fileName 储存所用文件名
+     * @param task 任务对象
      */
     //todo:还未完全测试
-    public void startTask(String fileName,int taskId,String type,
-                          Integer imsId,Integer ausId,Integer clarity,boolean is) throws Exception {
+    public void startTask(String fileName,Task task) {
         new Thread(  ){
             @Override
             public void run() {
@@ -108,56 +104,78 @@ public class TaskService {
                 //储存文件夹不存在则创建
                 newFolder(ParameterConfiguration.FilePath.finalSave);
                 newFolder(ParameterConfiguration.FilePath.intermediateSave);
-                if(type.equals( ParameterConfiguration.Type.video )){
-                    Task task=initialRecord(taskId);
-                    if(runVideo()){
-                        finishRecord(task,fileName);
-                    }
-                }else if(type.equals( ParameterConfiguration.Type.image )){
-                    Task task=initialRecord(taskId);
-                    if(runImage(fileName,imsId,clarity,taskId)){
-                        finishRecord(task,fileName);
-                    }
-                }else if(type.equals( ParameterConfiguration.Type.audio )){
-                    Task task=initialRecord(taskId);
-                    if(runAudio(fileName,ausId)){
-                        finishRecord(task,fileName);
-                    }
+                assert task != null;
+                switch (task.getTaskType()) {
+                    case ParameterConfiguration.Type.video:
+                        initialRecord( task );
+                        if (runVideo()) {
+                            finishRecord( task, fileName );
+                        }
+                        break;
+                    case ParameterConfiguration.Type.image:
+                        initialRecord( task );
+                        if (runImage( fileName, task.getImsId(), task.getClarity(), task.getTaskId() )) {
+                            finishRecord( task, fileName );
+                        }
+                        break;
+                    case ParameterConfiguration.Type.audio:
+                        initialRecord( task );
+                        if (runAudio( fileName, task.getAusId() )) {
+                            finishRecord( task, fileName );
+                        }
+                        break;
                 }
             }
         }.start();
     }
 
-    public void finishRecord(Task task,String fileName){
+    /**
+     * 任务完成后处理
+     */
+    private void finishRecord(Task task,String fileName){
         if(task==null)
             return;
         task.setFinishTime( new Date(  ) );
-        //调整风格平均耗时
-        long spendingTime=task.getStartTime().getTime()-task.getFinishTime().getTime();
+        //调整风格平均耗时//java中date精确到毫秒，mysql中只精确到秒，不能从数据库中查询后做差
+        long spendingTime=task.getFinishTime().getTime()-task.getStartTime().getTime();
         spendingTime*=1000;//数据库中储存微秒级
-        if(task.getTaskType().equals( ParameterConfiguration.Type.video )){
+        switch (task.getTaskType()) {
+            case ParameterConfiguration.Type.video:
 
-        }else if(task.getTaskType().equals( ParameterConfiguration.Type.image )){
-
-        }else if(task.getTaskType().equals( ParameterConfiguration.Type.audio )){
-            int estimatedTime=(int)(spendingTime/getDuration(ParameterConfiguration.FilePath.uploadSava
-                    +File.separator+fileName));
-            AudioStyle audioStyle=audioStyleMapper.selectByPrimaryKey( task.getAusId() );
-            int nowet=(audioStyle.getAusUsedCount()*audioStyle.getAusEstimatedTime()+estimatedTime)/
-                    (audioStyle.getAusUsedCount()+1);
-            audioStyle.setAusEstimatedTime( nowet );
-            audioStyle.setAusUsedCount( audioStyle.getAusUsedCount()+1 );
+                break;
+            case ParameterConfiguration.Type.image:
+                int[] pixel=getImgPixel(ParameterConfiguration.FilePath.finalSave+File.separator+fileName);
+                if(pixel==null)
+                    break;
+                ImageStyle imageStyle=imageStyleMapper.selectByPrimaryKey( task.getImsId() );
+                int estimatedTime1 = (int) (spendingTime / (pixel[0]*pixel[1]));
+                int nowet1 = (imageStyle.getImsUsedCount() * imageStyle.getImsEstimatedTime() + estimatedTime1) /
+                        (imageStyle.getImsUsedCount() + 1);
+                imageStyle.setImsEstimatedTime( nowet1 );
+                imageStyle.setImsUsedCount( imageStyle.getImsUsedCount()+1 );
+                imageStyleMapper.updateByPrimaryKey( imageStyle );
+                break;
+            case ParameterConfiguration.Type.audio:
+                int estimatedTime = (int) (spendingTime / getDuration( ParameterConfiguration.FilePath.uploadSava
+                        + File.separator + fileName ));
+                AudioStyle audioStyle = audioStyleMapper.selectByPrimaryKey( task.getAusId() );
+                int nowet = (audioStyle.getAusUsedCount() * audioStyle.getAusEstimatedTime() + estimatedTime) /
+                        (audioStyle.getAusUsedCount() + 1);
+                audioStyle.setAusEstimatedTime( nowet );
+                audioStyle.setAusUsedCount( audioStyle.getAusUsedCount() + 1 );
+                audioStyleMapper.updateByPrimaryKey( audioStyle );
+                break;
         }
+        taskMapper.updateByPrimaryKey( task );
 
         //todo:删除中间文件，节省储存空间
     }
 
-    private Task initialRecord(int taskId){
-        Task task=taskMapper.selectByPrimaryKey( taskId );
-        if(task==null)
-            return null;
+    /**
+     * 任务开始前处理
+     */
+    private void initialRecord(Task task){
         task.setStartTime( new Date(  ) );
-        return task;
     }
 
     private boolean runVideo(){
@@ -166,15 +184,23 @@ public class TaskService {
 
     private boolean runImage(String fileName,Integer imsId,int clarity,int taskId){
         String parameterValues= imageStyleMapper.selectByPrimaryKey( imsId ).getImsParameterValues();
-        if(parameterValues==null){
-            String ml="sudo cp -f";
-            if( System.getProperty("os.name").toLowerCase().startsWith("win")){//判断操作系统
-                ml="cmd /c copy /y";//windoes,执行命令前要加“cmd /c”
+        if(parameterValues==null){//原画
+            String fromPath=ParameterConfiguration.FilePath.uploadSava+File.separator+fileName;
+            String toPath=ParameterConfiguration.FilePath.finalSave+File.separator+fileName;
+            int [] pixel=getImgPixel( fromPath );
+            assert pixel != null;
+            if(pixel[0]>pixel[1]){
+                pixel[1]=(int)(pixel[1]*(1.0*clarity/pixel[0]));
+                pixel[0]=clarity;
+                if(pixel[1]<=0)
+                    pixel[1]=1;
+            }else{
+                pixel[0]=(int)(pixel[0]*(1.0*clarity/pixel[1]));
+                pixel[1]=clarity;
+                if(pixel[0]<=0)
+                    pixel[0]=1;
             }
-            String shell=ml+" "+ParameterConfiguration.FilePath.uploadSava+File.separator+fileName+" "
-                    +ParameterConfiguration.FilePath.finalSave+File.separator+fileName;
-            AudioProcessing.runExec( shell );
-            return false;
+            return changeImageSize(fromPath,pixel[0],pixel[1],toPath);
         }
         try {
             imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSava+File.separator+fileName,
@@ -197,7 +223,7 @@ public class TaskService {
             String shell=ml+" "+ParameterConfiguration.FilePath.uploadSava+File.separator+fileName+" "
                     +ParameterConfiguration.FilePath.finalSave+File.separator+fileName;
             AudioProcessing.runExec( shell );
-            return false;
+            return true;
         }
         String suffix = fileName.substring(fileName.lastIndexOf('.')+1);
         String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
@@ -225,9 +251,9 @@ public class TaskService {
     }
 
     /**
-     * 音频文件获取文件时长 秒
-     * @param source
-     * @return
+     * 音频文件获取文件时长
+     * @param source 文件地址
+     * @return 时长/秒
      */
     public static long getDuration(String source) {
         File file=new File( source );
@@ -251,4 +277,61 @@ public class TaskService {
         }
     }
 
+    /**
+     * 获取图片像素
+     * @param path 图片路径
+     * @return
+     */
+    private int[] getImgPixel(String path){
+        File file = new File( path);//读取文件路径
+        BufferedImage bi = null;
+        try {
+            bi = ImageIO.read( file );
+        }catch (IOException e){
+            e.printStackTrace();
+        }
+        if(bi==null)
+            return null;
+        int width = bi.getWidth();
+        int height = bi.getHeight();
+        return new int[]{width, height};
+    }
+
+    /**
+     * 改变图片的尺寸
+     * @param fromPath
+     * @param newWidth
+     * @param newHeight
+     * @param toPath
+     * @return
+     */
+    private boolean changeImageSize(String fromPath,int newWidth, int newHeight, String toPath) {
+        BufferedInputStream in = null;
+        try {
+            in = new BufferedInputStream(new FileInputStream(fromPath));
+            //字节流转图片对象
+            Image bi = ImageIO.read(in);
+            //构建图片流
+            BufferedImage tag = new BufferedImage(newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
+            //绘制改变尺寸后的图
+            tag.getGraphics().drawImage(bi, 0, 0, newWidth, newHeight, null);
+            //输出流
+            BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(toPath));
+            //JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
+            //encoder.encode(tag);
+            String formName="PNG";
+            String suffix = fromPath.substring(fromPath.lastIndexOf('.')+1);//文件后缀
+            if(suffix.equalsIgnoreCase( "jpg" )){
+                formName="JPEG";
+            }else if(suffix.equalsIgnoreCase( "gif" )){
+                formName="GIF";
+            }
+            ImageIO.write(tag,formName,out);
+            in.close();
+            out.close();
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
 }
