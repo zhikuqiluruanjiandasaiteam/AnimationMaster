@@ -22,8 +22,6 @@ public class ParameterConfiguration {
         //必须写在上面file_xxx下面，比如键对应的值会得到null
         public static final HashMap<String,String[]> fileName = getFileName();
 
-
-
         private static HashMap<String,String[]> getFileName(){
             HashMap<String,String[]> map=new HashMap<String,String[]>(  );
             map.put(video,file_video);
@@ -40,6 +38,10 @@ public class ParameterConfiguration {
         public static final String uploadSava= root+File.separator+"UploadFiles";
         public static final String finalSave=root+File.separator+"FinishFiles";
         public static final String intermediateSave=root+File.separator+"IntermediateFiles";
+        //视频类任务中间文件的中间目录
+        public static final String video_ImagesForm="ImagesFrom";
+        public static final String vidoe_ImagesTo="ImagesTo";
+        public static final String vidoe_audio="Audio";
 
         private static String getRoot(){
             String os = System.getProperty("os.name");//判断操作系统

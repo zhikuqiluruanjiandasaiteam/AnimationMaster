@@ -7,6 +7,8 @@ import com.example.demo.dao.TaskMapper;
 import com.example.demo.entity.AudioStyle;
 import com.example.demo.entity.ImageStyle;
 import com.example.demo.entity.Task;
+import com.example.demo.util.AudioProcessing;
+import com.example.demo.util.VideoProcessing;
 import it.sauronsoftware.jave.Encoder;
 import it.sauronsoftware.jave.MultimediaInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,9 +110,7 @@ public class TaskService {
                 switch (task.getTaskType()) {
                     case ParameterConfiguration.Type.video:
                         initialRecord( task );
-                        if (runVideo()) {
-                            finishRecord( task, fileName );
-                        }
+                        runVideo(fileName,task);
                         break;
                     case ParameterConfiguration.Type.image:
                         initialRecord( task );
@@ -178,7 +178,13 @@ public class TaskService {
         task.setStartTime( new Date(  ) );
     }
 
-    private boolean runVideo(){
+    private boolean runVideo(String fileName,Task task){
+        String fileSuffix = fileName.substring(fileName.lastIndexOf('.')+1);
+        String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
+        //拆分视频为图片
+        VideoProcessing.video2images(ParameterConfiguration.FilePath.uploadSava+File.separator+fileName,
+                ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName+
+                        File.separator+ParameterConfiguration.FilePath.video_ImagesForm,7);
         return false;
     }
 

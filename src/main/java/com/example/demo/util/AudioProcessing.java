@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.util;
 
 import org.springframework.stereotype.Service;
 
@@ -90,7 +90,7 @@ public class AudioProcessing {
      * 得到WebRoot文件夹下的根路径，及web项目的根路径--classes的绝对路径,
      * 注意返回...../classes/最后有‘/’，再加一个‘/’，‘...//...’会报错
      */
-    private static String getWebRootAbsolutePath() {
+    public static String getWebRootAbsolutePath() {
         String path = AudioProcessing.class.getProtectionDomain().getCodeSource().getLocation().getPath();
         if(path.charAt( 0 )=='/'||path.charAt( 0 )=='\\'){//如果开头是‘\’
             path=path.substring(1);//截取第二到最后的字符串
