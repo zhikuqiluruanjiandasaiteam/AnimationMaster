@@ -13,7 +13,7 @@ mybatis:
   type-aliases-package: com.example.demo.entity
   mapper-locations: classpath:mybatis/mapper/*.xml
 server:
-  port: 80
+  port: 9999
   tomcat:
       uri-encoding: UTF-8
   servlet:
@@ -24,11 +24,13 @@ server:
 
 #配置变量
 
-DLServerIP: 3.93.190.93
+DLServerIP: 54.234.238.204
 DLServerUserName: ubuntu
 DLServerPassword: 123456
-DLServerSecretKey: C:\\Users\\Dell\\Downloads\\miyao1.pem
+DLServerSecretKey: /home/ubuntu/miyao1.pem
 ExecShell: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test.sh
+ExecShelltransferEnv: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/transferEnv.sh
+ExecShelltransferSinglePic: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/transferSinglePic.sh
 #风格类型对应实际风格决定参数值
 typle2Value:
   audio: "{1: 0,2: 7,3: -7}" #风格id对应音调变化量
