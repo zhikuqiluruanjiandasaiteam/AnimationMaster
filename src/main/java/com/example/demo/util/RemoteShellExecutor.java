@@ -58,7 +58,7 @@ public class RemoteShellExecutor {
      * @return
      * @throws Exception
      */
-    public int exec(String cmds) throws Exception {
+    public int execProcessSingleDir(String cmds) throws Exception {
         InputStream stdOut = null;
         InputStream stdErr = null;
         String outStr = "";
@@ -112,8 +112,5 @@ public class RemoteShellExecutor {
         return sb.toString();
     }
 
-    public static void main(String args[]) throws Exception {
-        RemoteShellExecutor executor = new RemoteShellExecutor("3.89.92.251", "ubuntu", "123456",new File("C:\\Users\\Dell\\Downloads\\miyao1.pem"));
-        System.out.println(executor.exec("/home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test.sh"));
-    }
+
 }
