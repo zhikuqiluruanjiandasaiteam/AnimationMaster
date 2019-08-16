@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import ch.ethz.ssh2.Connection;
 import com.example.demo.config.ParameterConfiguration;
 import com.example.demo.dao.AudioStyleMapper;
 import com.example.demo.dao.ImageStyleMapper;
@@ -178,13 +179,27 @@ public class TaskService {
         task.setStartTime( new Date(  ) );
     }
 
+    //todo:未完
     private boolean runVideo(String fileName,Task task){
-        String fileSuffix = fileName.substring(fileName.lastIndexOf('.')+1);
-        String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
-        //拆分视频为图片
-        VideoProcessing.video2images(ParameterConfiguration.FilePath.uploadSava+File.separator+fileName,
-                ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName+
-                        File.separator+ParameterConfiguration.FilePath.video_ImagesForm,7);
+        String imsParameterValues= imageStyleMapper.selectByPrimaryKey( task.getImsId() ).getImsParameterValues();
+        String ausParameterValues= audioStyleMapper.selectByPrimaryKey( task.getAusId() ).getAusParameterValues();
+        if(imsParameterValues==null&&ausParameterValues==null){//原画原声
+            copyFile(ParameterConfiguration.FilePath.uploadSava+File.separator+fileName+" "
+                    ,ParameterConfiguration.FilePath.finalSave+File.separator+fileName);
+        }else if(imsParameterValues==null){//原画非原声
+            splitVideo(fileName,true);
+
+        }else{//非原画
+            splitVideo(fileName,false);
+            if(task.getIsFrameSpeed()){
+
+            }else{
+
+            }
+        }
+//        return true;
+
+
         return false;
     }
 
@@ -209,9 +224,11 @@ public class TaskService {
             return changeImageSize(fromPath,pixel[0],pixel[1],toPath);
         }
         try {
+            Connection connection=imgProcessing.ProcessSinglePicLogin();
             imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSava+File.separator+fileName,
                     ParameterConfiguration.FilePath.finalSave+File.separator+fileName,
-                    parameterValues,clarity ,taskId);
+                    parameterValues,clarity,connection);
+            //关闭连接
         } catch (Exception e) {
             e.printStackTrace();
             return false;
@@ -222,13 +239,8 @@ public class TaskService {
     private boolean runAudio(String fileName,Integer ausId){
         String parameterValues= audioStyleMapper.selectByPrimaryKey( ausId ).getAusParameterValues();
         if(parameterValues==null){
-            String ml="sudo cp -f";
-            if( System.getProperty("os.name").toLowerCase().startsWith("win")){//判断操作系统
-                ml="cmd.exe /c copy /y";//windoes,执行命令前要加“cmd.exe /c”
-            }
-            String shell=ml+" "+ParameterConfiguration.FilePath.uploadSava+File.separator+fileName+" "
-                    +ParameterConfiguration.FilePath.finalSave+File.separator+fileName;
-            AudioProcessing.runExec( shell );
+            copyFile(ParameterConfiguration.FilePath.uploadSava+File.separator+fileName+" "
+                    ,ParameterConfiguration.FilePath.finalSave+File.separator+fileName);
             return true;
         }
         String suffix = fileName.substring(fileName.lastIndexOf('.')+1);
@@ -339,5 +351,25 @@ public class TaskService {
         } catch (IOException e) {
             return false;
         }
+    }
+
+    private void copyFile(String formFile,String toFile){
+        String ml="sudo cp -f";
+        if( System.getProperty("os.name").toLowerCase().startsWith("win")){//判断操作系统
+            ml="cmd.exe /c copy /y";//windoes,执行命令前要加“cmd.exe /c”
+        }
+        String shell=ml+" "+formFile+" "+toFile;
+        AudioProcessing.runExec( shell );
+    }
+
+    private void splitVideo(String fileName,boolean isOriginalIms){
+        String fileSuffix = fileName.substring(fileName.lastIndexOf('.')+1);
+        String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
+        //拆分视频为图片
+        VideoProcessing.video2images(ParameterConfiguration.FilePath.uploadSava+File.separator+fileName,
+                ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName+
+                        File.separator+ParameterConfiguration.FilePath.video_ImagesForm,7);
+    //todo:同时导出音频
+        //todo:是否原画：原画不拆分图片，只拆分视频和音频
     }
 }
