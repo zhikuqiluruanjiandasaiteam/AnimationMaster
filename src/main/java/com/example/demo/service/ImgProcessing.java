@@ -6,6 +6,7 @@ import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
 import com.example.demo.util.RemoteShellExecutor;
+import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -77,6 +78,9 @@ public class ImgProcessing {
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
+        }finally {
+            IOUtils.closeQuietly(stdOut);
+            IOUtils.closeQuietly(stdErr);
         }
     }
     public Integer ProcessSinglePic(String initFile,String outputFile,String style,Integer longEdgeLength,Connection conn)throws Exception{
@@ -101,6 +105,9 @@ public class ImgProcessing {
         } catch (Exception e) {
             e.printStackTrace();
             return -1;
+        }finally {
+            IOUtils.closeQuietly(stdOut);
+            IOUtils.closeQuietly(stdErr);
         }
     }
 
@@ -112,6 +119,12 @@ public class ImgProcessing {
             sb.append(new String(buf, charset));
         }
         return sb.toString();
+    }
+
+    public void closeConnect(Connection connection){
+        if (connection != null) {
+            connection.close();
+        }
     }
 
 }
