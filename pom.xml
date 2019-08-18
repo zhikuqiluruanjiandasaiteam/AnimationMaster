@@ -64,7 +64,7 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.3</version>
+            <version>2.4</version>
         </dependency>
         <!--java获取音频文件时长-->
         <!--直接通过maven下载失败，看https://blog.csdn.net/xie_sining/article/details/79643152-->
@@ -73,7 +73,12 @@
             <artifactId>jave</artifactId>
             <version>1.0.2</version>
         </dependency>
-
+        <!--&lt;!&ndash;使用json函数&ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>com.alibaba</groupId>-->
+            <!--<artifactId>fastjson</artifactId>-->
+            <!--<version>1.2.37</version>-->
+        <!--</dependency>-->
     </dependencies>
 
     <build>

@@ -56,6 +56,7 @@ public class ImgProcessing {
             return null;
         }
     }
+
     public Integer ProcessSinglePicTransferEnv(Connection conn){
         InputStream stdOut = null;
         InputStream stdErr = null;
