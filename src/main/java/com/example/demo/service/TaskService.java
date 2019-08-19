@@ -333,15 +333,18 @@ public class TaskService {
             }
             return changeImageSize(fromPath,pixel[0],pixel[1],toPath);
         }
+        Connection connection = null;
         try {
-            Connection connection=imgProcessing.ProcessSinglePicLogin();
+            connection=imgProcessing.ProcessSinglePicLogin();
             imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
                     ParameterConfiguration.FilePath.finalSave+File.separator+fileName,
                     parameterValues,clarity,connection);
-            //关闭连接
         } catch (Exception e) {
             e.printStackTrace();
             return false;
+        }finally {
+            //关闭连接
+            imgProcessing.closeConnect( connection );
         }
         return true;
     }
