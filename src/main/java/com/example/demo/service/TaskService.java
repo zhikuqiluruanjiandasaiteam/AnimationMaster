@@ -17,7 +17,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
-import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
@@ -36,10 +35,11 @@ public class TaskService {
     @Autowired
     private AudioStyleMapper audioStyleMapper;
 
-    private long imsEstimatedTime;//处理图片耗时（毫秒）
-    private long ausEstimatedTime;//处理音频耗时（毫秒）
+    private long imsEstimatedTime;//处理图片耗时（微秒）
+    private long ausEstimatedTime;//处理音频耗时（微秒）
     private int patchFrameNone;//使用补帧时直接通过风格转换未补帧的帧数
-    private long patchFrameTime;//使用补帧时补帧所耗费的时长（毫秒）
+    private long patchFrameTime;//使用补帧时补帧所耗费的时长（微秒）
+    private int numWidth=7;
 
 
 
@@ -118,7 +118,9 @@ public class TaskService {
                 switch (task.getTaskType()) {
                     case ParameterConfiguration.Type.video:
                         initialRecord( task );
-                        runVideo(fileName,task);
+                        if(runVideo(fileName,task)){
+                            finishRecord( task,fileName );
+                        }
                         break;
                     case ParameterConfiguration.Type.image:
                         initialRecord( task );
@@ -140,7 +142,7 @@ public class TaskService {
     /**
      * 任务完成后处理
      */
-    private void finishRecord(Task task,String fileName){
+    private void finishRecord(Task task,String fileName) {
         if(task==null)
             return;
         task.setFinishTime( new Date(  ) );
@@ -152,10 +154,11 @@ public class TaskService {
             case ParameterConfiguration.Type.video:
                 //音频
                 AudioStyle audioStyle0 = audioStyleMapper.selectByPrimaryKey( task.getAusId() );
-                int nowet0 = (audioStyle0.getAusUsedCount() * audioStyle0.getAusEstimatedTime() + (int)ausEstimatedTime*1000) /
+                int nowet0 = (audioStyle0.getAusUsedCount() * audioStyle0.getAusEstimatedTime() + (int)ausEstimatedTime) /
                         (audioStyle0.getAusUsedCount() + 1);
                 audioStyle0.setAusUsedCount( audioStyle0.getAusUsedCount() + 1 );
                 audioStyle0.setAusEstimatedTime( nowet0 );
+                audioStyleMapper.updateByPrimaryKey( audioStyle0 );
                 //图像
                 ImageStyle imageStyle0=imageStyleMapper.selectByPrimaryKey( task.getImsId() );
                 int[] videoInfo=VideoProcessing.getVideoInfo( ParameterConfiguration.FilePath.finalSave
@@ -167,7 +170,7 @@ public class TaskService {
                     int estimated_time=Integer.parseInt( (String) map.get("estimated_time"));
                     int used_count=Integer.parseInt( (String) map.get("used_count"));
                     float frame_patch_rate=Float.parseFloat( (String) map.get("frame_patch_rate"));
-                    et=patchFrameTime*1000/(videoInfo[0]*videoInfo[1]*(videoInfo[2]-patchFrameNone));
+                    et=patchFrameTime/(videoInfo[0]*videoInfo[1]*(videoInfo[2]-patchFrameNone));
                     estimated_time=(int)((et+estimated_time*used_count)/(used_count+1));
                     float fpr=(float)1.0*(videoInfo[2]-patchFrameNone)/videoInfo[2];
                     frame_patch_rate=(fpr+frame_patch_rate*used_count)/(used_count+1);
@@ -177,14 +180,15 @@ public class TaskService {
                     map.put("frame_patch_rate",frame_patch_rate);
                     setPatchFrameInfo( map );
 
-                    et=((imsEstimatedTime-patchFrameTime)*1000/(videoInfo[0]*videoInfo[1]*patchFrameNone));
+                    et=((imsEstimatedTime-patchFrameTime)/(videoInfo[0]*videoInfo[1]*patchFrameNone));
                 }else{
-                    et=(imsEstimatedTime*1000/(videoInfo[0]*videoInfo[1]*videoInfo[2]));
+                    et=(imsEstimatedTime/(videoInfo[0]*videoInfo[1]*videoInfo[2]));
                 }
                 nowet0 = (int)(et+audioStyle0.getAusUsedCount() * audioStyle0.getAusEstimatedTime()) /
                         (audioStyle0.getAusUsedCount() + 1);
                 imageStyle0.setImsUsedCount( imageStyle0.getImsUsedCount()+1 );
                 imageStyle0.setImsEstimatedTime( nowet0 );
+                imageStyleMapper.updateByPrimaryKey( imageStyle0 );
                 break;
             case ParameterConfiguration.Type.image:
                 int[] pixel=getImgPixel(ParameterConfiguration.FilePath.finalSave+File.separator+fileName);
@@ -199,7 +203,7 @@ public class TaskService {
                 imageStyleMapper.updateByPrimaryKey( imageStyle );
                 break;
             case ParameterConfiguration.Type.audio:
-                int estimatedTime = (int) (spendingTime / getDuration( ParameterConfiguration.FilePath.uploadSava
+                int estimatedTime = (int) (spendingTime / getDuration( ParameterConfiguration.FilePath.uploadSave
                         + File.separator + fileName ));
                 AudioStyle audioStyle = audioStyleMapper.selectByPrimaryKey( task.getAusId() );
                 int nowet = (audioStyle.getAusUsedCount() * audioStyle.getAusEstimatedTime() + estimatedTime) /
@@ -222,13 +226,18 @@ public class TaskService {
     //todo:未完
     private boolean runVideo(String fileName,Task task){
         task.setStartTime( new Date(  ) );
+        String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
+        String intermediatePath=ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName+File.separator;
+        newFolder( ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName);
 
         String imsParameterValues= imageStyleMapper.selectByPrimaryKey( task.getImsId() ).getImsParameterValues();
         String ausParameterValues= audioStyleMapper.selectByPrimaryKey( task.getAusId() ).getAusParameterValues();
-        String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
         if(imsParameterValues==null&&ausParameterValues==null){//原画原声
-            copyFile(ParameterConfiguration.FilePath.uploadSava+File.separator+fileName+" "
+            long time1=System.nanoTime();
+            copyFile(ParameterConfiguration.FilePath.uploadSave +File.separator+fileName+" "
                     ,ParameterConfiguration.FilePath.finalSave+File.separator+fileName);
+            long wtime=(System.nanoTime()-time1)/1000;
+            imsEstimatedTime=ausEstimatedTime=wtime;
         }else if(imsParameterValues==null){//原画非原声
             splitVideoAudio( fileName, false);
             new Thread(  ) {//线程中处理图像
@@ -237,10 +246,17 @@ public class TaskService {
                     super.run();
                     long imsStartTime =System.currentTimeMillis();
                     splitVideoImage( fileName, true );
-                    imsEstimatedTime =System.currentTimeMillis()-imsStartTime;
+                    imsEstimatedTime =(System.currentTimeMillis()-imsStartTime)*1000;
                 }
             }.start();
-
+            //转音频
+            long time1=System.nanoTime();
+            String fromFile=intermediatePath+ParameterConfiguration.FilePath.vidoe_audio
+                    +File.separator+fileFrontName+".wav";
+            AudioProcessing.changePitch( fromFile,
+                    intermediatePath+File.separator+fileFrontName+".wav",
+                    Integer.parseInt( ausParameterValues ));
+            ausEstimatedTime+=(System.nanoTime()-time1)/1000;
 
         }else{//非原画
             splitVideoImage(fileName,false);
@@ -254,26 +270,42 @@ public class TaskService {
                     }else{
                         splitVideoAudio( fileName,false );
                         //转化音频
-                        AudioProcessing.changePitch(ParameterConfiguration.FilePath.intermediateSave+fileFrontName+File.separator+fileFrontName+".wav",
-                                ParameterConfiguration.FilePath.intermediateSave+fileFrontName+".wav",
+                        AudioProcessing.changePitch(intermediatePath+ParameterConfiguration.FilePath.vidoe_audio+
+                                        File.separator+fileFrontName+".wav",
+                                intermediatePath+fileFrontName+".wav",
                                 Integer.parseInt( ausParameterValues ));
                     }
-                    ausEstimatedTime =System.currentTimeMillis()-ausStartTime;
+                    ausEstimatedTime =(System.currentTimeMillis()-ausStartTime)*1000;
                 }
             }.start();
             //todo:处理视频
             if(task.getIsFrameSpeed()){
 
             }else{
+                long time1=System.nanoTime();
+                try {
+                    new ImgProcessing().ProcessSingleDir(
+                            intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm,
+                            intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
+                            imsParameterValues,task.getClarity(),task.getTaskId());
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                VideoProcessing.images2Video( intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
+                        "",numWidth,"_"+imsParameterValues,intermediatePath+File.separator+fileFrontName+".mp4",
+                        ParameterConfiguration.FilePath.uploadSave+File.separator+fileName );
+                imsEstimatedTime=(System.nanoTime()-time1)/1000;
+
 
             }
         }
         //合并视频音频
-        VideoProcessing.videoAddAudio( ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName+".mp4",
-                ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName+".wav",
-                ParameterConfiguration.FilePath.finalSave+fileFrontName+".mp4");
 
-        finishRecord( task,fileName );
+        VideoProcessing.videoAddAudio( intermediatePath+fileFrontName+".mp4",
+                intermediatePath+fileFrontName+".wav",
+                ParameterConfiguration.FilePath.finalSave+File.separator+fileFrontName+".mp4");
+
+
 
 //        return true;
 
@@ -284,7 +316,7 @@ public class TaskService {
     private boolean runImage(String fileName,Integer imsId,int clarity,int taskId){
         String parameterValues= imageStyleMapper.selectByPrimaryKey( imsId ).getImsParameterValues();
         if(parameterValues==null){//原画
-            String fromPath=ParameterConfiguration.FilePath.uploadSava+File.separator+fileName;
+            String fromPath=ParameterConfiguration.FilePath.uploadSave +File.separator+fileName;
             String toPath=ParameterConfiguration.FilePath.finalSave+File.separator+fileName;
             int [] pixel=getImgPixel( fromPath );
             assert pixel != null;
@@ -303,7 +335,7 @@ public class TaskService {
         }
         try {
             Connection connection=imgProcessing.ProcessSinglePicLogin();
-            imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSava+File.separator+fileName,
+            imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
                     ParameterConfiguration.FilePath.finalSave+File.separator+fileName,
                     parameterValues,clarity,connection);
             //关闭连接
@@ -317,7 +349,7 @@ public class TaskService {
     private boolean runAudio(String fileName,Integer ausId){
         String parameterValues= audioStyleMapper.selectByPrimaryKey( ausId ).getAusParameterValues();
         if(parameterValues==null){
-            copyFile(ParameterConfiguration.FilePath.uploadSava+File.separator+fileName+" "
+            copyFile(ParameterConfiguration.FilePath.uploadSave +File.separator+fileName+" "
                     ,ParameterConfiguration.FilePath.finalSave+File.separator+fileName);
             return true;
         }
@@ -328,7 +360,7 @@ public class TaskService {
         intermedPath+=File.separator;
         //转音频为wav
         int state=AudioProcessing.file2Wav( suffix,
-                ParameterConfiguration.FilePath.uploadSava+File.separator+fileName,
+                ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
                 "wav",intermedPath+fileFrontName+".wav");
         if(state!=0)
             return false;
@@ -378,7 +410,7 @@ public class TaskService {
      * @param path 图片路径
      * @return
      */
-    private int[] getImgPixel(String path){
+    private int[] getImgPixel(String path) {
         File file = new File( path);//读取文件路径
         BufferedImage bi = null;
         try {
@@ -440,22 +472,26 @@ public class TaskService {
         AudioProcessing.runExec( shell );
     }
 
+    //拆分视频出图片
     private void splitVideoImage(String fileName, boolean isOriginalIms){
 //        String fileSuffix = fileName.substring(fileName.lastIndexOf('.')+1);
         String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
         if(isOriginalIms){
             //取出
-            VideoProcessing.removeVideoSound( ParameterConfiguration.FilePath.uploadSava+File.separator+fileName,
+            VideoProcessing.removeVideoSound( ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
                     ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName+
                             File.separator+fileFrontName+".mp4");
         }else{
+            String toPath=ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName+
+                    File.separator+ParameterConfiguration.FilePath.video_ImagesForm;
+            newFolder( toPath );
             //拆分视频为图片
-            VideoProcessing.video2Images(ParameterConfiguration.FilePath.uploadSava+File.separator+fileName,
-                    ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName+
-                            File.separator+ParameterConfiguration.FilePath.video_ImagesForm,7);
+            VideoProcessing.video2Images(ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
+                    toPath,numWidth);
         }
     }
 
+    //拆分视频出音频
     private void splitVideoAudio(String fileName, boolean isOriginalAus){
         String fileSuffix = fileName.substring(fileName.lastIndexOf('.')+1);
         String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
@@ -464,9 +500,11 @@ public class TaskService {
         if(isOriginalAus){
             toFile+=fileFrontName+".wav";
         }else{
-            toFile+=ParameterConfiguration.FilePath.video_ImagesForm+fileFrontName+".wav";
+            toFile+=ParameterConfiguration.FilePath.vidoe_audio;
+            newFolder( toFile );
+            toFile+=File.separator+fileFrontName+".wav";
         }
-        AudioProcessing.file2Wav( fileSuffix,ParameterConfiguration.FilePath.uploadSava+File.separator+fileName,"wav",toFile);
+        AudioProcessing.file2Wav( fileSuffix,ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,"wav",toFile);
     }
 
     private Map<String,Object> getPatchFrameInfo(){
@@ -479,7 +517,7 @@ public class TaskService {
             jsonString=jsonString.replace( "{","" );
             jsonString=jsonString.replace( "}","" );
             jsonString=jsonString.replace( " ","" );
-            jsonString=jsonString.replace( ",","" );
+            jsonString=jsonString.replace( ",",":" );
             jsonString=jsonString.replace( "\n","" );
             jsonString=jsonString.replace( "\"","" );
             String[] strs=jsonString.split( ":" );
@@ -494,7 +532,6 @@ public class TaskService {
 
     private void setPatchFrameInfo(Map<String,Object> map){
         String filePath=AudioProcessing.getWebRootAbsolutePath()+"static/tools/PatchFrameInfo.json";
-
         try {
             Writer writer = new FileWriter(filePath);
             BufferedWriter bw = new BufferedWriter(writer);
@@ -514,4 +551,5 @@ public class TaskService {
             e.printStackTrace();
         }
     }
+
 }

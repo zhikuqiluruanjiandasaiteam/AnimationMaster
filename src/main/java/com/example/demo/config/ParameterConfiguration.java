@@ -35,7 +35,7 @@ public class ParameterConfiguration {
      */
     public static class FilePath{
         public static final String root=getRoot();
-        public static final String uploadSava= root+File.separator+"UploadFiles";
+        public static final String uploadSave = root+File.separator+"UploadFiles";
         public static final String finalSave=root+File.separator+"FinishFiles";
         public static final String intermediateSave=root+File.separator+"IntermediateFiles";
         //视频类任务中间文件的中间目录

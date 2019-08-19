@@ -9,7 +9,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Date;
 
 @Service
@@ -57,13 +56,13 @@ public class FilesService {
         if(!checkFile(type,filename))
             return null;
         //储存文件夹不存在则创建
-        File dir =new File( ParameterConfiguration.FilePath.uploadSava);
+        File dir =new File( ParameterConfiguration.FilePath.uploadSave );
         if  (!dir .exists()&&!dir .isDirectory()) {
             dir .mkdirs();
         }
         String suffix = filename.substring(filename.lastIndexOf('.')+1);
         saveName=getUniqueStr()+"."+suffix;
-        String path=ParameterConfiguration.FilePath.uploadSava+File.separator+saveName;
+        String path=ParameterConfiguration.FilePath.uploadSave +File.separator+saveName;
         //上传
         file.transferTo(new File(path));
 
