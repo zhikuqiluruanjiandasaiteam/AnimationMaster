@@ -79,10 +79,9 @@ public class VideoProcessing {
 
         return -1;
     }
-    //获取视频信息
 
     /**
-     *
+     *获取视频信息
      * @param filePath 视频文件路径
      * @return int[0]:视频宽度；[1]:视频高度；[2]:总帧数
      */
@@ -91,13 +90,17 @@ public class VideoProcessing {
         Encoder encoder = new Encoder();
         int[] info=null;
         try {
-            info=new int[3];
+            info=new int[4];
             MultimediaInfo m = encoder.getInfo(source);
             long ls = m.getDuration();
             VideoInfo vi = m.getVideo();
             info[0]=vi.getSize().getWidth();//视频宽度
             info[1]=vi.getSize().getHeight();//视频高度
-            info[2]=(int)(vi.getFrameRate()*ls/100);//总帧数
+            info[2]=(int)(vi.getFrameRate()*ls/1000);//总帧数
+            info[3]=(int)(ls/1000);//时长
+            if(info[3]<=0){
+                info[3]=1;
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }

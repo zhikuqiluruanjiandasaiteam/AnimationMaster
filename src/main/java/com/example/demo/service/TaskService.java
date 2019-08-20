@@ -105,7 +105,6 @@ public class TaskService {
      * @param fileName 储存所用文件名
      * @param task 任务对象
      */
-    //todo:还未完全测试
     public void startTask(String fileName,Task task) {
         new Thread(  ){
             @Override
@@ -152,26 +151,26 @@ public class TaskService {
         spendingTime*=1000;//数据库中储存微秒级
         switch (task.getTaskType()) {
             case ParameterConfiguration.Type.video:
+                int[] videoInfo=VideoProcessing.getVideoInfo( ParameterConfiguration.FilePath.finalSave
+                        +File.separator+fileName );
                 //音频
                 AudioStyle audioStyle0 = audioStyleMapper.selectByPrimaryKey( task.getAusId() );
-                int nowet0 = (audioStyle0.getAusUsedCount() * audioStyle0.getAusEstimatedTime() + (int)ausEstimatedTime) /
+                long averageTime=ausEstimatedTime/videoInfo[3];//平均耗时
+                int nowet0 = (audioStyle0.getAusUsedCount() * audioStyle0.getAusEstimatedTime() + (int)averageTime) /
                         (audioStyle0.getAusUsedCount() + 1);
                 audioStyle0.setAusUsedCount( audioStyle0.getAusUsedCount() + 1 );
                 audioStyle0.setAusEstimatedTime( nowet0 );
                 audioStyleMapper.updateByPrimaryKey( audioStyle0 );
                 //图像
                 ImageStyle imageStyle0=imageStyleMapper.selectByPrimaryKey( task.getImsId() );
-                int[] videoInfo=VideoProcessing.getVideoInfo( ParameterConfiguration.FilePath.finalSave
-                        +File.separator+fileName );
-                long et;
                 if(task.getIsFrameSpeed()){
                     //更新补帧变量值
                     Map map=getPatchFrameInfo();
                     int estimated_time=Integer.parseInt( (String) map.get("estimated_time"));
                     int used_count=Integer.parseInt( (String) map.get("used_count"));
                     float frame_patch_rate=Float.parseFloat( (String) map.get("frame_patch_rate"));
-                    et=patchFrameTime/(videoInfo[0]*videoInfo[1]*(videoInfo[2]-patchFrameNone));
-                    estimated_time=(int)((et+estimated_time*used_count)/(used_count+1));
+                    averageTime=patchFrameTime/((long)videoInfo[0]*videoInfo[1]*(videoInfo[2]-patchFrameNone));
+                    estimated_time=(int)((averageTime+estimated_time*used_count)/(used_count+1));
                     float fpr=(float)1.0*(videoInfo[2]-patchFrameNone)/videoInfo[2];
                     frame_patch_rate=(fpr+frame_patch_rate*used_count)/(used_count+1);
                     used_count+=1;
@@ -180,12 +179,12 @@ public class TaskService {
                     map.put("frame_patch_rate",frame_patch_rate);
                     setPatchFrameInfo( map );
 
-                    et=((imsEstimatedTime-patchFrameTime)/(videoInfo[0]*videoInfo[1]*patchFrameNone));
+                    averageTime=((imsEstimatedTime-patchFrameTime)/((long)videoInfo[0]*videoInfo[1]*patchFrameNone));
                 }else{
-                    et=(imsEstimatedTime/(videoInfo[0]*videoInfo[1]*videoInfo[2]));
+                    averageTime=(imsEstimatedTime/((long)videoInfo[0]*videoInfo[1]*videoInfo[2]));
                 }
-                nowet0 = (int)(et+audioStyle0.getAusUsedCount() * audioStyle0.getAusEstimatedTime()) /
-                        (audioStyle0.getAusUsedCount() + 1);
+                nowet0 = (int)((averageTime+imageStyle0.getImsUsedCount() * imageStyle0.getImsEstimatedTime()) /
+                        (imageStyle0.getImsUsedCount() + 1));
                 imageStyle0.setImsUsedCount( imageStyle0.getImsUsedCount()+1 );
                 imageStyle0.setImsEstimatedTime( nowet0 );
                 imageStyleMapper.updateByPrimaryKey( imageStyle0 );
@@ -280,7 +279,7 @@ public class TaskService {
             }.start();
             //todo:处理视频
             if(task.getIsFrameSpeed()){
-
+                return false;
             }else{
                 long time1=System.nanoTime();
                 try {
@@ -295,8 +294,6 @@ public class TaskService {
                         "",numWidth,"_"+imsParameterValues,intermediatePath+File.separator+fileFrontName+".mp4",
                         ParameterConfiguration.FilePath.uploadSave+File.separator+fileName );
                 imsEstimatedTime=(System.nanoTime()-time1)/1000;
-
-
             }
         }
         //合并视频音频
@@ -305,12 +302,7 @@ public class TaskService {
                 intermediatePath+fileFrontName+".wav",
                 ParameterConfiguration.FilePath.finalSave+File.separator+fileFrontName+".mp4");
 
-
-
-//        return true;
-
-
-        return false;
+        return true;
     }
 
     private boolean runImage(String fileName,Integer imsId,int clarity,int taskId){
