@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.config.ParameterConfiguration;
 import com.example.demo.service.StyleService;
+import com.example.demo.service.TaskService;
+import com.example.demo.util.VideoProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +50,15 @@ public class StyleController {
                 return re;
             }
             data.put("audio",map);
+        }
+        if(type.equals( ParameterConfiguration.Type.video )){
+            Map map=TaskService.getPatchFrameInfo();
+            if(map==null){
+                re.put("error_code",1);
+                re.put("error_msg","查询失败");
+                return re;
+            }
+            data.put("patch_frame",map);
         }
         re.put("data",data);
         return re;

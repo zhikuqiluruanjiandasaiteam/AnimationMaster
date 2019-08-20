@@ -31,6 +31,7 @@ public class StyleService {
             map.put("ims_name",imageStyle.getImsName());
             map.put("ims_show_path",imageStyle.getImsShowPath());
             map.put("ims_description",imageStyle.getImsDescription());
+            map.put("ims_estimated_time",imageStyle.getImsEstimatedTime());
             maps[i++]=map;
         }
         return maps;
@@ -46,6 +47,7 @@ public class StyleService {
             map.put("aus_name",audioStyle.getAusName());
 //            map.put("aus_show_path",audioStyle.getAusShowPath());
             map.put("aus_description",audioStyle.getAusDescription());
+            map.put("aus_estimated_time",audioStyle.getAusEstimatedTime());
             maps[i++]=map;
         }
         return maps;

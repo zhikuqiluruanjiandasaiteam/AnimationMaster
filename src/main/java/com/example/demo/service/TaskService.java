@@ -502,26 +502,36 @@ public class TaskService {
         AudioProcessing.file2Wav( fileSuffix,ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,"wav",toFile);
     }
 
-    private Map<String,Object> getPatchFrameInfo(){
+    public static Map<String,Object> getPatchFrameInfo(){
         String filePath=AudioProcessing.getWebRootAbsolutePath()+"static/tools/PatchFrameInfo.json";
         Map map=null;
         try {
             map=new HashMap(  );
             File file = new File(filePath);
             String jsonString = FileUtils.readFileToString(file);
-            jsonString=jsonString.replace( "{","" );
-            jsonString=jsonString.replace( "}","" );
-            jsonString=jsonString.replace( " ","" );
+            System.out.println(jsonString);//////////////////
+            jsonString=jsonString.replaceAll("[\\t\\n\\r{}\" ]","" );
+            System.out.println( "替换后1：\n"+jsonString );///////////////////////
+//            jsonString=jsonString.replace( "}","" );
+//            System.out.println( "替换后2：\n"+jsonString );///////////////////////
+//            jsonString=jsonString.replace( " ","" );
+//            System.out.println( "替换后3：\n"+jsonString );///////////////////////
             jsonString=jsonString.replace( ",",":" );
-            jsonString=jsonString.replace( "\n","" );
-            jsonString=jsonString.replace( "\"","" );
+            System.out.println( "替换后4：\n"+jsonString );///////////////////////
+//            jsonString=jsonString.replace( "\n","" );
+//            System.out.println( "替换后5：\n"+jsonString );///////////////////////
+//            jsonString=jsonString.replace( "\"","" );
+//            System.out.println( "替换后6：\n"+jsonString );///////////////////////
             String[] strs=jsonString.split( ":" );
+            System.out.println( Arrays.toString( strs ) );///////////////////////
             map.put(strs[0],strs[1]);
             map.put(strs[2],strs[3]);
             map.put(strs[4],strs[5]);
         }catch (Exception e){
             e.printStackTrace();
         }
+        assert map != null;
+        System.out.println(map.toString());//////////////////
         return map;
     }
 
