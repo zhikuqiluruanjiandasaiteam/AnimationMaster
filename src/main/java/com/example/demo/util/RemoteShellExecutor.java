@@ -96,6 +96,46 @@ public class RemoteShellExecutor {
         return ret;
     }
 
+
+
+    public int execProcessSinglePic(String cmds) throws Exception{
+        InputStream stdOut = null;
+        InputStream stdErr = null;
+        String outStr = "";
+        String outErr = "";
+        int ret = -1;
+        try {
+            if (login()) {
+                // Open a new {@link Session} on this connection
+                Session session = conn.openSession();
+                // Execute a command on the remote machine.
+                session.execCommand(cmds);
+
+                stdOut = new StreamGobbler(session.getStdout());
+                outStr = processStream(stdOut, charset);
+
+                stdErr = new StreamGobbler(session.getStderr());
+                outErr = processStream(stdErr, charset);
+
+                session.waitForCondition(ChannelCondition.EXIT_STATUS, TIME_OUT);
+
+                System.out.println("outStr=" + outStr);
+                System.out.println("outErr=" + outErr);
+
+                ret = session.getExitStatus();
+            } else {
+                throw new Exception("登录远程机器失败" + ip); // 自定义异常类
+            }
+        } finally {
+            if (conn != null) {
+                conn.close();
+            }
+            IOUtils.closeQuietly(stdOut);
+            IOUtils.closeQuietly(stdErr);
+        }
+        return ret;
+    }
+
     /**
      * @param in
      * @param charset
