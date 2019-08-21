@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dao.UserMapper;
 import com.example.demo.entity.User;
+import com.example.demo.service.ImgProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,6 +20,10 @@ public class TestController {
     private final UserMapper userMapper;
 
     @Autowired
+    private ImgProcessing imgProcessing;
+
+
+    @Autowired
     public TestController(UserMapper userMapper) {
         this.userMapper = userMapper;
     }
@@ -28,5 +33,30 @@ public class TestController {
     public String hello(){
         User user=userMapper.selectByPrimaryKey( 1 );
         return "hello word!"+user.getUserName();
+    }
+    @ResponseBody
+    @RequestMapping("/testImg1")
+    public String testImg1() throws Exception {
+        String initFilePath= "/home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test_img";
+        String outputPath="/home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test_output1";
+        Integer longEdgeLength=100;
+        String style= "Shinkai";
+        imgProcessing.ProcessSingleDir(initFilePath,outputPath,style,longEdgeLength);
+        return "1";
+    }
+
+    @ResponseBody
+    @RequestMapping("/testImg2")
+    public String testImg2() throws Exception {
+        String initFile1= "/home/ubuntu/test_inputImg/aa.jpg";
+        String initFile2= "/home/ubuntu/test_inputImg/bb.jpg";
+        String outputPath="/home/ubuntu/test_outputImg";
+        String outputFile1="aa1.jpg";
+        String outputFile2="bb1.jpg";
+        Integer longEdgeLength=100;
+        String style= "Shinkai";
+        imgProcessing.ProcessSinglePic(initFile1,outputPath,outputFile1,style,longEdgeLength);
+        imgProcessing.ProcessSinglePic(initFile2,outputPath,outputFile2,style,longEdgeLength);
+        return "1";
     }
 }
