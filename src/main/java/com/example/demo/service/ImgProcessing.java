@@ -28,104 +28,123 @@ public class ImgProcessing {
     @Value("${DLServerSecretKey}")
     private String DLServerSecretKey;
 
-    @Value("${ExecShell}")
-    private String ExecShell;
+    @Value("${ExecShellSingleDir}")
+    private String ExecShellSingleDir;
 
-    @Value("${ExecShelltransferEnv}")
-    private String ExecShelltransferEnv;
-
-    @Value("${ExecShelltransferSinglePic}")
-    private String ExecShelltransferSinglePic;
+    @Value("${ExecShellSinglePic}")
+    private String ExecShellSinglePic;
 
     private String charset = Charset.defaultCharset().toString();
     private static final int TIME_OUT = 1000 * 5 * 60;
 
-    public void ProcessSingleDir(String initFilePath,String outputPath,String style,Integer longEdgeLength,int taskId)throws Exception{
+    private Connection conn;
+
+
+    /**
+     *
+     * @param initFilePath
+     * @param outputPath
+     * @param style
+     * @param longEdgeLength
+     * @throws Exception
+     */
+    public void ProcessSingleDir(String initFilePath,String outputPath,String style,Integer longEdgeLength)throws Exception{
         RemoteShellExecutor executor = new RemoteShellExecutor(DLServerIP, DLServerUserName, DLServerPassword,new File(DLServerSecretKey));
-        System.out.println(executor.execProcessSingleDir(ExecShell+" "+initFilePath+" "+outputPath+" "+longEdgeLength+" "+style+" "+taskId));
+        System.out.println(executor.execProcessSingleDir(ExecShellSingleDir+" "+initFilePath+" "+outputPath+" "+longEdgeLength+" "+style));
     }
 
-    public Connection ProcessSinglePicLogin(){
-        Connection conn = new Connection(DLServerIP);
-        try {
-            conn.connect();
-            conn.authenticateWithPublicKey(DLServerUserName,new File(DLServerSecretKey),DLServerPassword);
-            return conn;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    public Integer ProcessSinglePicTransferEnv(Connection conn){
-        InputStream stdOut = null;
-        InputStream stdErr = null;
-        String outStr = "";
-        String outErr = "";
-        int ret = -1;
-        Session session = null;
-        try {
-            session = conn.openSession();
-            session.execCommand(ExecShelltransferEnv);
-            stdOut = new StreamGobbler(session.getStdout());
-            outStr = processStream(stdOut, charset);
-            stdErr = new StreamGobbler(session.getStderr());
-            outErr = processStream(stdErr, charset);
-            session.waitForCondition(ChannelCondition.EXIT_STATUS, TIME_OUT);
-            System.out.println("outStr=" + outStr);
-            System.out.println("outErr=" + outErr);
-            ret = session.getExitStatus();
-            return ret;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }finally {
-            IOUtils.closeQuietly(stdOut);
-            IOUtils.closeQuietly(stdErr);
-        }
-    }
-    public Integer ProcessSinglePic(String initFile,String outputFile,String style,Integer longEdgeLength,Connection conn)throws Exception{
-        InputStream stdOut = null;
-        InputStream stdErr = null;
-        String outStr = "";
-        String outErr = "";
-        int ret = -1;
-        Session session = null;
-        try {
-            session = conn.openSession();
-            session.execCommand(ExecShelltransferSinglePic+" "+initFile+" "+outputFile+" "+longEdgeLength+" "+style+" ");
-            stdOut = new StreamGobbler(session.getStdout());
-            outStr = processStream(stdOut, charset);
-            stdErr = new StreamGobbler(session.getStderr());
-            outErr = processStream(stdErr, charset);
-            session.waitForCondition(ChannelCondition.EXIT_STATUS, TIME_OUT);
-            System.out.println("outStr=" + outStr);
-            System.out.println("outErr=" + outErr);
-            ret = session.getExitStatus();
-            return ret;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return -1;
-        }finally {
-            IOUtils.closeQuietly(stdOut);
-            IOUtils.closeQuietly(stdErr);
-        }
+    public void ProcessSinglePic(String input_file,String outputPath,String output_file,String style,Integer longEdgeLength)throws Exception{
+        RemoteShellExecutor executor = new RemoteShellExecutor(DLServerIP, DLServerUserName, DLServerPassword,new File(DLServerSecretKey));
+        System.out.println(executor.execProcessSinglePic(ExecShellSinglePic+" "+input_file+" "+outputPath+" "+output_file+" "+longEdgeLength+" "+style));
     }
 
 
-    private String processStream(InputStream in, String charset) throws Exception {
-        byte[] buf = new byte[1024];
-        StringBuilder sb = new StringBuilder();
-        while (in.read(buf) != -1) {
-            sb.append(new String(buf, charset));
-        }
-        return sb.toString();
-    }
+    /**
+     public Connection ProcessSinglePicLogin(){
+     conn = new Connection(DLServerIP);
+     try {
+     conn.connect();
+     conn.authenticateWithPublicKey(DLServerUserName,new File(DLServerSecretKey),DLServerPassword);
+     return conn;
+     } catch (IOException e) {
+     e.printStackTrace();
+     return null;
+     }
+     }
 
-    public void closeConnect(Connection connection){
-        if (connection != null) {
-            connection.close();
-        }
-    }
+     public Integer ProcessSinglePicTransferEnv(Connection conn){
+     InputStream stdOut = null;
+     InputStream stdErr = null;
+     String outStr = "";
+     String outErr = "";
+     int ret = -1;
+     Session session = null;
+     try {
+     session = conn.openSession();
+     session.execCommand(ExecShelltransferEnv);
+     stdOut = new StreamGobbler(session.getStdout());
+     outStr = processStream(stdOut, charset);
+     stdErr = new StreamGobbler(session.getStderr());
+     outErr = processStream(stdErr, charset);
+     session.waitForCondition(ChannelCondition.EXIT_STATUS, TIME_OUT);
+     System.out.println("outStr=" + outStr);
+     System.out.println("outErr=" + outErr);
+     ret = session.getExitStatus();
+     return ret;
+     } catch (Exception e) {
+     e.printStackTrace();
+     return -1;
+     }finally {
+     IOUtils.closeQuietly(stdOut);
+     IOUtils.closeQuietly(stdErr);
+     }
+     }
+     public Integer ProcessSinglePic1(String initFile,String outputFile,String style,Integer longEdgeLength,Connection conn)throws Exception{
+     InputStream stdOut = null;
+     InputStream stdErr = null;
+     String outStr = "";
+     String outErr = "";
+     int ret = -1;
+     Session session = null;
+     try {
+     session = conn.openSession();
+     session.execCommand(ExecShelltransferSinglePic+" "+initFile+" "+outputFile+" "+longEdgeLength+" "+style+" ");
+     stdOut = new StreamGobbler(session.getStdout());
+     outStr = processStream(stdOut, charset);
+     stdErr = new StreamGobbler(session.getStderr());
+     outErr = processStream(stdErr, charset);
+     session.waitForCondition(ChannelCondition.EXIT_STATUS, TIME_OUT);
+     System.out.println("outStr=" + outStr);
+     System.out.println("outErr=" + outErr);
+     ret = session.getExitStatus();
+     return ret;
+     } catch (Exception e) {
+     e.printStackTrace();
+     return -1;
+     }finally {
+     IOUtils.closeQuietly(stdOut);
+     IOUtils.closeQuietly(stdErr);
+     }
+     }
+     private String processStream(InputStream in, String charset) throws Exception {
+     byte[] buf = new byte[1024];
+     StringBuilder sb = new StringBuilder();
+     while (in.read(buf) != -1) {
+     sb.append(new String(buf, charset));
+     }
+     return sb.toString();
+     }
+     public void closeConnect(Connection connection){
+     if (connection != null) {
+     connection.close();
+     }
+     }
+     public Connection getConn() {
+     return conn;
+     }
+     public void setConn(Connection conn) {
+     this.conn = conn;
+     }
+     **/
 
 }
