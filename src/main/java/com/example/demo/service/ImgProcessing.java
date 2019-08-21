@@ -41,11 +41,11 @@ public class ImgProcessing {
 
 
     /**
-     *
-     * @param initFilePath
-     * @param outputPath
-     * @param style
-     * @param longEdgeLength
+     *  一次处理一个目录中的图片
+     * @param initFilePath  输入图片的目录
+     * @param outputPath    输出图片的目录(不存在会创建)
+     * @param style         风格
+     * @param longEdgeLength  长边的长度
      * @throws Exception
      */
     public void ProcessSingleDir(String initFilePath,String outputPath,String style,Integer longEdgeLength)throws Exception{
@@ -53,6 +53,16 @@ public class ImgProcessing {
         System.out.println(executor.execProcessSingleDir(ExecShellSingleDir+" "+initFilePath+" "+outputPath+" "+longEdgeLength+" "+style));
     }
 
+
+    /**
+     *  该方法为一次处理一张图片的方法
+     * @param input_file        输入文件的路径
+     * @param outputPath        输出文件的目录 如 /aaa/bbb
+     * @param output_file       输出文件的名称  如 aaa.jpg
+     * @param style             风格
+     * @param longEdgeLength    长边的长度
+     * @throws Exception
+     */
     public void ProcessSinglePic(String input_file,String outputPath,String output_file,String style,Integer longEdgeLength)throws Exception{
         RemoteShellExecutor executor = new RemoteShellExecutor(DLServerIP, DLServerUserName, DLServerPassword,new File(DLServerSecretKey));
         System.out.println(executor.execProcessSinglePic(ExecShellSinglePic+" "+input_file+" "+outputPath+" "+output_file+" "+longEdgeLength+" "+style));
