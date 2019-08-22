@@ -327,16 +327,12 @@ public class TaskService {
         }
         Connection connection = null;
         try {
-<<<<<<< HEAD
+
             connection=imgProcessing.ProcessSinglePicLogin();
            imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
                     ParameterConfiguration.FilePath.finalSave+File.separator+fileName,
                     parameterValues,clarity,connection);
-=======
-//            connection=imgProcessing.ProcessSinglePicLogin();
-            imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
-                    ParameterConfiguration.FilePath.finalSave,fileName,parameterValues,clarity);
->>>>>>> 03ec844d23e80ae0529ec2fd012543aee85168c6
+
         } catch (Exception e) {
             e.printStackTrace();
             return false;
