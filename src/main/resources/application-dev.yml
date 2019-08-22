@@ -28,10 +28,9 @@ DLServerIP: 52.205.195.32
 DLServerUserName: ubuntu
 DLServerPassword: 123456
 DLServerSecretKey: /home/ubuntu/miyao1.pem
-ExecShell: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test.sh
 ExecShellSingleDir: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/processSingleDir.sh
 ExecShellSinglePic: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/processSinglePic.sh
-ExecShellSinglePicOnceConn: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/processSinglePicOnceConn.sh
+
 ##风格类型对应实际风格决定参数值
 #typle2Value:
 #  audio: "{1: 0,2: 7,3: -7}" #风格id对应音调变化量
