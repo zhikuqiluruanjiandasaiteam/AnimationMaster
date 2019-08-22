@@ -35,13 +35,8 @@ public class ImgProcessing {
     private String ExecShellSinglePic;
 
 
-    @Value("${ExecShellSinglePicOnceConn}")
-    private String ExecShellSinglePicOnceConn;
-
     private String charset = Charset.defaultCharset().toString();
     private static final int TIME_OUT = 1000 * 5 * 60;
-
-
 
 
 
@@ -60,7 +55,7 @@ public class ImgProcessing {
 
 
     /**
-     *  该方法为一次处理一张图片的方法
+     *  该方法为一次处理一张图片的方法(低效版)
      * @param input_file        输入文件的路径
      * @param outputPath        输出文件的目录 如 /aaa/bbb
      * @param output_file       输出文件的名称  如 aaa.jpg
@@ -73,9 +68,11 @@ public class ImgProcessing {
         System.out.println(executor.execProcessSinglePic(ExecShellSinglePic+" "+input_file+" "+outputPath+" "+output_file+" "+longEdgeLength+" "+style));
     }
 
-
-
-     public Connection ProcessSinglePicLogin(){
+    /**
+     * 该方法为提前 获取连接对象的方法
+     * @return
+     */
+     public Connection Login(){
         Connection connection=null;
         connection = new Connection(DLServerIP);
         try {
@@ -88,7 +85,17 @@ public class ImgProcessing {
          }
      }
 
-
+    /**
+     * 该方法为处理图片高效版  获取了连接对象后，调用该方法完成对一张图片的处理
+     * @param initFile
+     * @param outputPath
+     * @param outputFile
+     * @param style
+     * @param longEdgeLength
+     * @param conn
+     * @return
+     * @throws Exception
+     */
      public Integer ProcessSinglePicOnceConn(String initFile,String outputPath,String outputFile,String style,Integer longEdgeLength,Connection conn)throws Exception{
      InputStream stdOut = null;
      InputStream stdErr = null;
@@ -98,7 +105,7 @@ public class ImgProcessing {
      Session session = null;
      try {
      session = conn.openSession();
-     session.execCommand(ExecShellSinglePicOnceConn+" "+initFile+" "+outputPath+" "+outputFile+" "+longEdgeLength+" "+style+" ");
+     session.execCommand(ExecShellSinglePic+" "+initFile+" "+outputPath+" "+outputFile+" "+longEdgeLength+" "+style+" ");
      stdOut = new StreamGobbler(session.getStdout());
      outStr = processStream(stdOut, charset);
      stdErr = new StreamGobbler(session.getStderr());
@@ -117,6 +124,33 @@ public class ImgProcessing {
      }
      }
 
+     public Integer ProcessSingleDirOnceConn(String input_dir,String output_dir,String style,Integer longEdgeLength,Connection conn)throws Exception{
+         InputStream stdOut = null;
+         InputStream stdErr = null;
+         String outStr = "";
+         String outErr = "";
+         int ret = -1;
+         Session session = null;
+         try {
+             session = conn.openSession();
+             session.execCommand(ExecShellSingleDir+" "+input_dir+" "+output_dir+" "+longEdgeLength+" "+style);
+             stdOut = new StreamGobbler(session.getStdout());
+             outStr = processStream(stdOut, charset);
+             stdErr = new StreamGobbler(session.getStderr());
+             outErr = processStream(stdErr, charset);
+             session.waitForCondition(ChannelCondition.EXIT_STATUS, TIME_OUT);
+             System.out.println("outStr=" + outStr);
+             System.out.println("outErr=" + outErr);
+             ret = session.getExitStatus();
+             return ret;
+         } catch (Exception e) {
+             e.printStackTrace();
+             return -1;
+         }finally {
+             IOUtils.closeQuietly(stdOut);
+             IOUtils.closeQuietly(stdErr);
+         }
+     }
 
      private String processStream(InputStream in, String charset) throws Exception {
      byte[] buf = new byte[1024];
@@ -126,6 +160,11 @@ public class ImgProcessing {
      }
      return sb.toString();
      }
+
+    /**
+     * 该方法为 关闭连接对象
+     * @param connection
+     */
      public void closeConnect(Connection connection){
      if (connection != null) {
        //  Integer exitStatus = session.getExitStatus();
