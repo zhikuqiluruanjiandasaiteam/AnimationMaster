@@ -61,22 +61,41 @@ public class TestController {
         return "1";
     }
 
+
     @ResponseBody
     @RequestMapping("/testImg3")
     public String testImg3() throws Exception {
+        String inputPath1= "/home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test_img1";
+        String inputPath2= "/home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test_img2";
+        String outputPath1="/home/ubuntu/test_outputImg1";
+        String outputPath2="/home/ubuntu/test_outputImg2";
+        Integer longEdgeLength=100;
+        String style= "Shinkai";
+        Connection connection = imgProcessing.Login();
+        imgProcessing.ProcessSingleDirOnceConn(inputPath1,outputPath1,style,longEdgeLength,connection);
+        imgProcessing.ProcessSingleDirOnceConn(inputPath2,outputPath2,style,longEdgeLength,connection);
+        imgProcessing.closeConnect(connection);
+        return "1";
+    }
+
+    @ResponseBody
+    @RequestMapping("/testImg4")
+    public String testImg4() throws Exception {
         String initFile1= "/home/ubuntu/test_inputImg/aa.jpg";
         String initFile2= "/home/ubuntu/test_inputImg/bb.jpg";
-        String outputPath="/home/ubuntu/test_outputImg";
+        String outputPath1="/home/ubuntu/test_outputImg1";
+        String outputPath2="/home/ubuntu/test_outputImg2";
         String outputFile1="aa1.jpg";
         String outputFile2="bb1.jpg";
         Integer longEdgeLength=100;
         String style= "Shinkai";
-        Connection connection = imgProcessing.ProcessSinglePicLogin();
-        imgProcessing.ProcessSinglePicOnceConn(initFile1,outputPath,outputFile1,style,longEdgeLength,connection);
-        imgProcessing.ProcessSinglePicOnceConn(initFile2,outputPath,outputFile2,style,longEdgeLength,connection);
+        Connection connection = imgProcessing.Login();
+        imgProcessing.ProcessSinglePicOnceConn(initFile1,outputPath1,outputFile1,style,longEdgeLength,connection);
+        imgProcessing.ProcessSinglePicOnceConn(initFile2,outputPath2,outputFile2,style,longEdgeLength,connection);
         imgProcessing.closeConnect(connection);
         return "1";
 
     }
+
 
 }
