@@ -328,7 +328,7 @@ public class TaskService {
         Connection connection = null;
         try {
             connection=imgProcessing.ProcessSinglePicLogin();
-            imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
+           imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
                     ParameterConfiguration.FilePath.finalSave+File.separator+fileName,
                     parameterValues,clarity,connection);
         } catch (Exception e) {
