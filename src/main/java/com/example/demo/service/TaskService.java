@@ -286,7 +286,7 @@ public class TaskService {
                     new ImgProcessing().ProcessSingleDir(
                             intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm,
                             intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
-                            imsParameterValues,task.getClarity(),task.getTaskId());
+                            imsParameterValues,task.getClarity());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -327,17 +327,24 @@ public class TaskService {
         }
         Connection connection = null;
         try {
+<<<<<<< HEAD
             connection=imgProcessing.ProcessSinglePicLogin();
            imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
                     ParameterConfiguration.FilePath.finalSave+File.separator+fileName,
                     parameterValues,clarity,connection);
+=======
+//            connection=imgProcessing.ProcessSinglePicLogin();
+            imgProcessing.ProcessSinglePic( ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
+                    ParameterConfiguration.FilePath.finalSave,fileName,parameterValues,clarity);
+>>>>>>> 03ec844d23e80ae0529ec2fd012543aee85168c6
         } catch (Exception e) {
             e.printStackTrace();
             return false;
-        }finally {
-            //关闭连接
-            imgProcessing.closeConnect( connection );
         }
+//        finally {
+            //关闭连接
+//            imgProcessing.closeConnect( connection );
+//        }
         return true;
     }
 

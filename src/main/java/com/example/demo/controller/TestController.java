@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import ch.ethz.ssh2.Connection;
 import com.example.demo.dao.UserMapper;
 import com.example.demo.entity.User;
 import com.example.demo.service.ImgProcessing;
@@ -59,4 +60,23 @@ public class TestController {
         imgProcessing.ProcessSinglePic(initFile2,outputPath,outputFile2,style,longEdgeLength);
         return "1";
     }
+
+    @ResponseBody
+    @RequestMapping("/testImg3")
+    public String testImg3() throws Exception {
+        String initFile1= "/home/ubuntu/test_inputImg/aa.jpg";
+        String initFile2= "/home/ubuntu/test_inputImg/bb.jpg";
+        String outputPath="/home/ubuntu/test_outputImg";
+        String outputFile1="aa1.jpg";
+        String outputFile2="bb1.jpg";
+        Integer longEdgeLength=100;
+        String style= "Shinkai";
+        Connection connection = imgProcessing.ProcessSinglePicLogin();
+        imgProcessing.ProcessSinglePicOnceConn(initFile1,outputPath,outputFile1,style,longEdgeLength,connection);
+        imgProcessing.ProcessSinglePicOnceConn(initFile2,outputPath,outputFile2,style,longEdgeLength,connection);
+        imgProcessing.closeConnect(connection);
+        return "1";
+
+    }
+
 }
