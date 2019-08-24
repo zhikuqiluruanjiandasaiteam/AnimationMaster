@@ -42,7 +42,12 @@ public class UserController {
                 UsernamePasswordToken token=new UsernamePasswordToken(user.getUserName(), new Md5Hash(user.getPassword(),currentUser.getPasswordSalt()).toString());
                 subject.login(token);
                 request.getSession().setAttribute("currentUser", currentUser);
+                User user1=new User();
+                user1.setUserName(currentUser.getUserName());
+                user1.setUserId(currentUser.getUserId());
                 map.put("error_code",0);
+                map.put("error_msg","登录成功");
+                map.put("data",user1);
             }catch(Exception e){
                 e.printStackTrace();
                 map.put("error_code", -3);
