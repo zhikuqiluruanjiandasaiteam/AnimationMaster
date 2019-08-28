@@ -4,6 +4,7 @@ import ch.ethz.ssh2.Connection;
 import com.example.demo.dao.UserMapper;
 import com.example.demo.entity.User;
 import com.example.demo.service.ImgProcessing;
+import com.example.demo.util.VideoProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,11 +39,17 @@ public class TestController {
     @ResponseBody
     @RequestMapping("/testImg1")
     public String testImg1() throws Exception {
-        String initFilePath= "/home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test_img";
-        String outputPath="/home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test_output1";
+        String initFilePath1= "/home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test_img1";
+        String initFilePath2= "/home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test_img2";
+        String outputPath1="/home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test_output1";
+        String outputPath2="/home/ubuntu/CartoonGAN-Test-Pytorch-Torch/test_output2";
         Integer longEdgeLength=100;
         String style= "Shinkai";
-        imgProcessing.ProcessSingleDir(initFilePath,outputPath,style,longEdgeLength);
+        imgProcessing.ProcessSingleDir(initFilePath1,outputPath1,style,longEdgeLength);
+        for (int i=0;i<20;i++){
+            System.out.println("====================");
+        }
+        imgProcessing.ProcessSingleDir(initFilePath2,outputPath2,style,longEdgeLength);
         return "1";
     }
 
@@ -57,6 +64,9 @@ public class TestController {
         Integer longEdgeLength=100;
         String style= "Shinkai";
         imgProcessing.ProcessSinglePic(initFile1,outputPath,outputFile1,style,longEdgeLength);
+        for (int i=0;i<20;i++){
+            System.out.println("====================");
+        }
         imgProcessing.ProcessSinglePic(initFile2,outputPath,outputFile2,style,longEdgeLength);
         return "1";
     }
@@ -73,6 +83,9 @@ public class TestController {
         String style= "Shinkai";
         Connection connection = imgProcessing.Login();
         imgProcessing.ProcessSingleDirOnceConn(inputPath1,outputPath1,style,longEdgeLength,connection);
+        for (int i=0;i<20;i++){
+            System.out.println("====================");
+        }
         imgProcessing.ProcessSingleDirOnceConn(inputPath2,outputPath2,style,longEdgeLength,connection);
         imgProcessing.closeConnect(connection);
         return "1";
@@ -91,9 +104,19 @@ public class TestController {
         String style= "Shinkai";
         Connection connection = imgProcessing.Login();
         imgProcessing.ProcessSinglePicOnceConn(initFile1,outputPath1,outputFile1,style,longEdgeLength,connection);
+        for (int i=0;i<20;i++){
+            System.out.println("====================");
+        }
         imgProcessing.ProcessSinglePicOnceConn(initFile2,outputPath2,outputFile2,style,longEdgeLength,connection);
         imgProcessing.closeConnect(connection);
         return "1";
+
+    }
+
+    @ResponseBody
+    @RequestMapping("/testvideo")
+    public String testvideo() throws Exception {
+      return ""+VideoProcessing.videoAddAudio("/home/ubuntu/out_dmt.mp4","/home/ubuntu/dmt.wav","/home/ubuntu/output.mp4");
 
     }
 
