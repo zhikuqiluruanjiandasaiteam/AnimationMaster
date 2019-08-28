@@ -5,7 +5,7 @@ import it.sauronsoftware.jave.VideoInfo;
 import it.sauronsoftware.jave.MultimediaInfo;
 import org.apache.shiro.util.PatternMatcher;
 
-import java.io.File;
+import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
@@ -76,8 +76,10 @@ public class VideoProcessing {
      */
      //todo:清晰的不足，待做
     public static int videoAddAudio(String videoFile,String wavFile,String toFile){
+        //ffmpeg -i video.mp4 -i audio.wav -c:v copy -c:a aac -strict experimental output.mp4
+        // ffmpeg -i videoFile -i wavFile -c:v copy -c:a aac -strict experimental toFile
+        return    runExec("ffmpeg -i"+"  "+videoFile+"  -i "+ wavFile+" -c:v copy -c:a aac -strict experimental  "+toFile);
 
-        return -1;
     }
 
     /**
@@ -105,5 +107,35 @@ public class VideoProcessing {
             e.printStackTrace();
         }
         return info;
+    }
+
+
+    public static int runExec(String shell) {
+        try{
+            final Process process = Runtime.getRuntime().exec(shell);//生成一个新的进程去运行调用的程序
+            printMessage(process.getInputStream());
+            printMessage(process.getErrorStream());
+            return process.waitFor();//得到进程运行结束后的返回状态，如果进程未运行完毕则等待知道执行完毕
+        }catch (Exception e){
+            e.printStackTrace();
+            return -1;
+        }
+    }
+
+    private static void printMessage(final InputStream input) {
+        new Thread(new Runnable() {
+            public void run() {
+                Reader reader = new InputStreamReader(input);
+                BufferedReader bf = new BufferedReader(reader);
+                String line = null;
+                try {
+                    while((line=bf.readLine())!=null) {
+                        System.out.println(line);
+                    }
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 }
