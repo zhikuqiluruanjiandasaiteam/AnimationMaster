@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans">
+
+<head>
+    <!-- TODO: 还需要其他<meta> -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+
+    <title>
+        动画大师Animation-master
+    </title>
+    <!-- 框内文字等 -->
+    <link rel="stylesheet" href="static/style/style.css" />
+    <link rel="stylesheet" href="static/style/dragFrame.css" />
+    <link rel="stylesheet" href="static/style/sweetalert2.css" />
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/pure-min.css" integrity="sha384-"
+        crossorigin="anonymous" />
+    <!--[if lte IE 8]>
+        <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/grids-responsive-old-ie-min.css">
+    <![endif]-->
+    <!--[if gt IE 8]><!-->
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.1/build/grids-responsive-min.css">
+    <!--<![endif]-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <!--[if lte IE 8]>
+    <link rel="stylesheet" href="static/style/marketing-old-ie.css">
+    <![endif]-->
+    <!--[if gt IE 8]><!-->
+    <link rel="stylesheet" href="static/style/marketing.css">
+    <link rel="stylesheet" href="static/style/bootstrap.min.css">
+    <link rel="stylesheet" href="static/style/animate.css">
+    <link rel="stylesheet" href="static/style/loginAndRegister.css">
+    <link rel="stylesheet" type="text/css" href="static/style/component.css" />
+    <link rel="stylesheet" type="text/css" href="static/style/default.css" />
+    <script src="static/script/modernizr.custom.js"></script>
+    <!--<![endif]-->
+</head>
+
+
+
+<body>
+    <!-- input按钮-->
+    <!--
+    <div class="input-box">
+        <input class="form-control" type="file" style="height:auto;" id="video" name="video" />
+    </div> -->
+
+    <div class="header">
+        <div class="home-menu pure-menu pure-menu-horizontal pure-menu-fixed">
+            <!-- TODO:此处可以弄个logo代替文字 -->
+            <!-- 暂时让 .menu-heading强制在西小于370px时display none -->
+            <div class="menu-heading pure-menu-heading">Animation-master</div>
+            <!-- TODO:跳转到任务列表页面 -->
+            <!-- 在未登录状态时display设置为none -->
+            <a id="turn-to-list" class="pure-menu-heading turn-to-list" style="display: none; " href="#">任务列表</a>
+            <ul id="menuList" class="pure-menu-list">
+                <li id="login-button" class="pure-menu-item"><a href="#" class="pure-menu-link">登陆</a></li>
+                <li id="register-button" class="pure-menu-item"><a href="#" class="pure-menu-link">注册</a></li>
+            </ul>
+        </div>
+    </div>
+    <div class="board-container">
+        <div id="dashboard" class="dashboard">
+            <div class="head-container">
+                <p class="board-head">拖拽文件至此或者点击下方图标</p>
+            </div>
+            <div id="icon-upload" class="board-icon file">
+                <img id="uploadImg" src="static/image/upload_icon.png" draggable="false">
+                <!-- TODO:处于登陆状态时候动态生成下面这句 -->
+                <!-- <input type="file" name="" id=""> -->
+            </div>
+
+        </div>
+    </div>
+
+    <!--遮罩-->
+    <div class="modal-overlay"></div>
+
+    <!-- 风格选择对话框 -->
+    <!-- TODO:再加个媒体查询width:100% 整理时候看看，最好要和登录框保持一致些 -->
+    <div id="styleContainer" class="container">
+        <div class="main">
+            <header class="clearfix">
+                <h1>文件名：</h1>
+                <h2 id="uploadFilename" class="upload-filename">文件处理中...</h2>
+                <span id="styleContainerClose" class="close-box">
+                    <p>&#10006</p>
+                </span>
+            </header>
+            <label>选择文件类型</label>
+            <div>
+                <button class="filetype-button" id="filetypeButtonV">视频</button>
+                <button class="filetype-button" id="filetypeButtonA">音频</button>
+                <button class="filetype-button" id="filetypeButtonI">图像</button>
+                <label class="is-frame" style="display: none">采用补帧方法以加速
+                    <select>
+                        <option class="select-li">是</option>
+                        <option class="select-li">否</option>
+                    </select>
+                </label>
+            </div>
+            <form class="cbp-mc-form" id="styleForm" style="display: none">
+                <div class="cbp-mc-column">
+                    <label class="img-style-group" for="image_style">图像风格</label>
+                    <select class="style-select img-style-group" id="img_style" name="img_style">
+                        <!-- 动态获取option中的内容 -->
+                        <!-- <option class="select-li"></option> -->
+                    </select>
+                    <label class="audio-style-group" for="audio_style">音频风格</label>
+                    <select class="style-select audio-style-group" id="audio_style" name="audio_style">
+                        <!-- 动态获取option中的内容 -->
+                        <!-- <option class="select-li"></option> -->
+                    </select>
+                    <label class="img-style-group" for="clarity">清晰度</label>
+                    <select class="style-select img-style-group" id="video_clarity" name="video_clarity">
+                        <!-- 动态获取option中的内容 -->
+                        <!-- <option class="select-li"></option> -->
+                    </select>
+                </div>
+                <div class="cbp-mc-column img-style-group">
+                    <label for="image_style">风格样例展示</label>
+                </div>
+                <div class="cbp-mc-submit-wrap">
+                    <!-- <input class="cbp-mc-submit" type="submit" value="确认上传" /> -->
+                    <div class="cbp-mc-submit" id="submitButton">确认上传</div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- 登陆框 -->
+    <div>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4 ">
+                <form id="login-box" action="#" class="l-modal-box fh5co-form animate-box" data-animate-effect="fadeIn">
+                    <span class="close-box">
+                        <p>&#10006</p>
+                    </span>
+                    <h2>登陆</h2>
+                    <div class="form-group">
+                        <label for="username" class="sr-only">用户名</label>
+                        <input type="text" class="form-control" id="l-username" placeholder="用户名" autocomplete="off"
+                            required="required">
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="sr-only">密码</label>
+                        <input type="password" class="form-control" id="l-password" placeholder="密码" autocomplete="off"
+                            required="required">
+                    </div>
+                    <div class="form-group">
+                        <p>还没有账号？ <a id="turn-to-register">去注册</a></p>
+                    </div>
+                    <div class="form-group login-register-button">
+                        <button id="login-submit" type="submit" class="btn btn-primary">登陆 </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- 注册框 -->
+    <div>
+        <div class="row">
+            <div class="col-md-4 col-md-offset-4">
+                <form id="register-box" action="#" class="r-modal-box fh5co-form animate-box"
+                    data-animate-effect="fadeIn">
+                    <span class="close-box">
+                        <p>&#10006</p>
+                    </span>
+                    <h2>注册</h2>
+                    <div class="form-group">
+                        <label for="name" class="sr-only">用户名</label>
+                        <input type="text" class="form-control" id="r-username" placeholder="用户名" autocomplete="off"
+                            required="required">
+                    </div>
+                    <div class="form-group">
+                        <label for="password" class="sr-only">密码</label>
+                        <input type="password" class="form-control" id="r-password" placeholder="密码" autocomplete="off"
+                            required="required">
+                    </div>
+                    <!-- <div class="form-group">
+                        <label for="re-password" class="sr-only">重新输入密码</label>
+                        <input type="password" class="form-control" id="re-password" placeholder="重新输入密码"
+                            autocomplete="off">
+                    </div> -->
+                    <div class="form-group">
+                        <p>已有账号? <a id="turn-to-login">去登陆</a></p>
+                    </div>
+                    <div class="form-group login-register-button">
+                        <button id="register-submit" type="submit" class="btn btn-primary">注册</button>
+                    </div>
+                </form>
+                <!-- END Sign In Form -->
+            </div>
+        </div>
+    </div>
+    <!-- <div id="upload" class="upload-container">
+            <div class="pure-button pure-button-primary">开始上传</div>
+        </div> -->
+    <!--模态框-->
+    <!-- <div id="modal" class="dropbox">
+        <div class="items-container">
+            <div>
+                <p class="head"><b>拖拽文件至此</b></p>
+                <div class="content" id="content">
+                    <table class="table">
+                        <tbody class="tbody"></tbody>
+                    </table>
+                </div>
+				<a href="#" onclick="clearAll()" style="position:absolute;bottom:10px;right:30px;">清空所有</a>
+            </div>
+        </div>
+    </div> -->
+
+    <!-- <div id="testAjaxDiv">Test</div> -->
+
+
+    <!--使用jq -->
+    <script src="static/script/jquery.js"></script>
+    <!--使用sweetalert2美化原生alert-->
+    <script src="static/script/sweetalert2.js"></script>
+    <!-- 对话框的打开与关闭 -->
+    <script src="static/script/modalFrame.js"></script>
+    <!-- 登陆注册窗口的打开以及功能实现 -->
+    <script src="static/script/loginAndRegister.js"></script>
+    <!-- 实现拖拽上传文件-->
+    <script src="static/script/dragUpload.js"></script>
+    <!-- 占位文字插件 -->
+    <script src="static/script/jquery.placeholder.min.js"></script>
+    <!--元素滚动监听插件，实现对话框的动画效果 -->
+    <script src="static/script/jquery.waypoints.min.js"></script>
+
+
+    <!-- TODO: 后期删除 -->
+    <!-- mock.js进行假数据测试 -->
+    <!-- <script src="./node_modules/mockjs/dist/mock.js"></script> -->
+    <!-- <script src="./script/mockForTest.js"></script> -->
+    <!-- <script>
+        // hTML5实现表单内的上传文件框，上传前预览视频，刷新预览video，使用HTML5 的File API,
+        // 建立一个可存取到该file的url，一个空的video标签，ID为video0,把选择的文件显示在video标签中，实现视频预览功能。
+        // 需要选择支持HTML API的浏览器。
+        $("#video").change(function () {
+            var objUrl = getObjectURL(this.files[0]);
+            console.log("objUrl = " + objUrl);
+            if (objUrl) {
+                $("#video0").attr("src", objUrl);
+            }
+        });
+        //建立一个可存取到该file的url
+        function getObjectURL(file) {
+            var url = null;
+            if (window.createObjectURL != undefined) { // basic
+                url = window.createObjectURL(file);
+            } else if (window.URL != undefined) { // mozilla(firefox)
+                url = window.URL.createObjectURL(file);
+            } else if (window.webkitURL != undefined) { // webkit or chrome
+                url = window.webkitURL.createObjectURL(file);
+            }
+            return url;
+        }
+    </script> -->
+</body>
+
+</html>
