@@ -1,13 +1,16 @@
 spring:
   datasource:
-    url: jdbc:mysql://119.3.184.113:3306/animationmaster?characterEncoding=utf-8
+    url: jdbc:mysql://cdb-nj2smsfc.bj.tencentcdb.com:10001/animationmaster?characterEncoding=utf-8&serverTimezone=GMT%2b8
     username: root
-    password: Zhiku_qr_123
+    password: train_60321
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
     multipart:
       max-file-size: 100MB
       max-request-size: 100MB
+
+  jackson:
+    time-zone: GMT+8  #配置返回给前端时区（默认伦敦时区）加：spring.jackson.time-zone:GMT+8
 #      location: /AnimationMasterData/upload
 mybatis:
   type-aliases-package: com.example.demo.entity
