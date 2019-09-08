@@ -104,6 +104,7 @@ public class UserController {
         }catch (Exception e){
             map.put("error_code", -1);
             map.put("error_msg", "获取异常");
+            map.put("data",null);
         }
         return map;
     }
