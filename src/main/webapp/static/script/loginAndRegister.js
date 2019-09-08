@@ -186,7 +186,7 @@ $('#login-submit').click(function () {
 			// type:"GET",
 			data: {
 				'userName': $('#l-username').val(),
-				'passWord': $('#l-password').val(),
+				'password': $('#l-password').val(),
 			},
 			// dataType:'',
 			//接收返回值还需要变化的,这个TODO应该没问题了~ 剩下注册那块
@@ -303,7 +303,7 @@ $('#register-submit').click(function () {
 			type: "POST",
 			data: {
 				'userName': $('#r-username').val(),
-				'passWord': $('#r-password').val(),
+				'password': $('#r-password').val(),
 			},
 			// dataType:'',
 			success: function (resultData) {
