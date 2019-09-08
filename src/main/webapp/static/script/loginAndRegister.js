@@ -47,9 +47,10 @@
 }());
 
 //设置全局变量
+var testVar={};
 var userInfo = {
-	userId: 0,
-	username: "",
+	 userId: 0,
+	 username: ""
 }
 //判断是否处于登陆状态
 var isLogin = function () {
@@ -60,23 +61,27 @@ var isLogin = function () {
 		let error_code = resultdata.error_code;
 		switch (error_code) {
 			case 0:
-				if (resultdata.data !== "") {
+				console.log(resultdata.data);
+				if (resultdata.data !== null) {
 					userInfo = resultdata.data;
-					return true;
-				} else return false;
-			case -1:
-				Swal.fire({
-					// toast: true,
-					// position: 'top',
-					showConfirmButton: true,
-					timer: 2000,
-					type: 'success',
-					title: "已成功上传，请耐心等待处理",
-				});
-				break;
+				} else;
+			// case -1:
+			// 	Swal.fire({
+			// 		// toast: true,
+			// 		// position: 'top',
+			// 		showConfirmButton: true,
+			// 		timer: 2000,
+			// 		type: 'info',
+			// 		title: "出错了",
+			// 	});
+			// 	break;
 		}
 	});
-
+   if(userInfo.userId!==0&&userInfo!=null){
+   	return true;
+   }else {
+   	return false;
+   }
 	//let username;
 	// let myCookie=document.cookie
 	// let myCookie="u"
@@ -96,6 +101,7 @@ var isLogin = function () {
 // 3.input部分的删除与生成 
 
 var toggleLoginState = function () {
+
 	if (isLogin()) {
 		console.log('login!');
 		document.getElementById('turn-to-list').style.display = 'inline-block';
@@ -104,7 +110,7 @@ var toggleLoginState = function () {
 		menuItem_1.className = "pure-menu-item";
 		//TODO:暂时不知道对不对
 		let username = userInfo.username;
-		menuItem_1.innerHTML = username;
+		menuItem_1.innerHTML = "欢迎您: "+username;
 		$('#menuList').append(menuItem_1);
 		let menuItem_2 = document.createElement("li");
 		menuItem_2.className = "pure-menu-item";
@@ -201,7 +207,8 @@ $('#login-submit').click(function () {
 				// console.log(dataObj.data[1]);
 				switch (dataObj.error_code) {
 					case 0:
-
+						console.log(dataObj.data);
+                        console.log(dataObj.data.userId);
 						userInfo.userId = dataObj.data.userId;
 						userInfo.username = dataObj.data.userName;
 						closeModal('login-box');
