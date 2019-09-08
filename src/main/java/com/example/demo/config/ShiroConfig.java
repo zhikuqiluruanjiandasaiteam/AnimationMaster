@@ -15,7 +15,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 
-//@Configuration
+@Configuration
 public class ShiroConfig {
 
     @Bean
@@ -32,7 +32,9 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/", "anon");
         filterChainDefinitionMap.put("/user/login", "anon");
         filterChainDefinitionMap.put("/user/register", "anon");
+        filterChainDefinitionMap.put("/user/getSession", "anon");
         filterChainDefinitionMap.put("/testImg", "anon");
+        filterChainDefinitionMap.put("/static/**", "anon");
         // 配置退出过滤器,其中的具体的退出代码Shiro已经替我们实现了
         filterChainDefinitionMap.put("/logout", "logout");
 
