@@ -9,9 +9,11 @@ import org.apache.shiro.crypto.hash.Md5Hash;
 import org.apache.shiro.subject.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,4 +82,36 @@ public class UserController {
         }
         return map;
     }
+
+    @ResponseBody
+    @RequestMapping("/getSession")
+    public Map<String,Object> getSession(HttpSession session){
+        Map<String,Object> map=new HashMap<String,Object>();
+        try {
+            User currentUser = (User) session.getAttribute("currentUser");
+            if(currentUser!=null){
+                Map<String,Object>data=new HashMap<>();
+                data.put("userId",currentUser.getUserId());
+                data.put("userName",currentUser.getUserName());
+                map.put("error_code",0);
+                map.put("error_msg","获取成功");
+                map.put("data",data);
+            }else {
+                map.put("error_code",0);
+                map.put("error_msg","获取成功");
+                map.put("data",null);
+            }
+        }catch (Exception e){
+            map.put("error_code", -1);
+            map.put("error_msg", "获取异常");
+        }
+        return map;
+    }
+
+    @RequestMapping("/logout")
+    public String logout(){
+        SecurityUtils.getSubject().logout();
+        return "redirect:/";
+    }
+
 }
