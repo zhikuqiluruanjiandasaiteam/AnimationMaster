@@ -109,7 +109,7 @@ public class TaskController {
      */
     @ResponseBody
     @RequestMapping(value = "list")
-    public Map list(@RequestParam(value ="usr_id", required = true) Integer userId,
+    public Map list(@RequestParam(value ="user_id", required = true) Integer userId,
                     @RequestParam(value ="is_desc", required = false,defaultValue = "true") boolean isDesc,
                     @RequestParam(value ="finish_state", required = false,defaultValue = "0") Integer finishState){
         HashMap<String,Object> re=new HashMap<>(  );
