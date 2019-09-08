@@ -1,10 +1,13 @@
 /// <reference path="./sweetalert2.js"/>
 /// <reference path="./jquery.js"/>
-; (function () {
+;
+(function () {
 	'use strict';
 	// Placeholder
 	var placeholderFunction = function () {
-		$('input, textarea').placeholder({ customClass: 'my-placeholder' });
+		$('input, textarea').placeholder({
+			customClass: 'my-placeholder'
+		});
 	}
 	// Placeholder
 	var contentWayPoint = function () {
@@ -32,7 +35,9 @@
 					});
 				}, 100);
 			}
-		}, { offset: '85%' });
+		}, {
+			offset: '85%'
+		});
 	};
 	// On load
 	$(function () {
@@ -42,19 +47,50 @@
 }());
 
 //设置全局变量
-//TODO:通过session判断是否处于登陆状态???
+var userInfo = {
+	userId: 0,
+	username: "",
+}
+//判断是否处于登陆状态
 var isLogin = function () {
-	//let username = '<%=session.getAtribute("username")%>';
-	 let username=document.cookie;
-	if (username !== "" && typeof (username) != "undefined") {
-		return true;
-	}
-	else
-		return false;
+	$.ajax({
+		type: "POST",
+		url: "/user/getSession",
+	}).done((resultdata) => {
+		let error_code = resultdata.error_code;
+		switch (error_code) {
+			case 0:
+				if (resultdata.data !== "") {
+					userInfo = resultdata.data;
+					return true;
+				} else return false;
+			case -1:
+				Swal.fire({
+					// toast: true,
+					// position: 'top',
+					showConfirmButton: true,
+					timer: 2000,
+					type: 'success',
+					title: "已成功上传，请耐心等待处理",
+				});
+				break;
+		}
+	});
+
+	//let username;
+	// let myCookie=document.cookie
+	// let myCookie="u"
+
+	// if (myCookie !== "") {
+	// 	return true;
+	// }
+	// else
+	// 	return false;
 };
 
+
 //切换登陆与未登录状态后的变化
-// TODO:登陆状态与未登录状态的区别:
+// 登陆状态与未登录状态的区别:
 // 1.任务列表的跳转按钮
 // 2.右上角 登录注册 修改为 用户名 退出登陆
 // 3.input部分的删除与生成 
@@ -67,7 +103,7 @@ var toggleLoginState = function () {
 		let menuItem_1 = document.createElement("li");
 		menuItem_1.className = "pure-menu-item";
 		//TODO:暂时不知道对不对
-		let username = '<%=session.getAtribute("username")%>'
+		let username = userInfo.username;
 		menuItem_1.innerHTML = username;
 		$('#menuList').append(menuItem_1);
 		let menuItem_2 = document.createElement("li");
@@ -75,14 +111,16 @@ var toggleLoginState = function () {
 		menuItem_2.innerHTML = '退出';
 		$('#menuList').append(menuItem_2);
 
-		let input = document.createElement('input');
-		input.type = "file";
-		input.accept="image/png,image/jpeg,audio/mp3, audio/mp4, video/mp4";
-		input.id="fileUpload";
-		$('#icon-upload').append(input);
-	}
-
-	else {
+		//创建input节点
+		if (document.getElementById('fileUpload') === null) {
+			let input = document.createElement('input');
+			input.type = "file";
+			input.accept = "image/png,image/jpeg,audio/mp3, audio/mp4, video/mp4";
+			input.id = "fileUpload";
+			$('#icon-upload').append(input);
+		}
+		document.getElementById('icon-upload').style.cursor = "none";
+	} else {
 		console.log('not login');
 		document.getElementById('turn-to-list').style.display = 'none';
 		$('#menuList').empty();
@@ -98,12 +136,17 @@ var toggleLoginState = function () {
 		menuItem_2.innerHTML = '<a href="#" class="pure-menu-link">注册</a>';
 		$('#menuList').append(menuItem_2);
 
+		//删除input节点
+		if (document.getElementById('fileUpload') !== null) {
+			$('#fileUpload').remove();
+		}
+		document.getElementById('icon-upload').style.cursor = "pointer";
 		document.getElementById("login-button").addEventListener("click", loginModal);
 		document.getElementById("register-button").addEventListener("click", registerModal);
 	}
 }
 
-$(toggleLoginState());//页面加载时执行
+$(toggleLoginState()); //页面加载时执行
 
 //点击登陆按钮
 function loginModal() {
@@ -143,7 +186,7 @@ $('#login-submit').click(function () {
 			// type:"GET",
 			data: {
 				'userName': $('#l-username').val(),
-				'password': $('#l-password').val(),
+				'passWord': $('#l-password').val(),
 			},
 			// dataType:'',
 			//接收返回值还需要变化的,这个TODO应该没问题了~ 剩下注册那块
@@ -151,14 +194,16 @@ $('#login-submit').click(function () {
 				// alert("请求成功");
 				console.log(resultData);
 				//TODO:因为用mock，直接那样格式是json，所以这里转换了一下，最后完成后不用转
-				var dataObj = JSON.parse(resultData);//将收到的数据转换成js对象
-				// var dataObj=resultData;
+				// var dataObj = JSON.parse(resultData); //将收到的数据转换成js对象
+				var dataObj=resultData;
 				console.log(dataObj);
 				console.log(dataObj.error_code);
 				// console.log(dataObj.data[1]);
 				switch (dataObj.error_code) {
 					case 0:
 
+						userInfo.userId = dataObj.data.userId;
+						userInfo.username = dataObj.data.userName;
 						closeModal('login-box');
 						Swal.fire({
 							// toast: true,
@@ -168,7 +213,7 @@ $('#login-submit').click(function () {
 							type: 'success',
 							title: "您已经成功登陆",
 						});
-
+						//TODO:保存用户信息
 						//登陆成功需要页面变化,调用toggleLoginstate()
 						toggleLoginState();
 						break;
@@ -226,8 +271,7 @@ $('#login-submit').click(function () {
 				})
 			},
 		});
-	}
-	else if (inputIsNull('l-username')) {
+	} else if (inputIsNull('l-username')) {
 		Swal.fire({
 			toast: true,
 			position: 'top',
@@ -236,8 +280,7 @@ $('#login-submit').click(function () {
 			type: 'warning',
 			title: "您未完整填写用户名",
 		})
-	}
-	else if (inputIsNull('l-password')) {
+	} else if (inputIsNull('l-password')) {
 		Swal.fire({
 			toast: true,
 			position: 'top',
@@ -260,15 +303,15 @@ $('#register-submit').click(function () {
 			type: "POST",
 			data: {
 				'userName': $('#r-username').val(),
-				'password': $('#r-password').val(),
+				'passWord': $('#r-password').val(),
 			},
 			// dataType:'',
 			success: function (resultData) {
 				// alert("请求成功");
 				console.log(resultData);
 				//TODO:因为用mock，直接那样格式是json，所以这里转换了一下，最后完成后不用转
-				//var dataObj = JSON.parse(resultData);//将收到的数据转换成js对象
-				 var dataObj=resultData;
+				// var dataObj = JSON.parse(resultData); //将收到的数据转换成js对象
+				var dataObj=resultData;
 				console.log(dataObj);
 				console.log(dataObj.error_code);
 				// console.log(dataObj.data[1]);
@@ -339,8 +382,7 @@ $('#register-submit').click(function () {
 				})
 			},
 		});
-	}
-	else if (inputIsNull('r-username')) {
+	} else if (inputIsNull('r-username')) {
 		Swal.fire({
 			toast: true,
 			position: 'top',
@@ -349,8 +391,7 @@ $('#register-submit').click(function () {
 			type: 'warning',
 			title: "您未完整填写用户名",
 		})
-	}
-	else if (inputIsNull('r-password')) {
+	} else if (inputIsNull('r-password')) {
 		Swal.fire({
 			toast: true,
 			position: 'top',
@@ -362,5 +403,3 @@ $('#register-submit').click(function () {
 	}
 
 })
-
-

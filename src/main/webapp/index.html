@@ -36,8 +36,6 @@
     <!--<![endif]-->
 </head>
 
-
-
 <body>
     <!-- input按钮-->
     <!--
@@ -52,7 +50,8 @@
             <div class="menu-heading pure-menu-heading">Animation-master</div>
             <!-- TODO:跳转到任务列表页面 -->
             <!-- 在未登录状态时display设置为none -->
-            <a id="turn-to-list" class="pure-menu-heading turn-to-list" style="display: none; " href="#">任务列表</a>
+            <a id="turn-to-list" title="前往任务列表查看任务" class="pure-menu-heading turn-to-list" style="display: none; "
+                href="#">任务列表</a>
             <ul id="menuList" class="pure-menu-list">
                 <li id="login-button" class="pure-menu-item"><a href="#" class="pure-menu-link">登陆</a></li>
                 <li id="register-button" class="pure-menu-item"><a href="#" class="pure-menu-link">注册</a></li>
@@ -65,9 +64,9 @@
                 <p class="board-head">拖拽文件至此或者点击下方图标</p>
             </div>
             <div id="icon-upload" class="board-icon file">
-                <img id="uploadImg" src="static/image/upload_icon.png" draggable="false">
+                <img id="uploadImg" src="./image/upload_icon.png" draggable="false">
                 <!-- TODO:处于登陆状态时候动态生成下面这句 -->
-                <!-- <input type="file" name="" id=""> -->
+                <!-- <input type="file" name="" id="fileUpload"> -->
             </div>
 
         </div>
@@ -77,7 +76,7 @@
     <div class="modal-overlay"></div>
 
     <!-- 风格选择对话框 -->
-    <!-- TODO:再加个媒体查询width:100% 整理时候看看，最好要和登录框保持一致些 -->
+    <!-- 再加个媒体查询width:100% 整理时候看看，最好要和登录框保持一致些 -->
     <div id="styleContainer" class="container">
         <div class="main">
             <header class="clearfix">
@@ -87,15 +86,15 @@
                     <p>&#10006</p>
                 </span>
             </header>
-            <label>选择文件类型</label>
+            <label>选择要转换的文件类型</label>
             <div>
                 <button class="filetype-button" id="filetypeButtonV">视频</button>
                 <button class="filetype-button" id="filetypeButtonA">音频</button>
                 <button class="filetype-button" id="filetypeButtonI">图像</button>
                 <label class="is-frame" style="display: none">采用补帧方法以加速
                     <select>
-                        <option class="select-li">是</option>
-                        <option class="select-li">否</option>
+                        <option class="select-li" id="isFrame_0">是</option>
+                        <option class="select-li" id="isFrame_1">否</option>
                     </select>
                 </label>
             </div>
@@ -122,7 +121,9 @@
                 </div>
                 <div class="cbp-mc-submit-wrap">
                     <!-- <input class="cbp-mc-submit" type="submit" value="确认上传" /> -->
-                    <div class="cbp-mc-submit" id="submitButton">确认上传</div>
+                    <div class="cbp-mc-submit" id="submitButton">确认上传
+                        <div title="预计需要的时间，请耐心等待" id="estimatedTime" class="estimated-time"></div>
+                    </div>
                 </div>
             </form>
         </div>
@@ -213,27 +214,29 @@
 
     <!-- <div id="testAjaxDiv">Test</div> -->
 
-
     <!--使用jq -->
-    <script src="static/script/jquery.js"></script>
+    <script src="./static/script/jquery.js"></script>
+
     <!--使用sweetalert2美化原生alert-->
-    <script src="static/script/sweetalert2.js"></script>
+    <script src="./static/script/sweetalert2.js"></script>
     <!-- 对话框的打开与关闭 -->
-    <script src="static/script/modalFrame.js"></script>
+    <script src="./static/script/modalFrame.js"></script>
     <!-- 登陆注册窗口的打开以及功能实现 -->
-    <script src="static/script/loginAndRegister.js"></script>
+    <script src="./static/script/loginAndRegister.js"></script>
     <!-- 实现拖拽上传文件-->
-    <script src="static/script/dragUpload.js"></script>
+    <script src="./static/script/dragUpload.js"></script>
     <!-- 占位文字插件 -->
-    <script src="static/script/jquery.placeholder.min.js"></script>
+    <script src="./static/script/jquery.placeholder.min.js"></script>
     <!--元素滚动监听插件，实现对话框的动画效果 -->
-    <script src="static/script/jquery.waypoints.min.js"></script>
+    <script src="./static/script/jquery.waypoints.min.js"></script>
 
 
     <!-- TODO: 后期删除 -->
     <!-- mock.js进行假数据测试 -->
     <!-- <script src="./node_modules/mockjs/dist/mock.js"></script> -->
     <!-- <script src="./script/mockForTest.js"></script> -->
+
+
     <!-- <script>
         // hTML5实现表单内的上传文件框，上传前预览视频，刷新预览video，使用HTML5 的File API,
         // 建立一个可存取到该file的url，一个空的video标签，ID为video0,把选择的文件显示在video标签中，实现视频预览功能。
