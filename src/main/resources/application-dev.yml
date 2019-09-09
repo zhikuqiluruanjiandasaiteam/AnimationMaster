@@ -6,8 +6,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   servlet:
     multipart:
-      max-file-size: 100MB
-      max-request-size: 100MB
+      max-file-size: 200MB
+      max-request-size: 200MB
 
   jackson:
     time-zone: GMT+8  #配置返回给前端时区（默认伦敦时区）加：spring.jackson.time-zone:GMT+8
@@ -27,10 +27,10 @@ server:
 
 #配置变量
 
-DLServerIP: 52.205.195.32
+DLServerIP: 127.0.0.1
 DLServerUserName: ubuntu
 DLServerPassword: 123456
-DLServerSecretKey: /home/ubuntu/miyao1.pem
+DLServerSecretKey: /home/ubuntu/web/lpem.pem
 ExecShellSingleDir: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/processSingleDir.sh
 ExecShellSinglePic: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/processSinglePic.sh
 

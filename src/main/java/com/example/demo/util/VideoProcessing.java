@@ -3,12 +3,10 @@ package com.example.demo.util;
 import it.sauronsoftware.jave.Encoder;
 import it.sauronsoftware.jave.VideoInfo;
 import it.sauronsoftware.jave.MultimediaInfo;
-import org.apache.shiro.util.PatternMatcher;
-
 import java.io.*;
-import java.nio.channels.FileChannel;
-import java.util.regex.MatchResult;
-import java.util.regex.Pattern;
+
+
+import static com.example.demo.util.AudioProcessing.getWebRootAbsolutePath;
 
 public class VideoProcessing {
     /**
@@ -19,7 +17,7 @@ public class VideoProcessing {
      * @return 运行结果状态码
      */
     public static int video2Images(String videoFile, String toPath, int numWidth){
-        String toolStr=AudioProcessing.getWebRootAbsolutePath()+"static/tools/video2images.py";
+        String toolStr= getWebRootAbsolutePath()+"static/tools/video2images.py";
         String strShell="python "+toolStr+" --from_file "+videoFile+" --to_path "+toPath
                 +" --num_width "+numWidth;
         int re=-1;
@@ -52,7 +50,7 @@ public class VideoProcessing {
      */
     public static int images2Video(String imagesPath,String prefix,int numWidth,
                                    String suffix,String toFile,String referenceVideo){
-        String toolStr=AudioProcessing.getWebRootAbsolutePath()+"static/tools/images2video.py";
+        String toolStr= getWebRootAbsolutePath()+"static/tools/images2video.py";
         String strShell="python "+toolStr+" --image_path "+imagesPath
                 +" --num_width "+numWidth
                 +" --suffix "+suffix
@@ -74,11 +72,15 @@ public class VideoProcessing {
      * @param toFile 生成视频文件路径
      * @return 运行结果状态码
      */
-     //todo:清晰的不足，待做
     public static int videoAddAudio(String videoFile,String wavFile,String toFile){
         //ffmpeg -i video.mp4 -i audio.wav -c:v copy -c:a aac -strict experimental output.mp4
         // ffmpeg -i videoFile -i wavFile -c:v copy -c:a aac -strict experimental toFile
-        return    runExec("ffmpeg -i"+"  "+videoFile+"  -i "+ wavFile+" -c:v copy -c:a aac -strict experimental  "+toFile);
+        String strFfmprg="ffmpeg";
+        String os = System.getProperty("os.name");//判断操作系统
+        if(os.toLowerCase().startsWith("win")){
+            strFfmprg=getWebRootAbsolutePath()+"static/tools/ffmpeg.exe";
+        }
+        return    runExec(strFfmprg+" -i"+"  "+videoFile+"  -i "+ wavFile+" -c:v copy -c:a aac -strict experimental  "+toFile);
 
     }
 

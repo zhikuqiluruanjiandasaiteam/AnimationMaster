@@ -26,6 +26,9 @@ public class FilesService {
      * @throws IOException .
      */
     public Files createFile(String type, MultipartFile file, Integer userId) throws IOException {
+        //储存文件夹不存在则创建
+        newFolder(  ParameterConfiguration.FilePath.uploadSave );
+
         String storeName=saveFile(type,file);
         if(storeName==null)
             return null;//储存失败
@@ -55,11 +58,6 @@ public class FilesService {
         //检查文件类型是否合法
         if(!checkFile(type,filename))
             return null;
-        //储存文件夹不存在则创建
-        File dir =new File( ParameterConfiguration.FilePath.uploadSave );
-        if  (!dir .exists()&&!dir .isDirectory()) {
-            dir .mkdirs();
-        }
         String suffix = filename.substring(filename.lastIndexOf('.')+1);
         saveName=getUniqueStr()+"."+suffix;
         String path=ParameterConfiguration.FilePath.uploadSave +File.separator+saveName;
@@ -98,5 +96,13 @@ public class FilesService {
 
     public Files queryFileByID(int id) {
         return  filesMapper.selectByPrimaryKey(id);
+    }
+
+    //创建文件夹
+    public static void newFolder(String path){
+        File dir =new File( path);
+        if  (!dir .exists()&&!dir .isDirectory()) {
+            dir.mkdirs();
+        }
     }
 }

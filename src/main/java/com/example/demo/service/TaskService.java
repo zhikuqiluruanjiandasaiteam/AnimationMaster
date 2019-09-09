@@ -224,10 +224,11 @@ public class TaskService {
 
     //todo:未完
     private boolean runVideo(String fileName,Task task){
-        task.setStartTime( new Date(  ) );
+        //创建文件夹
         String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
-        String intermediatePath=ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName+File.separator;
-        newFolder( ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName);
+        String intermediatePath=ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName;
+        newFolder( intermediatePath);
+        intermediatePath+=File.separator;
 
         String imsParameterValues= imageStyleMapper.selectByPrimaryKey( task.getImsId() ).getImsParameterValues();
         String ausParameterValues= audioStyleMapper.selectByPrimaryKey( task.getAusId() ).getAusParameterValues();
@@ -253,12 +254,13 @@ public class TaskService {
             String fromFile=intermediatePath+ParameterConfiguration.FilePath.vidoe_audio
                     +File.separator+fileFrontName+".wav";
             AudioProcessing.changePitch( fromFile,
-                    intermediatePath+File.separator+fileFrontName+".wav",
+                    intermediatePath+fileFrontName+".wav",
                     Integer.parseInt( ausParameterValues ));
             ausEstimatedTime+=(System.nanoTime()-time1)/1000;
 
         }else{//非原画
             splitVideoImage(fileName,false);
+            String finalIntermediatePath = intermediatePath;
             new Thread(  ) {//线程中处理音频
                 @Override
                 public void run() {
@@ -269,9 +271,9 @@ public class TaskService {
                     }else{
                         splitVideoAudio( fileName,false );
                         //转化音频
-                        AudioProcessing.changePitch(intermediatePath+ParameterConfiguration.FilePath.vidoe_audio+
+                        AudioProcessing.changePitch( finalIntermediatePath +ParameterConfiguration.FilePath.vidoe_audio+
                                         File.separator+fileFrontName+".wav",
-                                intermediatePath+fileFrontName+".wav",
+                                finalIntermediatePath +fileFrontName+".wav",
                                 Integer.parseInt( ausParameterValues ));
                     }
                     ausEstimatedTime =(System.currentTimeMillis()-ausStartTime)*1000;
@@ -354,6 +356,7 @@ public class TaskService {
         String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
         String intermedPath=ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName;
         newFolder(intermedPath);
+
         intermedPath+=File.separator;
         //转音频为wav
         int state=AudioProcessing.file2Wav( suffix,
