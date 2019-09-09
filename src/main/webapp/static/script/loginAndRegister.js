@@ -78,8 +78,10 @@ var isLogin = function () {
 		}
 	});
    if(userInfo.userId!==0&&userInfo!=null){
+   	console.log("islogin");
    	return true;
    }else {
+   	console.log("islogin");
    	return false;
    }
 	//let username;
@@ -101,7 +103,6 @@ var isLogin = function () {
 // 3.input部分的删除与生成 
 
 var toggleLoginState = function () {
-
 	if (isLogin()) {
 		console.log('login!');
 		document.getElementById('turn-to-list').style.display = 'inline-block';
@@ -124,6 +125,149 @@ var toggleLoginState = function () {
 			input.accept = "image/png,image/jpeg,audio/mp3, audio/mp4, video/mp4";
 			input.id = "fileUpload";
 			$('#icon-upload').append(input);
+            //为input绑定事件
+            $("#fileUpload").change(function () {
+                console.log($("#fileUpload")[0].files);
+                let file = $("#fileUpload")[0].files[0];
+                //如果不合格式，重新选文件
+                if (
+                    file.type !== "image/png" &&
+                    file.type !== "image/jpeg" &&
+                    file.type !== "audio/mp3" &&
+                    file.type !== "audio/mp4" &&
+                    file.type !== "video/mp4"
+                ) {
+                    Swal.fire({
+                        // toast: true,
+                        // position: 'top',
+                        showConfirmButton: true,
+                        allowOutsideClick: false, //点击背景不会关闭
+                        type: "warning",
+                        title: "不支持该格式",
+                        text: "仅支持mp4，jpg，jpeg，png，mp3,请重新选择"
+                    });
+                }
+                else if (file.size > 400 * 1000 * 1000) {
+                    Swal.fire({
+                        // toast: true,
+                        // position: 'top',
+                        showConfirmButton: true,
+                        allowOutsideClick: false, //点击背景不会关闭
+                        type: "warning",
+                        title: "文件太大了",
+                        text: "请尝试上传小于400M的文件"
+                    });
+                }
+                //符合要求的格式
+                else {
+                    fileInformation.name = file.name;
+                    fileInformation.type = file.type;
+                    fileInformation.uploadFile = file;
+                    console.log(fileInformation);
+                    //"image/png,image/jpeg,audio/mpeg,audio/mp4, video/mp4"
+                    //传的是图片
+                    if (file.type === "image/png" || file.type === "image/jpeg") {
+                        let reader = new FileReader();
+                        reader.readAsDataURL(file); //这里把一个文件用base64编码
+                        reader.onload = function (e) {
+                            let img = new Image();
+                            img.src = e.target.result; //获取编码后的值,也可以用this.result获取
+                            img.onload = function () {
+                                console.log("height:" + this.height + "----width:" + this.width);
+                                document.getElementById("uploadFilename").innerHTML =
+                                    fileInformation.name;
+                                fileInformation.height = this.height;
+                                fileInformation.width = this.width;
+                                fileInformation.duration = 0;
+                            };
+                        };
+                    }
+                    //传的是视频
+                    else if (file.type === "video/mp4") {
+                        //等待视频数据加载弹框
+                        Swal.fire({
+                            // toast: true,
+                            // position: 'top',
+                            showConfirmButton: false,
+                            allowOutsideClick: false, //点击背景不会关闭
+                            type: "info",
+                            title: "文件正在处理中..."
+                        });
+
+                        let reader = new FileReader();
+                        reader.readAsDataURL(file); //这里把一个文件用base64编码
+                        reader.onload = function (e) {
+                            var dataUrl = reader.result;
+                            var videoId = "videoMain";
+                            var $videoEl = $('<video id="' + videoId + '"></video>');
+                            // $("body").append($videoEl);
+                            $videoEl.attr("src", dataUrl);
+                            var videoTagRef = $videoEl[0];
+
+                            //媒体（音频、视频）相关事件loadstart、loadmetadata
+                            //参考https://developer.mozilla.org/zh-CN/docs/Web/Guide/Events/Media_events
+
+                            videoTagRef.addEventListener("loadedmetadata", function (e) {
+                                console.log(
+                                    videoTagRef.videoWidth,
+                                    videoTagRef.videoHeight,
+                                    videoTagRef.duration
+                                );
+                                document.getElementById("uploadFilename").innerHTML =
+                                    fileInformation.name;
+                                fileInformation.height = videoTagRef.videoHeight;
+                                fileInformation.width = videoTagRef.videoWidth;
+                                fileInformation.duration = videoTagRef.duration;
+                                swal.close(); //元数据加载完成后自动关闭对话框
+                            });
+                        };
+                    }
+                    //传的是音频
+                    else if (file.type === "audio/mp3") {
+                        console.log("mp3加载中");
+                        //等待视频数据加载弹框
+                        Swal.fire({
+                            // toast: true,
+                            // position: 'top',
+                            showConfirmButton: false,
+                            allowOutsideClick: false, //点击背景不会关闭
+                            type: "info",
+                            title: "文件正在处理中..."
+                        });
+
+                        let reader = new FileReader();
+                        reader.readAsDataURL(file); //这里把一个文件用base64编码
+                        reader.onload = function (e) {
+                            let dataUrl = reader.result;
+                            let audioId = "videoMain";
+                            let $audioEl = $('<audio id="' + audioId + '"></audio>');
+                            // $("body").append($videoEl);
+                            $audioEl.attr("src", dataUrl);
+                            let audioTagRef = $audioEl[0];
+
+                            //媒体（音频、视频）相关事件loadstart、loadmetadata
+                            audioTagRef.addEventListener("loadedmetadata", function (e) {
+                                console.log(audioTagRef.duration);
+                                document.getElementById("uploadFilename").innerHTML =
+                                    fileInformation.name;
+                                fileInformation.height = 1;
+                                fileInformation.width = 1;
+                                fileInformation.duration = audioTagRef.duration;
+
+                                swal.close(); //元数据加载完成后自动关闭对话框
+                            });
+                        };
+                    }
+
+                    //TODO:暂且不用自己判断，用户决定
+                    //是否需要用户选择类型？？？展示对话框之前需要做一下判断.暂且不用自己判断，用户决定
+                    showModal("styleContainer");
+                }
+                //"image/png,image/jpeg,audio/mpeg,audio/mp4, video/mp4"
+                // showModal('styleContainer');
+                //document.getElementById('uploadFilename').innerHTML = fileInformation.name;
+                //showModal('styleContainer');
+            });
 		}
 		document.getElementById('icon-upload').style.cursor = "none";
 	} else {
@@ -223,7 +367,9 @@ $('#login-submit').click(function () {
 						//TODO:保存用户信息
 						//登陆成功需要页面变化,调用toggleLoginstate()
 						toggleLoginState();
-						break;
+
+
+                        break;
 					case -1:
 						Swal.fire({
 							// toast: true,
