@@ -111,7 +111,6 @@ public class VideoProcessing {
         return info;
     }
 
-
     public static int runExec(String shell) {
         try{
             final Process process = Runtime.getRuntime().exec(shell);//生成一个新的进程去运行调用的程序
@@ -140,4 +139,20 @@ public class VideoProcessing {
             }
         }).start();
     }
+
+    private static int findKeyFrame(String video,String outTxt){
+        //ffprobe -select_streams v -show_frames -show_entries frame=pict_type -of csv test.mp4 | grep -n I >> tesxt.txt
+        String strff="ffprobe";//windows系统先安装ffmpeg，再配置环境变量
+        String shell=strff+" -select_streams v -show_frames -show_entries frame=pict_type -of csv "+
+                video+" | grep -n I >  "+outTxt;
+        System.out.println( shell );
+        return AudioProcessing.runExec(shell);
+    }
+
+//    public static void main(String[] args){
+//        int re=findKeyFrame("C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx.mp4",
+//                "C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\txtx.txt");
+//
+//    }
+
 }

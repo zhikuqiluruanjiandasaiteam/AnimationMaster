@@ -73,6 +73,18 @@
             <artifactId>jave</artifactId>
             <version>1.0.2</version>
         </dependency>
+
+        <!--使用opencv处理视频-->
+        <!--&lt;!&ndash;todo:jar包只有windows安装的opencv目录下自带，linux不知如何使用&ndash;&gt;-->
+        <!--<dependency>-->
+            <!--<groupId>org.opencv</groupId>-->
+            <!--<artifactId>opencv</artifactId>-->
+            <!--<version>4.1.1</version>-->
+            <!--<systemPath>E:/Software/Opencv/opencv/build/java/opencv-411.jar</systemPath>-->
+            <!--<scope>system</scope>-->
+        <!--</dependency>-->
+
+
         <!--&lt;!&ndash;使用json函数&ndash;&gt;-->
         <!--<dependency>-->
             <!--<groupId>com.alibaba</groupId>-->

@@ -42,7 +42,6 @@ public class TaskService {
     private int numWidth=7;
 
 
-
     /**
      * 创建任务（仅创建记录，未开启任务）
      * @param userId 用户id
@@ -98,7 +97,6 @@ public class TaskService {
 
         return maps;
     }
-
 
     /**
      * 开启任务
@@ -281,6 +279,7 @@ public class TaskService {
             }.start();
             //todo:处理视频
             if(task.getIsFrameSpeed()){
+
                 return false;
             }else{
                 long time1=System.nanoTime();
