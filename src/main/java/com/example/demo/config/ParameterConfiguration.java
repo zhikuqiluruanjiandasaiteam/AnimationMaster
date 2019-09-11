@@ -1,11 +1,26 @@
 package com.example.demo.config;
 
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Controller;
+import org.springframework.stereotype.Service;
+
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
+@Service
 public class ParameterConfiguration {
+
+
+    public static String fileRoot;
+
+    // 静态变量不能直接value,必须先建立一个对象
+    //todo：不知原因，但经测试，FilePath.root静态变量不会先于这个创建（如果先于就会null/Ad...,如果出错，可能这里有问题）
+    @Value( "${fileRoot}" )
+    public void setDriver(String fileRoot) {
+        this.fileRoot= fileRoot;
+    }
 
     public static final int[] clarity= {720,480,360,240};
 
@@ -48,9 +63,8 @@ public class ParameterConfiguration {
             if(os.toLowerCase().startsWith("win")){
                 return "E:"+ File.separator+"AnimationMaster";
             }else{
-                return "~"+ File.separator+"AnimationMaster";
+                return fileRoot+File.separator+"AnimationMaster";
             }
         }
-
     }
 }

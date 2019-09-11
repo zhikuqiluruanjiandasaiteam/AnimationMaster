@@ -39,7 +39,7 @@ public class TaskService {
     private long ausEstimatedTime;//处理音频耗时（微秒）
     private int patchFrameNone;//使用补帧时直接通过风格转换未补帧的帧数
     private long patchFrameTime;//使用补帧时补帧所耗费的时长（微秒）
-    private int numWidth=7;
+    private int numWidth=6;//中间文件数字编号宽度
 
 
     /**

@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import ch.ethz.ssh2.Connection;
+import com.example.demo.config.ParameterConfiguration;
 import com.example.demo.dao.UserMapper;
 import com.example.demo.entity.User;
 import com.example.demo.service.ImgProcessing;
@@ -33,8 +34,7 @@ public class TestController {
     @ResponseBody//返回字符串，而不是字符串对应名字的jsp
     @RequestMapping("test")
     public String hello(){
-        User user=userMapper.selectByPrimaryKey( 1 );
-        return "hello word!"+user.getUserName();
+        return "hello word!:"+ ParameterConfiguration.fileRoot+ParameterConfiguration.FilePath.uploadSave;
     }
     @ResponseBody
     @RequestMapping("/testImg1")

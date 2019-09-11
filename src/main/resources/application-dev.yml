@@ -16,7 +16,7 @@ mybatis:
   type-aliases-package: com.example.demo.entity
   mapper-locations: classpath:mybatis/mapper/*.xml
 server:
-  port: 9999
+  port: 8080
   tomcat:
       uri-encoding: UTF-8
   servlet:
@@ -33,6 +33,10 @@ DLServerPassword: 123456
 DLServerSecretKey: /home/ubuntu/web/lpem.pem
 ExecShellSingleDir: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/processSingleDir.sh
 ExecShellSinglePic: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/processSinglePic.sh
+
+#文件存储根目录
+fileRoot: /home/ubuntu/web
+
 
 ##风格类型对应实际风格决定参数值
 #typle2Value:
