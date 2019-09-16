@@ -284,6 +284,12 @@ public class TaskService {
             }else{
                 long time1=System.nanoTime();
                 try {
+                    System.out.println( "\n测试信息输出：" );///////////////////
+                    System.out.println( "video_ImagesForm:::"+intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm );
+                    System.out.println( "video_ImagesForm:::"+intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo );
+                    System.out.println( "video_ImagesForm:::"+imsParameterValues );
+                    System.out.println( "video_ImagesForm:::"+task.getClarity() );
+                    System.out.println( "over\n" );////////////////////////////////////
                     new ImgProcessing().ProcessSingleDir(
                             intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm,
                             intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
@@ -292,7 +298,7 @@ public class TaskService {
                     e.printStackTrace();
                 }
                 VideoProcessing.images2Video( intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
-                        "",numWidth,"_"+imsParameterValues,intermediatePath+File.separator+fileFrontName+".mp4",
+                        "",numWidth,"_"+imsParameterValues,intermediatePath+fileFrontName+".mp4",
                         ParameterConfiguration.FilePath.uploadSave+File.separator+fileName );
                 imsEstimatedTime=(System.nanoTime()-time1)/1000;
             }
@@ -482,8 +488,10 @@ public class TaskService {
                             File.separator+fileFrontName+".mp4");
         }else{
             String toPath=ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName+
-                    File.separator+ParameterConfiguration.FilePath.video_ImagesForm;
-            newFolder( toPath );
+                    File.separator;
+            newFolder( toPath+ParameterConfiguration.FilePath.video_ImagesForm );
+            newFolder( toPath+ParameterConfiguration.FilePath.vidoe_ImagesTo );
+            toPath=toPath+ParameterConfiguration.FilePath.video_ImagesForm;
             //拆分视频为图片
             VideoProcessing.video2Images(ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
                     toPath,numWidth);

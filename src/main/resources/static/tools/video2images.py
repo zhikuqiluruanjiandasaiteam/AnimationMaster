@@ -80,7 +80,7 @@ def main():
         getFrame(opt.from_file, opt.to_path, opt.num_width)
     else:
         getFrame2(opt.from_file, opt.to_path, opt.num_width,opt.key_txt,opt.interval_num)
-    
+
 main()
 # keys=readKey('C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\tesxt.txt')
 # getFrame2('C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx.mp4', 'C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx',

@@ -45,7 +45,7 @@ public class TaskController {
     @ResponseBody
     @RequestMapping(value = "create",method = RequestMethod.POST)
     public Map create(@RequestParam(value = "file", required = true) MultipartFile file,
-                      @RequestParam(value ="usr_id", required = true) Integer userId,
+                      @RequestParam(value ="user_id", required = true) Integer userId,
                       @RequestParam(value ="ims_id", required = false) Integer imsId,
                       @RequestParam(value ="aus_id", required = false) Integer ausId,
                       @RequestParam(value ="clarity", required = false) Integer clarity,
