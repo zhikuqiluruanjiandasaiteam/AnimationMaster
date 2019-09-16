@@ -36,7 +36,7 @@ def getFrame(videoPath, svPath,numWidth):
                 newPath = svPath+'/' + ("{:0>"+str(numWidth)+"d}").format(numFrame) + ".jpg"
                 cv2.imencode('.jpg', frame)[1].tofile(newPath)
 
-#补帧，拆转场帧，//todo:暂时没有转场判断，拆关键帧，需传关键帧记录
+#补帧，拆转场帧，#todo: 暂时没有转场判断，拆关键帧，需传关键帧记录
 def getFrame2(videoPath, svPath,numWidth,keyTxt,intervalNum):
     setKey=keys=readKey(keyTxt)
     setKey.add(1)

@@ -284,13 +284,7 @@ public class TaskService {
             }else{
                 long time1=System.nanoTime();
                 try {
-                    System.out.println( "\n测试信息输出：" );///////////////////
-                    System.out.println( "video_ImagesForm:::"+intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm );
-                    System.out.println( "video_ImagesForm:::"+intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo );
-                    System.out.println( "video_ImagesForm:::"+imsParameterValues );
-                    System.out.println( "video_ImagesForm:::"+task.getClarity() );
-                    System.out.println( "over\n" );////////////////////////////////////
-                    new ImgProcessing().ProcessSingleDir(
+                    imgProcessing.ProcessSingleDir(
                             intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm,
                             intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
                             imsParameterValues,task.getClarity());
