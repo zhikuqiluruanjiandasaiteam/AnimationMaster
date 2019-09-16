@@ -24,6 +24,10 @@ public class ParameterConfiguration {
     public void setDriver2(String toolsRoot) {
         Tools.rootPath= toolsRoot;
     }
+    @Value( "${pfRoot}" )
+    public void setDriver3(String pfRoot) {
+        Tools.pfRoot= pfRoot;
+    }
 
     public static final int[] clarity= {720,480,360,240};
 
@@ -72,6 +76,8 @@ public class ParameterConfiguration {
 
     public static class Tools{
         public static String rootPath;
+        private static String pfRoot;
+        public static String pfMainFile=pfRoot+File.separator+"patch_frame.py";
     }
 
 }

@@ -9,6 +9,7 @@ import com.example.demo.entity.AudioStyle;
 import com.example.demo.entity.ImageStyle;
 import com.example.demo.entity.Task;
 import com.example.demo.util.AudioProcessing;
+import com.example.demo.util.PatchFrameUtil;
 import com.example.demo.util.VideoProcessing;
 import it.sauronsoftware.jave.Encoder;
 import it.sauronsoftware.jave.MultimediaInfo;
@@ -41,7 +42,7 @@ public class TaskService {
     private long patchFrameTime;//使用补帧时补帧所耗费的时长（微秒）
     private int numWidth=6;//中间文件数字编号宽度
 
-
+    List<String> outNames;
     /**
      * 创建任务（仅创建记录，未开启任务）
      * @param userId 用户id
@@ -243,7 +244,7 @@ public class TaskService {
                 public void run() {
                     super.run();
                     long imsStartTime =System.currentTimeMillis();
-                    splitVideoImage( fileName, true );
+                    splitVideoImage( fileName, true ,false);
                     imsEstimatedTime =(System.currentTimeMillis()-imsStartTime)*1000;
                 }
             }.start();
@@ -257,7 +258,7 @@ public class TaskService {
             ausEstimatedTime+=(System.nanoTime()-time1)/1000;
 
         }else{//非原画
-            splitVideoImage(fileName,false);
+            splitVideoImage(fileName,false ,task.getIsFrameSpeed());
             String finalIntermediatePath = intermediatePath;
             new Thread(  ) {//线程中处理音频
                 @Override
@@ -279,7 +280,51 @@ public class TaskService {
             }.start();
             //todo:处理视频
             if(task.getIsFrameSpeed()){
+                long time1=System.nanoTime();
+                patchFrameNone=0;
+                patchFrameTime=0;
+                if(outNames==null)
+                    return false;
+                try {
+                    imgProcessing.ProcessSinglePic(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
+                                    +File.separator+outNames.get( 0 ),
+                            intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
+                            outNames.get( 0 ),imsParameterValues,task.getClarity() );//todo:有待改为登陆分离版
+                }catch (Exception e){
+                    e.printStackTrace();
+                }
+                if(outNames.size()>1){
+                    PatchFrameUtil patchFrameUtil=new PatchFrameUtil( "",numWidth,".jpg" );
+                    int len=outNames.size();
+                    for(int i=1;i<len;i++){
+                        String name=outNames.get( i );
+                        try {
+                            imgProcessing.ProcessSinglePic(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
+                                            +File.separator+name,
+                                    intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
+                                    name,imsParameterValues,task.getClarity() );//todo:有待改为登陆分离版
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
+                        int startNum=Integer.parseInt(outNames.get( i-1 ).split( "." )[0]);
+                        int endNum=Integer.parseInt(name.split( "." )[0]);
 
+                        long timepf=System.nanoTime();
+                        patchFrameUtil.add(startNum+1,endNum-startNum,
+                                intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo+File.separator+outNames.get( i-1 ),
+                                intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo+name);
+                        if(i==1){
+                            patchFrameUtil.run();
+                        }
+                        patchFrameNone+=endNum-startNum;
+                        patchFrameTime+=(System.nanoTime()-timepf)/1000;
+                    }
+                    patchFrameUtil.close();
+                }
+                VideoProcessing.images2Video( intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
+                        "",numWidth,"",intermediatePath+fileFrontName+".mp4",
+                        ParameterConfiguration.FilePath.uploadSave+File.separator+fileName );
+                imsEstimatedTime=(System.nanoTime()-time1)/1000;
                 return false;
             }else{
                 long time1=System.nanoTime();
@@ -472,7 +517,7 @@ public class TaskService {
     }
 
     //拆分视频出图片
-    private void splitVideoImage(String fileName, boolean isOriginalIms){
+    private void splitVideoImage(String fileName, boolean isOriginalIms ,boolean ispFrame){
 //        String fileSuffix = fileName.substring(fileName.lastIndexOf('.')+1);
         String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
         if(isOriginalIms){
@@ -487,8 +532,14 @@ public class TaskService {
             newFolder( toPath+ParameterConfiguration.FilePath.vidoe_ImagesTo );
             toPath=toPath+ParameterConfiguration.FilePath.video_ImagesForm;
             //拆分视频为图片
-            VideoProcessing.video2Images(ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
-                    toPath,numWidth);
+            if(ispFrame){
+                outNames=VideoProcessing.video2ImagesPf(ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
+                        toPath,numWidth,ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName);
+            }else{
+                VideoProcessing.video2Images(ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,
+                        toPath,numWidth);
+            }
+
         }
     }
 

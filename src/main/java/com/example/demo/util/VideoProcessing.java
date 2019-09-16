@@ -5,11 +5,18 @@ import it.sauronsoftware.jave.Encoder;
 import it.sauronsoftware.jave.VideoInfo;
 import it.sauronsoftware.jave.MultimediaInfo;
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import static com.example.demo.util.AudioProcessing.getWebRootAbsolutePath;
 
 public class VideoProcessing {
+
+    //补帧时，间隔多少帧必有一帧
+    private static int intervalNum=10;
+
+
     /**
      * 视频拆分图片（全部帧）
      * @param videoFile 视频文件完整路径
@@ -26,7 +33,56 @@ public class VideoProcessing {
         re = AudioProcessing.runExec(strShell);
         return re;
     }
+    /**
+     * 视频拆分图片（补帧用帧）
+     * @param videoFile 视频文件完整路径
+     * @param toPath 图片储存目录(只生成jpg)
+     * @param numWidth 储存编号宽度 （如宽度3）001开始
+     * @return 运行结果状态码
+     */
+    public static List<String> video2ImagesPf(String videoFile, String toPath, int numWidth,String intermediatePath){
+        String kfTxt=intermediatePath+File.separator+"keyFrameNum.txt";
+        String namesTxt=intermediatePath+File.separator+"namesTxt.txt";
+        findKeyFrame(videoFile,kfTxt);
 
+        String toolStr= ParameterConfiguration.Tools.rootPath +File.separator+"video2images.py";
+        String strShell="python "+toolStr+" --from_file "+videoFile+" --to_path "+toPath
+                +" --num_width "+numWidth+" --key_txt "+kfTxt+" --interval_num "+intervalNum
+                +" --names_outtxt "+namesTxt;
+        int re=-1;
+        System.out.println(strShell);
+        re = AudioProcessing.runExec(strShell);
+        if(re!=0)
+            return null;
+        //获取输出帧名称序列
+        List<String> names=new ArrayList<>(  );
+        File file = new File(namesTxt);
+        BufferedReader reader = null;
+        try {
+            System.out.println("以行为单位读取文件内容，一次读一整行：");
+            reader = new BufferedReader(new FileReader(file));
+            String tempString = null;
+            int line = 1;
+            // 一次读入一行，直到读入null为文件结束
+            while ((tempString = reader.readLine()) != null) {
+                // 显示行号
+                names.add(tempString);
+                line++;
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            if (reader != null) {
+                try {
+                    reader.close();
+                } catch (IOException e1) {
+                }
+            }
+        }
+        return names;
+
+    }
     /**
      * 去除视频声音
      * @param videoFile 视频文件完整路径

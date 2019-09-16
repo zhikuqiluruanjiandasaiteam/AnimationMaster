@@ -15,6 +15,8 @@ def readKey(keyTxt):
                 key.add(i-1)
             key.add(i)
             line=f.readline()
+
+        f.close()
     return key
 #不补帧，全拆
 def getFrame(videoPath, svPath,numWidth):
@@ -37,9 +39,10 @@ def getFrame(videoPath, svPath,numWidth):
                 cv2.imencode('.jpg', frame)[1].tofile(newPath)
 
 #补帧，拆转场帧，#todo: 暂时没有转场判断，拆关键帧，需传关键帧记录
-def getFrame2(videoPath, svPath,numWidth,keyTxt,intervalNum):
+def getFrame2(videoPath, svPath,numWidth,keyTxt,intervalNum,namesOutTxt):
     setKey=keys=readKey(keyTxt)
     setKey.add(1)
+    outNames = open(namesOutTxt, 'w')#输出帧名到文件
     cap = cv2.VideoCapture(videoPath)
     sumFrame=0
     while cap.grab():#捕获下一帧，成功返回真
@@ -61,9 +64,12 @@ def getFrame2(videoPath, svPath,numWidth,keyTxt,intervalNum):
                 #cv2.imshow('video', frame)
                 numFrame += 1
                 if numFrame in setKey or numFrame-lastFrame >= intervalNum:
-                    newPath = svPath+'/' + ("{:0>"+str(numWidth)+"d}").format(numFrame) + ".jpg"
+                    str=("{:0>"+str(numWidth)+"d}").format(numFrame) + ".jpg"
+                    newPath = svPath+'/' + str
+                    outNames.write(str+"\n")
                     cv2.imencode('.jpg', frame)[1].tofile(newPath)
                     lastFrame=numFrame
+    outNames.close()
 
 def main():
     parser = argparse.ArgumentParser()
@@ -74,12 +80,12 @@ def main():
     #使用部分抽帧
     parser.add_argument('--key_txt', default = None )#关键帧记录txt#内格式形如 16:frame,I
     parser.add_argument('--interval_num', default = 1 )#间隔多少帧必有一帧
+    parser.add_argument('--names_outtxt', default='names.txt')  # 抽帧文件名输出，只输出文件名
     opt = parser.parse_args()
-    filePath='dmt'
     if opt.key_txt ==None:
         getFrame(opt.from_file, opt.to_path, opt.num_width)
     else:
-        getFrame2(opt.from_file, opt.to_path, opt.num_width,opt.key_txt,opt.interval_num)
+        getFrame2(opt.from_file, opt.to_path, opt.num_width,opt.key_txt,opt.interval_num,opt.names_outtxt)
 
 main()
 # keys=readKey('C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\tesxt.txt')
