@@ -34,7 +34,7 @@ public class TestController {
     @ResponseBody//返回字符串，而不是字符串对应名字的jsp
     @RequestMapping("test")
     public String hello(){
-        return "hello word!:"+ ParameterConfiguration.fileRoot+ParameterConfiguration.FilePath.uploadSave;
+        return "hello word!:"+ ParameterConfiguration.fileRoot+ParameterConfiguration.Tools.rootPath;
     }
     @ResponseBody
     @RequestMapping("/testImg1")

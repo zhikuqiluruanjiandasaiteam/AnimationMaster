@@ -1,5 +1,6 @@
 package com.example.demo.util;
 
+import com.example.demo.config.ParameterConfiguration;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -27,7 +28,7 @@ public class AudioProcessing {
             strPitch=""+relPitch;
         }
         if(os.toLowerCase().startsWith("win")){
-            String str=getWebRootAbsolutePath()+"static/tools/soundstretch.exe";
+            String str= ParameterConfiguration.Tools.rootPath +File.separator+"soundstretch.exe";
             strShell=str+" "+infile+" "+outfile+" -pitch="+strPitch;
         }else{
             strShell="soundstretch "+infile+" "+outfile+" -pitch="+strPitch;
@@ -47,7 +48,7 @@ public class AudioProcessing {
      * @return
      */
     public static int file2Wav(String fromType, String fromFile, String toType, String toFile){
-        String str=getWebRootAbsolutePath()+"static/tools/video2wav.py";
+        String str=ParameterConfiguration.Tools.rootPath +File.separator+"video2wav.py";
         String strShell="python "+str+" --from_type "+fromType+" --from_file "+fromFile
                 +" --to_type "+toType+" --to_file "+toFile;
         int re=-1;

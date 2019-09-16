@@ -16,10 +16,14 @@ public class ParameterConfiguration {
     public static String fileRoot;
 
     // 静态变量不能直接value,必须先建立一个对象
-    //todo：不知原因，但经测试，FilePath.root静态变量不会先于这个创建（如果先于就会null/Ad...,如果出错，可能这里有问题）
+    //todo：不知原因，但经测试，FilePath.root静态变量不会先于这个创建（如果先于就会null/Ad...；目前没问题，如果出错，可能这里有问题）
     @Value( "${fileRoot}" )
     public void setDriver(String fileRoot) {
         this.fileRoot= fileRoot;
+    }
+    @Value( "${toolsRoot}" )
+    public void setDriver2(String toolsRoot) {
+        Tools.rootPath= toolsRoot;
     }
 
     public static final int[] clarity= {720,480,360,240};
@@ -45,7 +49,6 @@ public class ParameterConfiguration {
             return map;
         }
     }
-
     /**文件储存位置
      */
     public static class FilePath{
@@ -67,4 +70,9 @@ public class ParameterConfiguration {
             }
         }
     }
+
+    public static class Tools{
+        public static String rootPath;
+    }
+
 }

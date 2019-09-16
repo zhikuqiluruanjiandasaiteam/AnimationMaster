@@ -507,7 +507,7 @@ public class TaskService {
     }
 
     public static Map<String,Object> getPatchFrameInfo(){
-        String filePath=AudioProcessing.getWebRootAbsolutePath()+"static/tools/PatchFrameInfo.json";
+        String filePath=ParameterConfiguration.Tools.rootPath +File.separator+"PatchFrameInfo.json";
         Map map=null;
         try {
             map=new HashMap(  );
@@ -540,7 +540,7 @@ public class TaskService {
     }
 
     private void setPatchFrameInfo(Map<String,Object> map){
-        String filePath=AudioProcessing.getWebRootAbsolutePath()+"static/tools/PatchFrameInfo.json";
+        String filePath=ParameterConfiguration.Tools.rootPath +File.separator+"PatchFrameInfo.json";
         try {
             Writer writer = new FileWriter(filePath);
             BufferedWriter bw = new BufferedWriter(writer);

@@ -36,6 +36,9 @@ ExecShellSinglePic: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/processSinglePic.
 
 #文件存储根目录
 fileRoot: /home/ubuntu/web
+#工具储存根目录
+toolsRoot: /home/ubuntu/web/tools
+
 
 
 ##风格类型对应实际风格决定参数值

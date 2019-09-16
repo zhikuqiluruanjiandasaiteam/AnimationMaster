@@ -1,5 +1,6 @@
 package com.example.demo.util;
 
+import com.example.demo.config.ParameterConfiguration;
 import it.sauronsoftware.jave.Encoder;
 import it.sauronsoftware.jave.VideoInfo;
 import it.sauronsoftware.jave.MultimediaInfo;
@@ -17,7 +18,7 @@ public class VideoProcessing {
      * @return 运行结果状态码
      */
     public static int video2Images(String videoFile, String toPath, int numWidth){
-        String toolStr= getWebRootAbsolutePath()+"static/tools/video2images.py";
+        String toolStr= ParameterConfiguration.Tools.rootPath +File.separator+"video2images.py";
         String strShell="python "+toolStr+" --from_file "+videoFile+" --to_path "+toPath
                 +" --num_width "+numWidth;
         int re=-1;
@@ -50,7 +51,7 @@ public class VideoProcessing {
      */
     public static int images2Video(String imagesPath,String prefix,int numWidth,
                                    String suffix,String toFile,String referenceVideo){
-        String toolStr= getWebRootAbsolutePath()+"static/tools/images2video.py";
+        String toolStr= ParameterConfiguration.Tools.rootPath +File.separator+"images2video.py";
         String strShell="python "+toolStr+" --image_path "+imagesPath
                 +" --num_width "+numWidth
                 +" --suffix "+suffix
@@ -78,7 +79,7 @@ public class VideoProcessing {
         String strFfmprg="ffmpeg";
         String os = System.getProperty("os.name");//判断操作系统
         if(os.toLowerCase().startsWith("win")){
-            strFfmprg=getWebRootAbsolutePath()+"static/tools/ffmpeg.exe";
+            strFfmprg=ParameterConfiguration.Tools.rootPath +File.separator+"ffmpeg.exe";
         }
         return    runExec(strFfmprg+" -i"+"  "+videoFile+"  -i "+ wavFile+" -c:v copy -c:a aac -strict experimental  "+toFile);
 
