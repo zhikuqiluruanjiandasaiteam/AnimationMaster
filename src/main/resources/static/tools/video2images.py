@@ -16,7 +16,7 @@ def readKey(keyTxt):
             key.add(i)
             line=f.readline()
     return key
-
+#不补帧，全拆
 def getFrame(videoPath, svPath,numWidth):
     cap = cv2.VideoCapture(videoPath)
     fps = cap.get(cv2.CAP_PROP_FPS)#帧率
@@ -36,8 +36,9 @@ def getFrame(videoPath, svPath,numWidth):
                 newPath = svPath+'/' + ("{:0>"+str(numWidth)+"d}").format(numFrame) + ".jpg"
                 cv2.imencode('.jpg', frame)[1].tofile(newPath)
 
-
-def getFrame2(videoPath, svPath,numWidth,setKey,intervalNum):
+#补帧，拆转场帧，//todo:暂时没有转场判断，拆关键帧，需传关键帧记录
+def getFrame2(videoPath, svPath,numWidth,keyTxt,intervalNum):
+    setKey=keys=readKey(keyTxt)
     setKey.add(1)
     cap = cv2.VideoCapture(videoPath)
     sumFrame=0
@@ -75,10 +76,13 @@ def main():
     parser.add_argument('--interval_num', default = 1 )#间隔多少帧必有一帧
     opt = parser.parse_args()
     filePath='dmt'
-    getFrame(opt.from_file,opt.to_path,opt.num_width)
+    if opt.key_txt ==None:
+        getFrame(opt.from_file, opt.to_path, opt.num_width)
+    else:
+        getFrame2(opt.from_file, opt.to_path, opt.num_width,opt.key_txt,opt.interval_num)
     
-# main()
-keys=readKey('C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\tesxt.txt')
-getFrame2('C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx.mp4', 'C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx',
-          7,keys,5)
+main()
+# keys=readKey('C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\tesxt.txt')
+# getFrame2('C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx.mp4', 'C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx',
+#           7,'C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\tesxt.txt',5)
 print('finsh')

@@ -12,7 +12,6 @@ import java.util.HashMap;
 @Service
 public class ParameterConfiguration {
 
-
     public static String fileRoot;
 
     // 静态变量不能直接value,必须先建立一个对象
