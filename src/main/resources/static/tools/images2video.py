@@ -30,7 +30,8 @@ def images2video(im_dir,prefix,num_width,suffix,to_file,reference_video):
     else:
         img_size = (1280,720)#视频与图片不符，可能无法生成
     #print(img_size)
-    fourcc = cv2.VideoWriter_fourcc('A', 'V', 'C', '1')#mp4格式
+    #fourcc = cv2.VideoWriter_fourcc('A', 'V', 'C', '1')#mp4格式###linux不支持
+    fourcc = cv2.VideoWriter_fourcc('H', '2', '6', '4')#mp4格式
     video_writer = cv2.VideoWriter(to_file, fourcc, fps, img_size)
 
     for i in range(1,num+1):
