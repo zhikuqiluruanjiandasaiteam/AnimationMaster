@@ -6,6 +6,7 @@ import os
 import os.path
 import ctypes
 import shutil
+import time
 from shutil import rmtree, move
 from PIL import Image
 import torch
@@ -63,10 +64,11 @@ def main():
 
     # Create extraction folder and extract frames
     IS_WINDOWS = 'Windows' == platform.system()
-    extractionDir = "tmpSuperSloMo"
+    extractionDir = "tmpPy"+str(int(round(time.time()) * 1000))#防止多个同时运行目录相同
     if not IS_WINDOWS:
         # Assuming UNIX-like system where "." indicates hidden directories
         extractionDir = "." + extractionDir
+    extractionDir=os.path.join(args.out_path,extractionDir)
     if os.path.isdir(extractionDir):
         rmtree(extractionDir)
     os.mkdir(extractionDir)
@@ -81,8 +83,8 @@ def main():
     os.mkdir(extractionPath)
     # os.mkdir(outputPath)
 
-    shutil.copy(args.imageS,os.path.join(extractionPath, '{}/%06d.jpg'.format(1)))
-    shutil.copy(args.imageE, os.path.join(extractionPath, '{}/%06d.jpg'.format(2)))
+    shutil.copy(args.imageS,os.path.join(extractionPath, '{:06d}.jpg'.format(1)))
+    shutil.copy(args.imageE, os.path.join(extractionPath, '{:06d}.jpg'.format(2)))
 
     # error = extract_frames(args.video, extractionPath)
     # if error:
@@ -180,7 +182,7 @@ def main():
                 # Save intermediate frame
                 for batchIndex in range(args.batch_size):
                     (TP(Ft_p[batchIndex].cpu().detach())).resize(videoFrames.origDim, Image.BILINEAR).save(
-                        os.path.join(outputPath, ('{}{:'+args.num_width+'d}{}').format(args.prefix,(frameCounter + args.sf * batchIndex),args.suffix)))
+                        os.path.join(outputPath, ('{}{:0'+str(args.num_width)+'d}{}').format(args.prefix,(frameCounter + args.sf * batchIndex),args.suffix)))
                 frameCounter += 1
 
             # Set counter accounting for batching of frames

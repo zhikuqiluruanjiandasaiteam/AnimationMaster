@@ -294,7 +294,8 @@ public class TaskService {
                     e.printStackTrace();
                 }
                 if(outNames.size()>1){
-                    PatchFrameUtil patchFrameUtil=new PatchFrameUtil( "",numWidth,".jpg" );
+                    PatchFrameUtil patchFrameUtil=new PatchFrameUtil( "",numWidth,".jpg" ,
+                            intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo);
                     int len=outNames.size();
                     for(int i=1;i<len;i++){
                         String name=outNames.get( i );
@@ -322,7 +323,7 @@ public class TaskService {
                     patchFrameUtil.close();
                 }
                 VideoProcessing.images2Video( intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
-                        "",numWidth,"",intermediatePath+fileFrontName+".mp4",
+                        "",numWidth,".jpg",intermediatePath+fileFrontName+".mp4",
                         ParameterConfiguration.FilePath.uploadSave+File.separator+fileName );
                 imsEstimatedTime=(System.nanoTime()-time1)/1000;
             }else{
@@ -336,7 +337,7 @@ public class TaskService {
                     e.printStackTrace();
                 }
                 VideoProcessing.images2Video( intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
-                        "",numWidth,"_"+imsParameterValues,intermediatePath+fileFrontName+".mp4",
+                        "",numWidth,"_"+imsParameterValues+".jpg",intermediatePath+fileFrontName+".mp4",
                         ParameterConfiguration.FilePath.uploadSave+File.separator+fileName );
                 imsEstimatedTime=(System.nanoTime()-time1)/1000;
             }

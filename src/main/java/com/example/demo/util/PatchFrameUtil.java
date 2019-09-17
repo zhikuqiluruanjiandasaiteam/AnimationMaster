@@ -13,6 +13,7 @@ public class PatchFrameUtil {
     private String prefix;
     private int numWidth;
     private String suffix;
+    private String outPath;
 
     private boolean canAdd =true;
     private boolean over=false;
@@ -20,10 +21,11 @@ public class PatchFrameUtil {
     //补帧模型路径，与主文件同级
     private String model="checkpoint/SuperSloMo.ckpt";
 
-    public PatchFrameUtil(String prefix,int numWidth,String suffix){
+    public PatchFrameUtil(String prefix,int numWidth,String suffix,String outPath){
         this.prefix=prefix;
         this.numWidth=numWidth;
         this.suffix=suffix;
+        this.outPath=outPath;
         queue = new LinkedList<PfImage>();
     }
 
@@ -70,7 +72,7 @@ public class PatchFrameUtil {
         //python video_to_slomo.py --imageS s.jpg --imageE e.jpg --sf 8 --checkpoint ../download/SuperSloMo.ckpt --out_path ../download/output
         //--prefix   --num_width  6 --num_start 1  --suffix .jpg
         String strShell="python "+toolStr+" --imageS "+pfImage.startImage+" --imageE "+pfImage.endImage
-                +" --sf " +(pfImage.pfNumber+1) +" --checkpoint "+model
+                +" --sf " +(pfImage.pfNumber+1) +" --checkpoint "+model +" --out_path "+outPath
                 +" --num_width "+numWidth+" --num_start "+pfImage.numStart+" --suffix "+suffix;
         if(prefix!=null&&!prefix.equals( "" )){
             strShell+=" --prefix "+prefix;
