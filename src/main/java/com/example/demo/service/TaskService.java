@@ -325,7 +325,6 @@ public class TaskService {
                         "",numWidth,"",intermediatePath+fileFrontName+".mp4",
                         ParameterConfiguration.FilePath.uploadSave+File.separator+fileName );
                 imsEstimatedTime=(System.nanoTime()-time1)/1000;
-                return false;
             }else{
                 long time1=System.nanoTime();
                 try {

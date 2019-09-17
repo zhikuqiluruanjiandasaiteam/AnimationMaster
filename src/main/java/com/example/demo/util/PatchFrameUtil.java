@@ -17,8 +17,8 @@ public class PatchFrameUtil {
     private boolean canAdd =true;
     private boolean over=false;
 
-    //补帧模型//todo:有待删除，模型将封死在补帧项目中
-    private String model="/home/ubuntu/download/SuperSloMo.ckpt";
+    //补帧模型路径，与主文件同级
+    private String model="checkpoint/SuperSloMo.ckpt";
 
     public PatchFrameUtil(String prefix,int numWidth,String suffix){
         this.prefix=prefix;
