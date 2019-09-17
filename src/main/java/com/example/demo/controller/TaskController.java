@@ -51,7 +51,7 @@ public class TaskController {
                       @RequestParam(value ="clarity", required = false) Integer clarity,
                       @RequestParam(value ="type", required = true) String type,
                       @RequestParam(value ="estimate_time", required = true)Integer estimateTime,
-                      @RequestParam(value ="is_frame_speed", required = false)Integer isFrameSpeed)
+                      @RequestParam(value ="is_frame_speed", required = false,defaultValue = "0")Boolean isFrameSpeed)
             throws Exception {
         HashMap<String,Object> re=new HashMap<>(  );
         re.put("data","");
@@ -85,14 +85,14 @@ public class TaskController {
             return re;
         }
         Task task=taskService.createTask( userId, saveFiles.getFileId(), imsId, ausId, clarity, estimateTime,
-                isFrameSpeed==1, type);
+                isFrameSpeed, type);
         if(task==null){
             re.put("error_code",3);
             re.put("error_msg","任务创建失败");
             return re;
         }
         //开启任务
-        taskService.startTask( saveFiles.getStoreName(),task);
+        //taskService.startTask( saveFiles.getStoreName(),task);
 
         re.put("error_code",0);
         re.put("error_msg","");
