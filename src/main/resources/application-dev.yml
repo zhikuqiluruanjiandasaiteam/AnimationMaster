@@ -38,7 +38,7 @@ ExecShellSinglePic: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/processSinglePic.
 fileRoot: /home/ubuntu/web
 #工具储存根目录
 toolsRoot: /home/ubuntu/web/tools
-#补帧工程目录
+#补帧工程目录,主执行文件patch_frame.py的父目录
 pfRoot: /home/ubuntu/web/Super-SloMo-changing
 
 

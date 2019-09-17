@@ -278,18 +278,19 @@ public class TaskService {
                     ausEstimatedTime =(System.currentTimeMillis()-ausStartTime)*1000;
                 }
             }.start();
-            //todo:处理视频
+            //todo:调试
             if(task.getIsFrameSpeed()){
                 long time1=System.nanoTime();
                 patchFrameNone=0;
                 patchFrameTime=0;
                 if(outNames==null)
                     return false;
+                Connection connection=imgProcessing.Login();
                 try {
-                    imgProcessing.ProcessSinglePic(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
+                    imgProcessing.ProcessSinglePicOnceConn(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
                                     +File.separator+outNames.get( 0 ),
                             intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
-                            outNames.get( 0 ),imsParameterValues,task.getClarity() );//todo:有待改为登陆分离版
+                            outNames.get( 0 ),imsParameterValues,task.getClarity() ,connection);//todo:有待改为登陆分离版
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -297,31 +298,37 @@ public class TaskService {
                     PatchFrameUtil patchFrameUtil=new PatchFrameUtil( "",numWidth,".jpg" ,
                             intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo);
                     int len=outNames.size();
+                    boolean isRuning=false;
                     for(int i=1;i<len;i++){
                         String name=outNames.get( i );
                         try {
-                            imgProcessing.ProcessSinglePic(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
+                            imgProcessing.ProcessSinglePicOnceConn(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
                                             +File.separator+name,
                                     intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
-                                    name,imsParameterValues,task.getClarity() );//todo:有待改为登陆分离版
+                                    name,imsParameterValues,task.getClarity(),connection );//todo:有待改为登陆分离版
                         }catch (Exception e){
                             e.printStackTrace();
                         }
                         int startNum=Integer.parseInt(outNames.get( i-1 ).split( "." )[0]);
                         int endNum=Integer.parseInt(name.split( "." )[0]);
-
+                        startNum+=1;
+                        if(endNum-startNum<1){
+                            continue;
+                        }
                         long timepf=System.nanoTime();
-                        patchFrameUtil.add(startNum+1,endNum-startNum,
+                        patchFrameUtil.add(startNum,endNum-startNum,
                                 intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo+File.separator+outNames.get( i-1 ),
                                 intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo+name);
-                        if(i==1){
+                        if(!isRuning){
                             patchFrameUtil.run();
+                            isRuning=true;
                         }
                         patchFrameNone+=endNum-startNum;
                         patchFrameTime+=(System.nanoTime()-timepf)/1000;
                     }
                     patchFrameUtil.close();
                 }
+                imgProcessing.closeConnect( connection );
                 VideoProcessing.images2Video( intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
                         "",numWidth,".jpg",intermediatePath+fileFrontName+".mp4",
                         ParameterConfiguration.FilePath.uploadSave+File.separator+fileName );

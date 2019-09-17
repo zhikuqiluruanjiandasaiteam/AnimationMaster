@@ -79,7 +79,7 @@ def main():
 
     extractionPath = os.path.join(extractionDir, "input")
     # outputPath = os.path.join(extractionDir, "output")
-    outputPath=args.out_path
+    outputPath=str(args.out_path)
     os.mkdir(extractionPath)
     # os.mkdir(outputPath)
 
@@ -133,7 +133,7 @@ def main():
     flowComp.load_state_dict(dict1['state_dictFC'])
 
     # Interpolate frames
-    frameCounter = args.num_start
+    frameCounter = int(args.num_start)#默认为字符串
 
     with torch.no_grad():
         for _, (frame0, frame1) in enumerate(tqdm(videoFramesloader), 0):
