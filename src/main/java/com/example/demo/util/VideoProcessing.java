@@ -48,8 +48,9 @@ public class VideoProcessing {
         System.out.println( re );
         if(re!=0)
             return null;
-
+//        to//do:测试临时换掉
         String toolStr= ParameterConfiguration.Tools.rootPath +File.separator+"video2images.py";
+//        String toolStr="E:\\Workbench\\IDEA\\动漫大师\\tools临时存放\\tools\\"+"video2images.py";
         String strShell="python "+toolStr+" --from_file "+videoFile+" --to_path "+toPath
                 +" --num_width "+numWidth+" --key_txt "+kfTxt+" --interval_num "+intervalNum
                 +" --names_outtxt "+namesTxt;
@@ -63,7 +64,7 @@ public class VideoProcessing {
         File file = new File(namesTxt);
         BufferedReader reader = null;
         try {
-            System.out.println("以行为单位读取文件内容，一次读一整行：");
+
             reader = new BufferedReader(new FileReader(file));
             String tempString = null;
             // 一次读入一行，直到读入null为文件结束
@@ -206,7 +207,7 @@ public class VideoProcessing {
                 +video;//+" | grep -n I >  "+outTxt
         System.out.println( shell );
 
-        //！！！不能执行AudioProcessing.runExec(shell)，会截获输出流，导致无法自动输出到文件
+        //！！！不能执行AudioProcessing.runExec(shell)，linux中会截获输出流，导致无法自动输出到文件
         try{
             final Process process = Runtime.getRuntime().exec(shell);//生成一个新的进程去运行调用的程序
             printMessage2File( process.getInputStream(),outTxt );
@@ -228,20 +229,16 @@ public class VideoProcessing {
                     while((line=bf.readLine())!=null) {
                         line=line.trim();//删除两端空白字符
                         String[] strs=line.split( "," );
-                        if(strs.length==2&&strs[0].equals( "frame" )&&strs[1].equals( "I" )){
+                        if(strs.length==2&&strs[0].equals( "frame" )){
                             i++;
-                            out.append( i ).append( ":" ).append( line ).append( "\n" );
-                            System.out.println("out<<>>>>"+ out );///////////
+                            if(strs[1].equals( "I" ))
+                                out.append( i ).append( ":" ).append( line ).append( "\n" );
                         }
-                        System.out.println(line);
+//                        System.out.println(line);
                     }
-                    File file =new File(outTxt);
-                    if(!file.exists()){
-                        file.createNewFile();
-                    }
-                    FileWriter fileWritter = new FileWriter(file.getName());
+                    FileWriter fileWritter = new FileWriter(outTxt);
                     BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
-                    bufferWritter.write( out.toString() );
+                    bufferWritter.write( String.valueOf( out ) );
                     bufferWritter.close();
                     System.out.println("Finish");
                 } catch (IOException e) {
@@ -252,8 +249,12 @@ public class VideoProcessing {
     }
 
 //    public static void main(String[] args){
-//        int re=findKeyFrame("C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx.mp4",
-//                "C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\txtx.txt");
+//        video2ImagesPf("C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx.mp4",
+//                "C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\newx",6,
+//                "C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\newx");
+//
+////        int re=findKeyFrame("C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx.mp4",
+////                "C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\txtx.txt");
 //
 //    }
 

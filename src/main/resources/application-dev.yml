@@ -30,7 +30,7 @@ server:
 DLServerIP: 127.0.0.1
 DLServerUserName: ubuntu
 DLServerPassword: 123456
-DLServerSecretKey: /home/ubuntu/miyao1.pem
+DLServerSecretKey: /home/ubuntu/web/lpem.pem
 ExecShellSingleDir: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/processSingleDir.sh
 ExecShellSinglePic: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/processSinglePic.sh
 
