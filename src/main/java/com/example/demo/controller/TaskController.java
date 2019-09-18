@@ -92,7 +92,7 @@ public class TaskController {
             return re;
         }
         //开启任务
-        //taskService.startTask( saveFiles.getStoreName(),task);
+        taskService.startTask( saveFiles.getStoreName(),task);
 
         re.put("error_code",0);
         re.put("error_msg","");
@@ -136,7 +136,6 @@ public class TaskController {
     @RequestMapping("/inform")
     public void inform(Integer taskId,String fileName){
         System.out.println(taskId+"----------"+fileName);
-
     }
 
 }

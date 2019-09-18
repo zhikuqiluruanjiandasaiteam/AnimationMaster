@@ -222,7 +222,7 @@ public class TaskService {
     }
 
     //todo:未完
-    private boolean runVideo(String fileName,Task task){
+    private boolean runVideo(String fileName,Task task) {
         //创建文件夹
         String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
         String intermediatePath=ParameterConfiguration.FilePath.intermediateSave+File.separator+fileFrontName;
@@ -238,16 +238,10 @@ public class TaskService {
             long wtime=(System.nanoTime()-time1)/1000;
             imsEstimatedTime=ausEstimatedTime=wtime;
         }else if(imsParameterValues==null){//原画非原声
-            splitVideoAudio( fileName, false);
-            new Thread(  ) {//线程中处理图像
-                @Override
-                public void run() {
-                    super.run();
-                    long imsStartTime =System.currentTimeMillis();
-                    splitVideoImage( fileName, true ,false);
-                    imsEstimatedTime =(System.currentTimeMillis()-imsStartTime)*1000;
-                }
-            }.start();
+            splitVideoAudio( fileName, false);//拆音频
+            long imsStartTime =System.currentTimeMillis();
+            splitVideoImage( fileName, true ,false);//拆图片，不能和拆音频同时，会强占文件
+            imsEstimatedTime =(System.currentTimeMillis()-imsStartTime)*1000;
             //转音频
             long time1=System.nanoTime();
             String fromFile=intermediatePath+ParameterConfiguration.FilePath.vidoe_audio
@@ -258,17 +252,19 @@ public class TaskService {
             ausEstimatedTime+=(System.nanoTime()-time1)/1000;
 
         }else{//非原画
-            splitVideoImage(fileName,false ,task.getIsFrameSpeed());
             String finalIntermediatePath = intermediatePath;
+            long ausStartTime =System.currentTimeMillis();
+            if(ausParameterValues==null){
+                splitVideoAudio( fileName,true );//拆音频，不能和拆图片同时，会强占文件
+            }else {
+                splitVideoAudio( fileName, false );
+            }
+            splitVideoImage(fileName,false ,task.getIsFrameSpeed());//拆图片
             new Thread(  ) {//线程中处理音频
                 @Override
                 public void run() {
                     super.run();
-                    long ausStartTime =System.currentTimeMillis();
-                    if(ausParameterValues==null){
-                        splitVideoAudio( fileName,true );
-                    }else{
-                        splitVideoAudio( fileName,false );
+                    if(ausParameterValues!=null){
                         //转化音频
                         AudioProcessing.changePitch( finalIntermediatePath +ParameterConfiguration.FilePath.vidoe_audio+
                                         File.separator+fileFrontName+".wav",
@@ -415,9 +411,8 @@ public class TaskService {
                 "wav",intermedPath+fileFrontName+".wav");
         if(state!=0)
             return false;
-        //改变音调
 
-        // ausId需要用ausId.toString,不用int不会自动转化string，只会返回null
+        //改变音调// ausId需要用ausId.toString,不用int不会自动转化string，只会返回null
         state=AudioProcessing.changePitch(intermedPath+fileFrontName+".wav",
                 intermedPath+fileFrontName+"_out.wav",
                 Integer.parseInt( parameterValues ));
@@ -573,15 +568,15 @@ public class TaskService {
             map=new HashMap(  );
             File file = new File(filePath);
             String jsonString = FileUtils.readFileToString(file);
-            System.out.println(jsonString);//////////////////
+//            System.out.println(jsonString);//////////////////
             jsonString=jsonString.replaceAll("[\\t\\n\\r{}\" ]","" );
-            System.out.println( "替换后1：\n"+jsonString );///////////////////////
+//            System.out.println( "替换后1：\n"+jsonString );///////////////////////
 //            jsonString=jsonString.replace( "}","" );
 //            System.out.println( "替换后2：\n"+jsonString );///////////////////////
 //            jsonString=jsonString.replace( " ","" );
 //            System.out.println( "替换后3：\n"+jsonString );///////////////////////
             jsonString=jsonString.replace( ",",":" );
-            System.out.println( "替换后4：\n"+jsonString );///////////////////////
+//            System.out.println( "替换后4：\n"+jsonString );///////////////////////
 //            jsonString=jsonString.replace( "\n","" );
 //            System.out.println( "替换后5：\n"+jsonString );///////////////////////
 //            jsonString=jsonString.replace( "\"","" );

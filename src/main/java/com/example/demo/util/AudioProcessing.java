@@ -51,13 +51,14 @@ public class AudioProcessing {
         String str=ParameterConfiguration.Tools.rootPath +File.separator+"video2wav.py";
         String strShell="python "+str+" --from_type "+fromType+" --from_file "+fromFile
                 +" --to_type "+toType+" --to_file "+toFile;
+        //python video2wav.py --from_type mp3 --from_file mp.mp3 --to_type wav --to_file wmp.wav
         int re=-1;
         System.out.println(strShell);
         re = runExec(strShell);
         return re;
     }
 
-    //运行命令并等待命令执行完
+    //运行命令并等待命令执行完//！！！注意，这里会截获输出流，如果shell有要处理输出信息的部分，不能调用该方法
     public static int runExec(String shell) {
         try{
             final Process process = Runtime.getRuntime().exec(shell);//生成一个新的进程去运行调用的程序

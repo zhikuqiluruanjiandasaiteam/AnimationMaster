@@ -6,6 +6,7 @@ def vidoe2wav(fromType,fromFilePath,toType,toFileName):
     video = AudioSegment.from_file(fromFilePath, format=fromType)
     file_handle = video.export(toFileName, format=toType)
 
+
 #合成音频和视频文件
 def video_add_wav(wavFilePath,videoPath):
     print('ffmpeg -i '+videoPath+' -i '+wavFilePath+' x'+videoPath)

@@ -5,6 +5,7 @@ import it.sauronsoftware.jave.Encoder;
 import it.sauronsoftware.jave.VideoInfo;
 import it.sauronsoftware.jave.MultimediaInfo;
 import java.io.*;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,13 +44,16 @@ public class VideoProcessing {
     public static List<String> video2ImagesPf(String videoFile, String toPath, int numWidth,String intermediatePath){
         String kfTxt=intermediatePath+File.separator+"keyFrameNum.txt";
         String namesTxt=intermediatePath+File.separator+"namesTxt.txt";
-        findKeyFrame(videoFile,kfTxt);
+        int re=findKeyFrame(videoFile,kfTxt);
+        System.out.println( re );
+        if(re!=0)
+            return null;
 
         String toolStr= ParameterConfiguration.Tools.rootPath +File.separator+"video2images.py";
         String strShell="python "+toolStr+" --from_file "+videoFile+" --to_path "+toPath
                 +" --num_width "+numWidth+" --key_txt "+kfTxt+" --interval_num "+intervalNum
                 +" --names_outtxt "+namesTxt;
-        int re=-1;
+        re=-1;
         System.out.println(strShell);
         re = AudioProcessing.runExec(strShell);
         if(re!=0)
@@ -62,12 +66,11 @@ public class VideoProcessing {
             System.out.println("以行为单位读取文件内容，一次读一整行：");
             reader = new BufferedReader(new FileReader(file));
             String tempString = null;
-            int line = 1;
             // 一次读入一行，直到读入null为文件结束
             while ((tempString = reader.readLine()) != null) {
-                // 显示行号
+                if(tempString.trim().equals( "" ))
+                    continue;
                 names.add(tempString);
-                line++;
             }
             reader.close();
         } catch (IOException e) {
@@ -137,8 +140,7 @@ public class VideoProcessing {
         if(os.toLowerCase().startsWith("win")){
             strFfmprg=ParameterConfiguration.Tools.rootPath +File.separator+"ffmpeg.exe";
         }
-        return    runExec(strFfmprg+" -i"+"  "+videoFile+"  -i "+ wavFile+" -c:v copy -c:a aac -strict experimental  "+toFile);
-
+        return AudioProcessing.runExec(strFfmprg+" -i"+"  "+videoFile+"  -i "+ wavFile+" -c:v copy -c:a aac -strict experimental  "+toFile);
     }
 
     /**
@@ -200,10 +202,53 @@ public class VideoProcessing {
     private static int findKeyFrame(String video,String outTxt){
         //ffprobe -select_streams v -show_frames -show_entries frame=pict_type -of csv test.mp4 | grep -n I >> tesxt.txt
         String strff="ffprobe";//windows系统先安装ffmpeg，再配置环境变量
-        String shell=strff+" -select_streams v -show_frames -show_entries frame=pict_type -of csv "+
-                video+" | grep -n I >  "+outTxt;
+        String shell=strff+" -select_streams v -show_frames -show_entries frame=pict_type -of csv "
+                +video;//+" | grep -n I >  "+outTxt
         System.out.println( shell );
-        return AudioProcessing.runExec(shell);
+
+        //！！！不能执行AudioProcessing.runExec(shell)，会截获输出流，导致无法自动输出到文件
+        try{
+            final Process process = Runtime.getRuntime().exec(shell);//生成一个新的进程去运行调用的程序
+            printMessage2File( process.getInputStream(),outTxt );
+            return process.waitFor();//得到进程运行结束后的返回状态，如果进程未运行完毕则等待知道执行完毕
+        }catch (Exception e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
+    private static void printMessage2File(final InputStream input,String outTxt) {
+        new Thread(new Runnable() {
+            public void run() {
+                Reader reader = new InputStreamReader(input);
+                BufferedReader bf = new BufferedReader(reader);
+                String line = null;
+                try {
+                    StringBuilder out= new StringBuilder();
+                    int i=0;
+                    while((line=bf.readLine())!=null) {
+                        line=line.trim();//删除两端空白字符
+                        String[] strs=line.split( "," );
+                        if(strs.length==2&&strs[0].equals( "frame" )&&strs[1].equals( "I" )){
+                            i++;
+                            out.append( i ).append( ":" ).append( line ).append( "\n" );
+                            System.out.println("out<<>>>>"+ out );///////////
+                        }
+                        System.out.println(line);
+                    }
+                    File file =new File(outTxt);
+                    if(!file.exists()){
+                        file.createNewFile();
+                    }
+                    FileWriter fileWritter = new FileWriter(file.getName());
+                    BufferedWriter bufferWritter = new BufferedWriter(fileWritter);
+                    bufferWritter.write( out.toString() );
+                    bufferWritter.close();
+                    System.out.println("Finish");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }).start();
     }
 
 //    public static void main(String[] args){

@@ -40,7 +40,7 @@ def getFrame(videoPath, svPath,numWidth):
 
 #补帧，拆转场帧，#todo: 暂时没有转场判断，拆关键帧，需传关键帧记录
 def getFrame2(videoPath, svPath,numWidth,keyTxt,intervalNum,namesOutTxt):
-    setKey=keys=readKey(keyTxt)
+    setKey=readKey(keyTxt)
     setKey.add(1)
     outNames = open(namesOutTxt, 'w')#输出帧名到文件
     cap = cv2.VideoCapture(videoPath)
@@ -55,7 +55,7 @@ def getFrame2(videoPath, svPath,numWidth,keyTxt,intervalNum,namesOutTxt):
     if not isExists:
         os.makedirs(svPath)
     numFrame = 0
-    lastFrame = 1#必须等于这个数，确保第一帧必有
+    lastFrame = 1
     while cap.grab():#捕获下一帧，成功返回真
             flag, frame = cap.retrieve()
             if not flag:
@@ -64,9 +64,9 @@ def getFrame2(videoPath, svPath,numWidth,keyTxt,intervalNum,namesOutTxt):
                 #cv2.imshow('video', frame)
                 numFrame += 1
                 if numFrame in setKey or numFrame-lastFrame >= intervalNum:
-                    str=("{:0>"+str(numWidth)+"d}").format(numFrame) + ".jpg"
-                    newPath = svPath+'/' + str
-                    outNames.write(str+"\n")
+                    str0=("{:0>"+str(numWidth)+"d}").format(numFrame) + ".jpg"
+                    newPath = svPath+'/' + str0
+                    outNames.write(str0+"\n")
                     cv2.imencode('.jpg', frame)[1].tofile(newPath)
                     lastFrame=numFrame
     outNames.close()
