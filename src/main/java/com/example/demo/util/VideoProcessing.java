@@ -64,7 +64,6 @@ public class VideoProcessing {
         File file = new File(namesTxt);
         BufferedReader reader = null;
         try {
-
             reader = new BufferedReader(new FileReader(file));
             String tempString = null;
             // 一次读入一行，直到读入null为文件结束
