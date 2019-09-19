@@ -27,6 +27,7 @@ public class ParameterConfiguration {
     @Value( "${pfRoot}" )
     public void setDriver3(String pfRoot) {
         Tools.pfRoot= pfRoot;
+        Tools.pfMainFile=pfRoot+File.separator+"patch_frame.py";
     }
 
     public static final int[] clarity= {720,480,360,240};
@@ -77,7 +78,7 @@ public class ParameterConfiguration {
     public static class Tools{
         public static String rootPath;
         private static String pfRoot;
-        public static String pfMainFile=pfRoot+File.separator+"patch_frame.py";
+        public static String pfMainFile;//不能在这里赋值，@Value注入后不会自动改变
     }
 
 }

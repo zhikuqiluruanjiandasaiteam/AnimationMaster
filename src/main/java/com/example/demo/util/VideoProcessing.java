@@ -10,13 +10,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import static com.example.demo.util.AudioProcessing.getWebRootAbsolutePath;
-
 public class VideoProcessing {
 
     //补帧时，间隔多少帧必有一帧
     private static int intervalNum=10;
-
 
     /**
      * 视频拆分图片（全部帧）
@@ -216,6 +213,7 @@ public class VideoProcessing {
             return -1;
         }
     }
+
     private static void printMessage2File(final InputStream input,String outTxt) {
         new Thread(new Runnable() {
             public void run() {
