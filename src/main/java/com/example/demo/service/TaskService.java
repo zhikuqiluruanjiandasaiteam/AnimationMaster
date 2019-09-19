@@ -287,6 +287,7 @@ public class TaskService {
                                     +File.separator+outNames.get( 0 ),
                             intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
                             outNames.get( 0 ),imsParameterValues,task.getClarity());
+                    patchFrameNone++;
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -306,10 +307,10 @@ public class TaskService {
                                             +File.separator+name,
                                     intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
                                     name,imsParameterValues,task.getClarity());
+                            patchFrameNone++;
                         }catch (Exception e){
                             e.printStackTrace();
                         }
-
                         int startNum=Integer.parseInt((outNames.get( i-1 ).split( "\\." ))[0]);
                         int endNum=Integer.parseInt(name.split( "\\." )[0]);//使用的是正则表达式不能只写.
                         startNum+=1;
@@ -324,7 +325,6 @@ public class TaskService {
                             patchFrameUtil.run();
                             isRuning=true;
                         }
-                        patchFrameNone+=endNum-startNum;
                         patchFrameTime+=(System.nanoTime()-timepf)/1000;
                     }
                     patchFrameUtil.close();
