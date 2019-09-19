@@ -13,7 +13,7 @@ import java.util.List;
 public class VideoProcessing {
 
     //补帧时，间隔多少帧必有一帧
-    private static int intervalNum=10;
+    private static int intervalNum=8;
 
     /**
      * 视频拆分图片（全部帧）
@@ -245,14 +245,5 @@ public class VideoProcessing {
         }).start();
     }
 
-//    public static void main(String[] args){
-//        video2ImagesPf("C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx.mp4",
-//                "C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\newx",6,
-//                "C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\newx");
-//
-////        int re=findKeyFrame("C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx.mp4",
-////                "C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\txtx.txt");
-//
-//    }
 
 }

@@ -88,7 +88,4 @@ def main():
         getFrame2(opt.from_file, opt.to_path, opt.num_width,opt.key_txt,int(opt.interval_num),opt.names_outtxt)
 
 main()
-# keys=readKey('C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\tesxt.txt')
-# getFrame2('C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx.mp4', 'C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx',
-#           7,'C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\tesxt.txt',5)
 print('finsh')

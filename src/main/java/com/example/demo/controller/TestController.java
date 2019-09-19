@@ -117,7 +117,6 @@ public class TestController {
     @RequestMapping("/testvideo")
     public String testvideo() throws Exception {
       return ""+VideoProcessing.videoAddAudio("/home/ubuntu/out_dmt.mp4","/home/ubuntu/dmt.wav","/home/ubuntu/output.mp4");
-
     }
 
 

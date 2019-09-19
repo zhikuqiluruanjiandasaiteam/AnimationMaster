@@ -165,9 +165,9 @@ public class TaskService {
                 if(task.getIsFrameSpeed()){
                     //更新补帧变量值
                     Map map=getPatchFrameInfo();
-                    int estimated_time=Integer.parseInt( (String) map.get("estimated_time"));
-                    int used_count=Integer.parseInt( (String) map.get("used_count"));
-                    float frame_patch_rate=Float.parseFloat( (String) map.get("frame_patch_rate"));
+                    int estimated_time=Integer.parseInt( map.get("estimated_time").toString());
+                    int used_count=Integer.parseInt( map.get("used_count").toString());
+                    float frame_patch_rate=Float.parseFloat( map.get("frame_patch_rate").toString());
                     averageTime=patchFrameTime/((long)videoInfo[0]*videoInfo[1]*(videoInfo[2]-patchFrameNone));
                     estimated_time=(int)((averageTime+estimated_time*used_count)/(used_count+1));
                     float fpr=(float)1.0*(videoInfo[2]-patchFrameNone)/videoInfo[2];
@@ -281,12 +281,12 @@ public class TaskService {
                 patchFrameTime=0;
                 if(outNames==null)
                     return false;
-                Connection connection=imgProcessing.Login();
+//                Connection connection=imgProcessing.Login();
                 try {
-                    imgProcessing.ProcessSinglePicOnceConn(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
+                    imgProcessing.ProcessSinglePic(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
                                     +File.separator+outNames.get( 0 ),
                             intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
-                            outNames.get( 0 ),imsParameterValues,task.getClarity() ,connection);//todo:有待改为登陆分离版
+                            outNames.get( 0 ),imsParameterValues,task.getClarity());
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -298,10 +298,14 @@ public class TaskService {
                     for(int i=1;i<len;i++){
                         String name=outNames.get( i );
                         try {
-                            imgProcessing.ProcessSinglePicOnceConn(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
+//                            imgProcessing.ProcessSinglePicOnceConn(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
+//                                            +File.separator+name,
+//                                    intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
+//                                    name,imsParameterValues,task.getClarity(),connection );
+                            imgProcessing.ProcessSinglePic(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
                                             +File.separator+name,
                                     intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
-                                    name,imsParameterValues,task.getClarity(),connection );//todo:有待改为登陆分离版
+                                    name,imsParameterValues,task.getClarity());
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -325,7 +329,7 @@ public class TaskService {
                     }
                     patchFrameUtil.close();
                 }
-                imgProcessing.closeConnect( connection );
+//                imgProcessing.closeConnect( connection );
                 VideoProcessing.images2Video( intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
                         "",numWidth,".jpg",intermediatePath+fileFrontName+".mp4",
                         ParameterConfiguration.FilePath.uploadSave+File.separator+fileName );
@@ -563,52 +567,48 @@ public class TaskService {
     }
 
     public static Map<String,Object> getPatchFrameInfo(){
+        //to//do:测试临时改
         String filePath=ParameterConfiguration.Tools.rootPath +File.separator+"PatchFrameInfo.json";
+//        String filePath="E:\\Workbench\\IDEA\\动漫大师\\AnimationMaster\\tools"+File.separator+"PatchFrameInfo.json";
         Map map=null;
         try {
             map=new HashMap(  );
             File file = new File(filePath);
             String jsonString = FileUtils.readFileToString(file);
-//            System.out.println(jsonString);//////////////////
             jsonString=jsonString.replaceAll("[\\t\\n\\r{}\" ]","" );
-//            System.out.println( "替换后1：\n"+jsonString );///////////////////////
-//            jsonString=jsonString.replace( "}","" );
-//            System.out.println( "替换后2：\n"+jsonString );///////////////////////
-//            jsonString=jsonString.replace( " ","" );
-//            System.out.println( "替换后3：\n"+jsonString );///////////////////////
             jsonString=jsonString.replace( ",",":" );
-//            System.out.println( "替换后4：\n"+jsonString );///////////////////////
-//            jsonString=jsonString.replace( "\n","" );
-//            System.out.println( "替换后5：\n"+jsonString );///////////////////////
-//            jsonString=jsonString.replace( "\"","" );
-//            System.out.println( "替换后6：\n"+jsonString );///////////////////////
             String[] strs=jsonString.split( ":" );
-            System.out.println( Arrays.toString( strs ) );///////////////////////
             map.put(strs[0],strs[1]);
             map.put(strs[2],strs[3]);
             map.put(strs[4],strs[5]);
         }catch (Exception e){
             e.printStackTrace();
+            map=new HashMap(  );
+            map.put("estimated_time",0);
+            map.put("used_count",0);
+            map.put("frame_patch_rate",0.0);
         }
         assert map != null;
-        System.out.println(map.toString());//////////////////
+//        System.out.println(map.toString());//////////////////
         return map;
     }
 
-    private void setPatchFrameInfo(Map<String,Object> map){
+    private static void  setPatchFrameInfo(Map<String,Object> map){
+        //to//do:测试临时改
         String filePath=ParameterConfiguration.Tools.rootPath +File.separator+"PatchFrameInfo.json";
+//        String filePath="E:\\Workbench\\IDEA\\动漫大师\\AnimationMaster\\tools"+File.separator+"PatchFrameInfo.json";
         try {
             Writer writer = new FileWriter(filePath);
             BufferedWriter bw = new BufferedWriter(writer);
-            String jsonStr="{";
+            StringBuilder jsonStr= new StringBuilder( "{" );
             Set set = map.keySet();
-            for(Iterator iter = set.iterator(); iter.hasNext();) {
-                String key = (String)iter.next();
-                String value = (String)map.get(key);
-                jsonStr+=key+":"+value+",";
+            for (Object o : set) {
+                String key = (String) o;
+                String value = map.get( key ).toString();
+                jsonStr.append( key ).append( ":" ).append( value ).append( "," );
             }
-            jsonStr+="}";
-            bw.write(jsonStr);
+            jsonStr.append( "}" );
+            bw.write( jsonStr.toString() );
             // 注意这两个关闭的顺序
             bw.close();
             writer.close();
@@ -623,7 +623,12 @@ public class TaskService {
 //        System.out.print( b );
 //    }
 //    public static void main(String[] s){
-//        test(null,null);
+//        Map map=getPatchFrameInfo();
+//        System.out.println(map.toString());///////
+//        map.put("used_count",1);
+//        map.put("frame_patch_rate",1.2);
+//        map.put("estimated_time",101021);
+//        setPatchFrameInfo(map);
 //    }
 
 }
