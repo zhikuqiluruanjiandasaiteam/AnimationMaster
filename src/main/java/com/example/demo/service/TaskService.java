@@ -219,6 +219,8 @@ public class TaskService {
      */
     private void initialRecord(Task task){
         task.setStartTime( new Date(  ) );
+        task.setFinishTime( null );
+        taskMapper.updateByPrimaryKey( task );
     }
 
     //todo:未完
