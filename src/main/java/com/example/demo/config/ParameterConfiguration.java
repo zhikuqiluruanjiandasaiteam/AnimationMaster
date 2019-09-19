@@ -77,7 +77,7 @@ public class ParameterConfiguration {
 
     public static class Tools{
         public static String rootPath;
-        private static String pfRoot;
+        public static String pfRoot;
         public static String pfMainFile;//不能在这里赋值，@Value注入后不会自动改变
     }
 

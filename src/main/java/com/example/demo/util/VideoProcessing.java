@@ -47,7 +47,7 @@ public class VideoProcessing {
             return null;
 //        to//do:测试临时换掉
         String toolStr= ParameterConfiguration.Tools.rootPath +File.separator+"video2images.py";
-//        String toolStr="E:\\Workbench\\IDEA\\动漫大师\\tools临时存放\\tools\\"+"video2images.py";
+//        String toolStr="E:\\Workbench\\IDEA\\动漫大师\\AnimationMaster\\tools\\"+"video2images.py";
         String strShell="python "+toolStr+" --from_file "+videoFile+" --to_path "+toPath
                 +" --num_width "+numWidth+" --key_txt "+kfTxt+" --interval_num "+intervalNum
                 +" --names_outtxt "+namesTxt;

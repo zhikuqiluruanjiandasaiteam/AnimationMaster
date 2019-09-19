@@ -315,7 +315,7 @@ public class TaskService {
                         long timepf=System.nanoTime();
                         patchFrameUtil.add(startNum,endNum-startNum,
                                 intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo+File.separator+outNames.get( i-1 ),
-                                intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo+name);
+                                intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo+File.separator+name);
                         if(!isRuning){
                             patchFrameUtil.run();
                             isRuning=true;

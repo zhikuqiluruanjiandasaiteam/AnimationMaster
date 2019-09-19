@@ -18,8 +18,9 @@ public class PatchFrameUtil {
     private boolean canAdd =true;
     private boolean over=false;
 
-    //补帧模型路径，与主文件同级
-    private String model="checkpoint/SuperSloMo.ckpt";
+    //补帧模型路径，与主文件同级//?但调用位置不同，可能不能用相对路径
+    private String model=ParameterConfiguration.Tools.pfRoot+ File.separator
+            +"checkpoint"+File.separator+"SuperSloMo.ckpt";
 
     public PatchFrameUtil(String prefix,int numWidth,String suffix,String outPath){
         this.prefix=prefix;
