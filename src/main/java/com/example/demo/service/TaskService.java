@@ -154,6 +154,10 @@ public class TaskService {
                         +File.separator+fileName );
                 //音频
                 AudioStyle audioStyle0 = audioStyleMapper.selectByPrimaryKey( task.getAusId() );
+                if(audioStyle0.getAusUsedCount()==null||audioStyle0.getAusEstimatedTime()==null){
+                    audioStyle0.setAusUsedCount( 0 );
+                    audioStyle0.setAusEstimatedTime( 0 );
+                }
                 long averageTime=ausEstimatedTime/videoInfo[3];//平均耗时
                 int nowet0 = (audioStyle0.getAusUsedCount() * audioStyle0.getAusEstimatedTime() + (int)averageTime) /
                         (audioStyle0.getAusUsedCount() + 1);
@@ -162,6 +166,10 @@ public class TaskService {
                 audioStyleMapper.updateByPrimaryKey( audioStyle0 );
                 //图像
                 ImageStyle imageStyle0=imageStyleMapper.selectByPrimaryKey( task.getImsId() );
+                if(imageStyle0.getImsUsedCount()==null||imageStyle0.getImsEstimatedTime()==null){
+                    imageStyle0.setImsUsedCount( 0 );
+                    imageStyle0.setImsEstimatedTime( 0 );
+                }
                 if(task.getIsFrameSpeed()){
                     //更新补帧变量值
                     Map map=getPatchFrameInfo();
@@ -193,6 +201,10 @@ public class TaskService {
                 if(pixel==null)
                     break;
                 ImageStyle imageStyle=imageStyleMapper.selectByPrimaryKey( task.getImsId() );
+                if(imageStyle.getImsUsedCount()==null||imageStyle.getImsEstimatedTime()==null){
+                    imageStyle.setImsUsedCount( 0 );
+                    imageStyle.setImsEstimatedTime( 0 );
+                }
                 int estimatedTime1 = (int) (spendingTime / (pixel[0]*pixel[1]));
                 int nowet1 = (imageStyle.getImsUsedCount() * imageStyle.getImsEstimatedTime() + estimatedTime1) /
                         (imageStyle.getImsUsedCount() + 1);
@@ -204,6 +216,10 @@ public class TaskService {
                 int estimatedTime = (int) (spendingTime / getDuration( ParameterConfiguration.FilePath.uploadSave
                         + File.separator + fileName ));
                 AudioStyle audioStyle = audioStyleMapper.selectByPrimaryKey( task.getAusId() );
+                if(audioStyle.getAusUsedCount()==null||audioStyle.getAusEstimatedTime()==null){
+                    audioStyle.setAusUsedCount( 0 );
+                    audioStyle.setAusEstimatedTime( 0 );
+                }
                 int nowet = (audioStyle.getAusUsedCount() * audioStyle.getAusEstimatedTime() + estimatedTime) /
                         (audioStyle.getAusUsedCount() + 1);
                 audioStyle.setAusEstimatedTime( nowet );
@@ -212,6 +228,7 @@ public class TaskService {
                 break;
         }
         //todo:删除中间文件，节省储存空间
+
     }
 
     /**
@@ -223,7 +240,6 @@ public class TaskService {
         taskMapper.updateByPrimaryKey( task );
     }
 
-    //todo:未完
     private boolean runVideo(String fileName,Task task) {
         //创建文件夹
         String fileFrontName = fileName.substring(0,fileName.lastIndexOf('.'));
@@ -237,48 +253,46 @@ public class TaskService {
             long time1=System.nanoTime();
             copyFile(ParameterConfiguration.FilePath.uploadSave +File.separator+fileName+" "
                     ,ParameterConfiguration.FilePath.finalSave+File.separator+fileName);
-            long wtime=(System.nanoTime()-time1)/1000;
-            imsEstimatedTime=ausEstimatedTime=wtime;
+            imsEstimatedTime=ausEstimatedTime=(System.nanoTime()-time1)/1000;
         }else if(imsParameterValues==null){//原画非原声
-            splitVideoAudio( fileName, false);//拆音频
             long imsStartTime =System.currentTimeMillis();
             splitVideoImage( fileName, true ,false);//拆图片，不能和拆音频同时，会强占文件
             imsEstimatedTime =(System.currentTimeMillis()-imsStartTime)*1000;
             //转音频
             long time1=System.nanoTime();
+            splitVideoAudio( fileName, false);//拆音频
             String fromFile=intermediatePath+ParameterConfiguration.FilePath.vidoe_audio
                     +File.separator+fileFrontName+".wav";
             AudioProcessing.changePitch( fromFile,
                     intermediatePath+fileFrontName+".wav",
                     Integer.parseInt( ausParameterValues ));
             ausEstimatedTime+=(System.nanoTime()-time1)/1000;
-
         }else{//非原画
             String finalIntermediatePath = intermediatePath;
+            //处理音频
             long ausStartTime =System.currentTimeMillis();
             if(ausParameterValues==null){
                 splitVideoAudio( fileName,true );//拆音频，不能和拆图片同时，会强占文件
+                ausEstimatedTime =(System.currentTimeMillis()-ausStartTime)*1000;
             }else {
                 splitVideoAudio( fileName, false );
-            }
-            splitVideoImage(fileName,false ,task.getIsFrameSpeed());//拆图片
-            new Thread(  ) {//线程中处理音频
-                @Override
-                public void run() {
-                    super.run();
-                    if(ausParameterValues!=null){
+                new Thread(  ) {//线程中处理音频
+                    @Override
+                    public void run() {
+                        super.run();
                         //转化音频
                         AudioProcessing.changePitch( finalIntermediatePath +ParameterConfiguration.FilePath.vidoe_audio+
                                         File.separator+fileFrontName+".wav",
                                 finalIntermediatePath +fileFrontName+".wav",
                                 Integer.parseInt( ausParameterValues ));
+                        ausEstimatedTime =(System.currentTimeMillis()-ausStartTime)*1000;
                     }
-                    ausEstimatedTime =(System.currentTimeMillis()-ausStartTime)*1000;
-                }
-            }.start();
-            //todo:调试
+                }.start();
+            }
+            splitVideoImage(fileName,false ,task.getIsFrameSpeed());//拆图片
+            //处理视频
+            long time1=System.nanoTime();
             if(task.getIsFrameSpeed()){
-                long time1=System.nanoTime();
                 patchFrameNone=0;
                 patchFrameTime=0;
                 if(outNames==null)
@@ -341,9 +355,8 @@ public class TaskService {
                 VideoProcessing.images2Video( intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
                         "",numWidth,".jpg",intermediatePath+fileFrontName+".mp4",
                         ParameterConfiguration.FilePath.uploadSave+File.separator+fileName );
-                imsEstimatedTime=(System.nanoTime()-time1)/1000;
+
             }else{
-                long time1=System.nanoTime();
                 try {
                     imgProcessing.ProcessSingleDir(
                             intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm,
@@ -355,8 +368,8 @@ public class TaskService {
                 VideoProcessing.images2Video( intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
                         "",numWidth,"_"+imsParameterValues+".jpg",intermediatePath+fileFrontName+".mp4",
                         ParameterConfiguration.FilePath.uploadSave+File.separator+fileName );
-                imsEstimatedTime=(System.nanoTime()-time1)/1000;
             }
+            imsEstimatedTime=(System.nanoTime()-time1)/1000;
         }
         //合并视频音频
 

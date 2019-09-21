@@ -35,7 +35,6 @@ public class ImgProcessing {
     @Value("${ExecShellSinglePic}")
     private String ExecShellSinglePic;
 
-
     private String charset = Charset.defaultCharset().toString();
     private static final int TIME_OUT = 1000 * 5 * 60;
 
