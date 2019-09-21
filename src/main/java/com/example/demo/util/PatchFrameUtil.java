@@ -18,6 +18,8 @@ public class PatchFrameUtil {
     private boolean canAdd =true;
     private boolean over=false;
 
+    private int state=0;
+
     //补帧模型路径，与主文件同级//?但调用位置不同，可能不能用相对路径
     private String model=ParameterConfiguration.Tools.pfRoot+ File.separator
             +"checkpoint"+File.separator+"SuperSloMo.ckpt";
@@ -45,7 +47,11 @@ public class PatchFrameUtil {
                         continue;
                     }
                     PfImage pfImage=queue.poll();//返回第一个元素，并在队列中删除
-                    patchFrame(pfImage);
+                    int re=patchFrame(pfImage);
+                    if(re!=0){
+                        state=-1;
+                        return;
+                    }
                 }
                 over=true;
             }
@@ -56,7 +62,7 @@ public class PatchFrameUtil {
         queue.offer(new PfImage( numStart,pfNumber,startImage,endImage));
     }
 
-    public void close(){
+    public int close(){
         canAdd=false;
         while(!over) {
             try {
@@ -66,6 +72,7 @@ public class PatchFrameUtil {
                 break;
             }
         }
+        return state;
     }
 
     private int patchFrame(PfImage pfImage){

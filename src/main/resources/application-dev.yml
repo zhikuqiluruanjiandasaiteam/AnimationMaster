@@ -1,5 +1,6 @@
 spring:
   datasource:
+    ##todo:改数据库用户，只附一个库的权限
     url: jdbc:mysql://cdb-nj2smsfc.bj.tencentcdb.com:10001/animationmaster?characterEncoding=utf-8&serverTimezone=GMT%2b8
     username: root
     password: train_60321
@@ -16,6 +17,7 @@ mybatis:
   type-aliases-package: com.example.demo.entity
   mapper-locations: classpath:mybatis/mapper/*.xml
 server:
+  ##todo:改端口
   port: 8080
   tomcat:
       uri-encoding: UTF-8

@@ -285,11 +285,13 @@ public class TaskService {
                     return false;
 //                Connection connection=imgProcessing.Login();
                 try {
-                    imgProcessing.ProcessSinglePic(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
+                    int re=imgProcessing.ProcessSinglePic(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
                                     +File.separator+outNames.get( 0 ),
                             intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
                             outNames.get( 0 ),imsParameterValues,task.getClarity());
                     patchFrameNone++;
+                    if(re!=0)
+                        return false;
                 }catch (Exception e){
                     e.printStackTrace();
                 }
@@ -305,11 +307,13 @@ public class TaskService {
 //                                            +File.separator+name,
 //                                    intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
 //                                    name,imsParameterValues,task.getClarity(),connection );
-                            imgProcessing.ProcessSinglePic(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
+                            int re=imgProcessing.ProcessSinglePic(intermediatePath+ParameterConfiguration.FilePath.video_ImagesForm
                                             +File.separator+name,
                                     intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
                                     name,imsParameterValues,task.getClarity());
                             patchFrameNone++;
+                            if(re!=0)
+                                return false;
                         }catch (Exception e){
                             e.printStackTrace();
                         }
@@ -329,7 +333,9 @@ public class TaskService {
                         }
                         patchFrameTime+=(System.nanoTime()-timepf)/1000;
                     }
-                    patchFrameUtil.close();
+                    int re=patchFrameUtil.close();
+                    if(re!=0)
+                        return false;
                 }
 //                imgProcessing.closeConnect( connection );
                 VideoProcessing.images2Video( intermediatePath+ParameterConfiguration.FilePath.vidoe_ImagesTo,
