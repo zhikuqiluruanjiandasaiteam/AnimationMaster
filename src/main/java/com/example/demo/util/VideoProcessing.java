@@ -167,33 +167,13 @@ public class VideoProcessing {
         return info;
     }
 
-    public static int runExec(String shell) {
-        try{
-            final Process process = Runtime.getRuntime().exec(shell);//生成一个新的进程去运行调用的程序
-            printMessage(process.getInputStream());
-            printMessage(process.getErrorStream());
-            return process.waitFor();//得到进程运行结束后的返回状态，如果进程未运行完毕则等待知道执行完毕
-        }catch (Exception e){
-            e.printStackTrace();
-            return -1;
-        }
-    }
-
-    private static void printMessage(final InputStream input) {
-        new Thread(new Runnable() {
-            public void run() {
-                Reader reader = new InputStreamReader(input);
-                BufferedReader bf = new BufferedReader(reader);
-                String line = null;
-                try {
-                    while((line=bf.readLine())!=null) {
-                        System.out.println(line);
-                    }
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }).start();
+    public static int getFirstImage(String videoFile, String toFile){
+        String toolStr= ParameterConfiguration.Tools.rootPath +File.separator+"video2images.py";
+        String strShell="python "+toolStr+" --from_file "+videoFile+" --frist_to "+toFile;
+        int re=-1;
+        System.out.println(strShell);
+        re = AudioProcessing.runExec(strShell);
+        return re;
     }
 
     private static int findKeyFrame(String video,String outTxt){
@@ -244,5 +224,6 @@ public class VideoProcessing {
             }
         }).start();
     }
+
 
 }

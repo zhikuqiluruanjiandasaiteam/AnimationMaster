@@ -9,6 +9,7 @@ import com.example.demo.entity.AudioStyle;
 import com.example.demo.entity.ImageStyle;
 import com.example.demo.entity.Task;
 import com.example.demo.util.AudioProcessing;
+import com.example.demo.util.ImgProcessing;
 import com.example.demo.util.PatchFrameUtil;
 import com.example.demo.util.VideoProcessing;
 import it.sauronsoftware.jave.Encoder;

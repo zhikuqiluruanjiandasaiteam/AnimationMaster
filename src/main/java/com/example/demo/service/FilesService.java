@@ -3,6 +3,8 @@ package com.example.demo.service;
 import com.example.demo.config.ParameterConfiguration;
 import com.example.demo.dao.FilesMapper;
 import com.example.demo.entity.Files;
+import com.example.demo.util.AudioProcessing;
+import com.example.demo.util.VideoProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,13 +58,36 @@ public class FilesService {
             return null;
         String filename = file.getOriginalFilename();
         //检查文件类型是否合法
+        assert filename != null;
         if(!checkFile(type,filename))
             return null;
         String suffix = filename.substring(filename.lastIndexOf('.')+1);
-        saveName=getUniqueStr()+"."+suffix;
-        String path=ParameterConfiguration.FilePath.uploadSave +File.separator+saveName;
-        //上传
-        file.transferTo(new File(path));
+        if(type.equals( ParameterConfiguration.Type.image )&&suffix.equals( "mp4" )) {//MP4转图片//目前只判断MP4
+            String tempstr=getUniqueStr();
+            saveName=tempstr+"_org"+"."+suffix;
+            String orgPath=ParameterConfiguration.FilePath.uploadSave +File.separator+saveName;
+            //上传
+            file.transferTo(new File(orgPath));
+            //提取第一张图
+            saveName=tempstr+".jpg";
+            String toPath=ParameterConfiguration.FilePath.uploadSave +File.separator+saveName;
+            VideoProcessing.getFirstImage( orgPath,toPath );
+        }else if(type.equals( ParameterConfiguration.Type.audio )&&suffix.equals( "mp4" )){
+            String tempstr=getUniqueStr();
+            saveName=tempstr+"_org"+"."+suffix;
+            String orgPath=ParameterConfiguration.FilePath.uploadSave +File.separator+saveName;
+            //上传
+            file.transferTo(new File(orgPath));
+            //提取音频
+            saveName=tempstr+".mp3";
+            String path=ParameterConfiguration.FilePath.uploadSave +File.separator+saveName;
+            AudioProcessing.file2Wav( "mp4",orgPath,"mp3",path);
+        }else{
+            saveName=getUniqueStr()+"."+suffix;
+            String path=ParameterConfiguration.FilePath.uploadSave +File.separator+saveName;
+            //上传
+            file.transferTo(new File(path));
+        }
 
         return saveName;
     }

@@ -3,16 +3,12 @@ package com.example.demo.controller;
 import ch.ethz.ssh2.Connection;
 import com.example.demo.config.ParameterConfiguration;
 import com.example.demo.dao.UserMapper;
-import com.example.demo.entity.User;
-import com.example.demo.service.ImgProcessing;
+import com.example.demo.util.ImgProcessing;
 import com.example.demo.util.VideoProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import javax.annotation.Resource;
 
 //@Controller
 

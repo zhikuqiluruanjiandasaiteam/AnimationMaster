@@ -71,6 +71,17 @@ def getFrame2(videoPath, svPath,numWidth,keyTxt,intervalNum,namesOutTxt):
                     lastFrame=numFrame
     outNames.close()
 
+#只提取第一张图
+def getFrame3(videoPath, svFile):
+    cap = cv2.VideoCapture(videoPath)
+    while cap.grab():  # 捕获下一帧，成功返回真
+        flag, frame = cap.retrieve()
+        if not flag:
+            break
+        else:
+            cv2.imencode('.jpg', frame)[1].tofile(svFile)
+            break
+
 def main():
     parser = argparse.ArgumentParser()
     #parser.add_argument('--gpu', type=int, default = 0)
@@ -81,11 +92,15 @@ def main():
     parser.add_argument('--key_txt', default = None )#关键帧记录txt#内格式形如 16:frame,I
     parser.add_argument('--interval_num', default = 1 )#间隔多少帧必有一帧
     parser.add_argument('--names_outtxt', default='names.txt')  # 抽帧文件名输出，只输出文件名
+    #只拆第一张图
+    parser.add_argument('--frist_to', default=None)
     opt = parser.parse_args()
-    if opt.key_txt ==None:
-        getFrame(opt.from_file, opt.to_path, opt.num_width)
+    if opt.key_txt !=None:
+        getFrame2(opt.from_file, opt.to_path, opt.num_width, opt.key_txt, int(opt.interval_num), opt.names_outtxt)
+    elif opt.frist_to!=None:
+        getFrame3(opt.from_file, opt.frist_to)
     else:
-        getFrame2(opt.from_file, opt.to_path, opt.num_width,opt.key_txt,int(opt.interval_num),opt.names_outtxt)
+        getFrame(opt.from_file, opt.to_path, opt.num_width)
 
 main()
 print('finsh')

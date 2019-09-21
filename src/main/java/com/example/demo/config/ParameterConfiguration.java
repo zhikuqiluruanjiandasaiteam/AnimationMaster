@@ -40,8 +40,8 @@ public class ParameterConfiguration {
         public static final String audio="audio";
 
         private static String[] file_video={"mp4"};
-        private static String[] file_image={"jpg","png","svg","gif"};
-        private static String[] file_audio={"mp3"};
+        private static String[] file_image={"jpg","png","mp4","svg","gif"};
+        private static String[] file_audio={"mp3","mp4"};
         //必须写在上面file_xxx下面，比如键对应的值会得到null
         public static final HashMap<String,String[]> fileName = getFileName();
 

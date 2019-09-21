@@ -1,4 +1,4 @@
-package com.example.demo.service;
+package com.example.demo.util;
 
 
 import ch.ethz.ssh2.ChannelCondition;
