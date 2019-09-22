@@ -18,6 +18,7 @@
   <resultMap id="ExtResultMap" extends="BaseResultMap" type="com.example.demo.entity.TaskExt">
       <result column="ims_name" jdbcType="VARCHAR" property="imsName" />
       <result column="aus_name" jdbcType="VARCHAR" property="ausName" />
+      <result column="origin_name" jdbcType="VARCHAR" property="fileName" />
   </resultMap>
   <sql id="Base_Column_List">
     task_id, user_id, file_id, ims_id, aus_id, clarity, is_frame_speed, create_time, 
@@ -49,8 +50,8 @@
   </select>
   <select id="selectsExtByUserId" resultMap="ExtResultMap">
       select task.task_id,task.user_id,task.file_id,task.task_type,task.ims_id,task.aus_id,task.clarity,task.is_frame_speed,
-      task.estimate_time,task.create_time,task.start_time,task.finish_time,image_style.ims_name,audio_style.aus_name
-      from task NATURAL LEFT JOIN image_style NATURAL LEFT JOIN  audio_style
+      task.estimate_time,task.create_time,task.start_time,task.finish_time,image_style.ims_name,audio_style.aus_name,files.origin_name
+      from task NATURAL LEFT JOIN image_style NATURAL LEFT JOIN  audio_style NATURAL JOIN files
       where user_id = #{userId,jdbcType=INTEGER}
         <if test="isAll == false">
             and finish_time is
@@ -63,7 +64,7 @@
         <if test="isDesc == true">
             desc
         </if>
-    </select>
+  </select>
 <!---->
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from task

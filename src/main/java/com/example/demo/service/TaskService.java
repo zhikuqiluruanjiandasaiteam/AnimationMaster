@@ -97,6 +97,7 @@ public class TaskService {
             map.put("create_time",taskExt.getCreateTime());
             map.put("ims_name",taskExt.getImsName());
             map.put("aus_name",taskExt.getAusName());
+            map.put("file_name",taskExt.getFileName());
             maps[i++]=map;
         }
 

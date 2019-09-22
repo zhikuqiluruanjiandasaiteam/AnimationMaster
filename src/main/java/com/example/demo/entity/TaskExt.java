@@ -3,6 +3,7 @@ package com.example.demo.entity;
 public class TaskExt extends Task {
     private String imsName;
     private String ausName;
+    private String fileName;
 
     public String getImsName() {
         return imsName;
@@ -19,4 +20,13 @@ public class TaskExt extends Task {
     public void setAusName(String ausName) {
         this.ausName = ausName;
     }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+    
 }

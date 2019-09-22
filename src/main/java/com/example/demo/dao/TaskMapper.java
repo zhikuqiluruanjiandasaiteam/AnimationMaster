@@ -27,6 +27,7 @@ public interface TaskMapper {
                                @Param( "isDesc" ) boolean isDesc,
                                @Param( "isAll" ) boolean isAll,
                                @Param( "isFinish" ) boolean isFinish);
+
     List<TaskExt> selectsExtByUserId(@Param( "userId" ) Integer userId,
                                      @Param( "isDesc" ) boolean isDesc,
                                      @Param( "isAll" ) boolean isAll,
