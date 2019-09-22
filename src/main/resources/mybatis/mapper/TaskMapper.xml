@@ -15,6 +15,10 @@
     <result column="finish_time" jdbcType="TIMESTAMP" property="finishTime" />
     <result column="task_type" jdbcType="CHAR" property="taskType" />
   </resultMap>
+  <resultMap id="ExtResultMap" extends="BaseResultMap" type="com.example.demo.entity.TaskExt">
+      <result column="ims_name" jdbcType="VARCHAR" property="imsName" />
+      <result column="aus_name" jdbcType="VARCHAR" property="ausName" />
+  </resultMap>
   <sql id="Base_Column_List">
     task_id, user_id, file_id, ims_id, aus_id, clarity, is_frame_speed, create_time, 
     estimate_time, start_time, finish_time, task_type
@@ -25,8 +29,8 @@
     from task
     where task_id = #{taskId,jdbcType=INTEGER}
   </select>
-
-  <select id="selectsByUserId" parameterType="java.lang.Integer" resultMap="BaseResultMap">
+<!---->
+  <select id="selectsByUserId" resultMap="BaseResultMap">
     select
     <include refid="Base_Column_List" />
     from task
@@ -43,7 +47,24 @@
       desc
     </if>
   </select>
-
+  <select id="selectsExtByUserId" resultMap="ExtResultMap">
+      select task.task_id,task.user_id,task.file_id,task.task_type,task.ims_id,task.aus_id,task.clarity,task.is_frame_speed,
+      task.estimate_time,task.create_time,task.start_time,task.finish_time,image_style.ims_name,audio_style.aus_name
+      from task NATURAL LEFT JOIN image_style NATURAL LEFT JOIN  audio_style
+      where user_id = #{userId,jdbcType=INTEGER}
+        <if test="isAll == false">
+            and finish_time is
+            <if test="isFinish == true">
+                not
+            </if>
+            null
+        </if>
+        order by create_time
+        <if test="isDesc == true">
+            desc
+        </if>
+    </select>
+<!---->
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     delete from task
     where task_id = #{taskId,jdbcType=INTEGER}

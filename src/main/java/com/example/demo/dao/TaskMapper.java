@@ -1,6 +1,7 @@
 package com.example.demo.dao;
 
 import com.example.demo.entity.Task;
+import com.example.demo.entity.TaskExt;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Component;
 
@@ -26,4 +27,8 @@ public interface TaskMapper {
                                @Param( "isDesc" ) boolean isDesc,
                                @Param( "isAll" ) boolean isAll,
                                @Param( "isFinish" ) boolean isFinish);
+    List<TaskExt> selectsExtByUserId(@Param( "userId" ) Integer userId,
+                                     @Param( "isDesc" ) boolean isDesc,
+                                     @Param( "isAll" ) boolean isAll,
+                                     @Param( "isFinish" ) boolean isFinish);
 }

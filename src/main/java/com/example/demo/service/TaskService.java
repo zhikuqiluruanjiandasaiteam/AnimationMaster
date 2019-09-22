@@ -8,6 +8,7 @@ import com.example.demo.dao.TaskMapper;
 import com.example.demo.entity.AudioStyle;
 import com.example.demo.entity.ImageStyle;
 import com.example.demo.entity.Task;
+import com.example.demo.entity.TaskExt;
 import com.example.demo.util.AudioProcessing;
 import com.example.demo.util.ImgProcessing;
 import com.example.demo.util.PatchFrameUtil;
@@ -78,22 +79,24 @@ public class TaskService {
      * @return 任务列表
      */
     public Map[] getList(int userId,boolean isDesc,boolean isAll,boolean isFinish){
-        List<Task> list=taskMapper.selectsByUserId( userId ,isDesc,isAll,isFinish);
+        List<TaskExt> list=taskMapper.selectsExtByUserId( userId ,isDesc,isAll,isFinish);
         Map[] maps=new HashMap[list.size()];
         int i=0;
-        for (Task task : list) {
+        for (TaskExt taskExt : list) {
             Map<String,Object> map=new HashMap<>();
-            map.put("task_id",task.getTaskId());
-            map.put("task_type",task.getTaskType());
-            map.put("ims_id",task.getImsId());
-            map.put("aus_id",task.getAusId());
-            map.put("clarity",task.getClarity());
-            map.put("is_frame_speed",task.getIsFrameSpeed());
-            map.put("estimate_time",task.getEstimateTime());
-            map.put("file_id",task.getFileId());
-            map.put("start_time",task.getStartTime());
-            map.put("final_time",task.getFinishTime());
-            map.put("create_time",task.getCreateTime());
+            map.put("task_id",taskExt.getTaskId());
+            map.put("task_type",taskExt.getTaskType());
+            map.put("ims_id",taskExt.getImsId());
+            map.put("aus_id",taskExt.getAusId());
+            map.put("clarity",taskExt.getClarity());
+            map.put("is_frame_speed",taskExt.getIsFrameSpeed());
+            map.put("estimate_time",taskExt.getEstimateTime());
+            map.put("file_id",taskExt.getFileId());
+            map.put("start_time",taskExt.getStartTime());
+            map.put("final_time",taskExt.getFinishTime());
+            map.put("create_time",taskExt.getCreateTime());
+            map.put("ims_name",taskExt.getImsName());
+            map.put("aus_name",taskExt.getAusName());
             maps[i++]=map;
         }
 
