@@ -5,6 +5,7 @@ import com.example.demo.config.ParameterConfiguration;
 import com.example.demo.entity.Task;
 import com.example.demo.service.FilesService;
 import com.example.demo.service.TaskService;
+import com.example.demo.util.TaskQueue;
 import com.sun.org.apache.xerces.internal.util.SynchronizedSymbolTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.example.demo.entity.Files;
@@ -91,8 +92,10 @@ public class TaskController {
             re.put("error_msg","任务创建失败");
             return re;
         }
-        //开启任务
-        taskService.startTask( saveFiles.getStoreName(),task);
+        //开启任务//任务过多需要排队
+        TaskQueue.add(saveFiles.getStoreName(),task,taskService);
+        TaskQueue.run();
+//        taskService.startTask( saveFiles.getStoreName(),task);
 
         re.put("error_code",0);
         re.put("error_msg","");

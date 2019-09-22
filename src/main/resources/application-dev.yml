@@ -9,7 +9,6 @@ spring:
     multipart:
       max-file-size: 200MB
       max-request-size: 200MB
-
   jackson:
     time-zone: GMT+8  #配置返回给前端时区（默认伦敦时区）加：spring.jackson.time-zone:GMT+8
 #      location: /AnimationMasterData/upload
@@ -23,6 +22,8 @@ server:
       uri-encoding: UTF-8
   servlet:
       context-path: /
+
+  connection-timeout: 18000000  #连接超时时间，毫秒
 #logging:
 #  level:
 #    com.zhiku.*: debug

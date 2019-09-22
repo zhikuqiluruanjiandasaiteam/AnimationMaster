@@ -149,6 +149,8 @@ public class TaskService {
         //调整风格平均耗时//java中date精确到毫秒，mysql中只精确到秒，不能从数据库中查询后做差
         long spendingTime=task.getFinishTime().getTime()-task.getStartTime().getTime();
         spendingTime*=1000;//数据库中储存微秒级
+
+        Map<String,String> mapInfo=getPatchFrameInfo();
         switch (task.getTaskType()) {
             case ParameterConfiguration.Type.video:
                 int[] videoInfo=VideoProcessing.getVideoInfo( ParameterConfiguration.FilePath.finalSave
@@ -173,19 +175,19 @@ public class TaskService {
                 }
                 if(task.getIsFrameSpeed()){
                     //更新补帧变量值
-                    Map map=getPatchFrameInfo();
-                    int estimated_time=Integer.parseInt( map.get("estimated_time").toString());
-                    int used_count=Integer.parseInt( map.get("used_count").toString());
-                    float frame_patch_rate=Float.parseFloat( map.get("frame_patch_rate").toString());
+
+                    int estimated_time=Integer.parseInt( mapInfo.get("estimated_time").toString());
+                    int used_count=Integer.parseInt( mapInfo.get("used_count").toString());
+                    float frame_patch_rate=Float.parseFloat( mapInfo.get("frame_patch_rate").toString());
                     averageTime=patchFrameTime/((long)videoInfo[0]*videoInfo[1]*(videoInfo[2]-patchFrameNone));
                     estimated_time=(int)((averageTime+estimated_time*used_count)/(used_count+1));
                     float fpr=(float)1.0*(videoInfo[2]-patchFrameNone)/videoInfo[2];
                     frame_patch_rate=(fpr+frame_patch_rate*used_count)/(used_count+1);
                     used_count+=1;
-                    map.put("estimated_time",estimated_time);
-                    map.put("used_count",used_count);
-                    map.put("frame_patch_rate",frame_patch_rate);
-                    setPatchFrameInfo( map );
+                    mapInfo.put("estimated_time",""+estimated_time);
+                    mapInfo.put("used_count",""+used_count);
+                    mapInfo.put("frame_patch_rate",""+frame_patch_rate);
+
 
                     averageTime=((imsEstimatedTime-patchFrameTime)/((long)videoInfo[0]*videoInfo[1]*patchFrameNone));
                 }else{
@@ -228,8 +230,13 @@ public class TaskService {
                 audioStyleMapper.updateByPrimaryKey( audioStyle );
                 break;
         }
+        int taskNum=Integer.parseInt( mapInfo.get("task_num"));
+        taskNum--;
+        if(taskNum<0)
+            taskNum=0;
+        mapInfo.put("task_num",""+taskNum);
+        setPatchFrameInfo( mapInfo );
         //todo:删除中间文件，节省储存空间
-
     }
 
     /**
@@ -588,34 +595,34 @@ public class TaskService {
         AudioProcessing.file2Wav( fileSuffix,ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,"wav",toFile);
     }
 
-    public static Map<String,Object> getPatchFrameInfo(){
+    public static Map<String,String> getPatchFrameInfo(){
         //to//do:测试临时改
         String filePath=ParameterConfiguration.Tools.rootPath +File.separator+"PatchFrameInfo.json";
 //        String filePath="E:\\Workbench\\IDEA\\动漫大师\\AnimationMaster\\tools"+File.separator+"PatchFrameInfo.json";
-        Map map=null;
+        Map<String,String> map=null;
         try {
-            map=new HashMap(  );
+            map=new HashMap<String,String>(  );
             File file = new File(filePath);
             String jsonString = FileUtils.readFileToString(file);
             jsonString=jsonString.replaceAll("[\\t\\n\\r{}\" ]","" );
             jsonString=jsonString.replace( ",",":" );
             String[] strs=jsonString.split( ":" );
-            map.put(strs[0],strs[1]);
-            map.put(strs[2],strs[3]);
-            map.put(strs[4],strs[5]);
+            for(int i=1;i<strs.length;i+=2){
+                map.put(strs[i-1],strs[i]);
+            }
         }catch (Exception e){
             e.printStackTrace();
-            map=new HashMap(  );
-            map.put("estimated_time",0);
-            map.put("used_count",0);
-            map.put("frame_patch_rate",0.0);
+            map=new HashMap<String,String>(  );
+            map.put("estimated_time",""+0);
+            map.put("used_count",""+0);
+            map.put("frame_patch_rate",""+0);
+            map.put("task_num",""+0);
         }
-        assert map != null;
 //        System.out.println(map.toString());//////////////////
         return map;
     }
 
-    private static void  setPatchFrameInfo(Map<String,Object> map){
+    public static void  setPatchFrameInfo(Map<String,String> map){
         //to//do:测试临时改
         String filePath=ParameterConfiguration.Tools.rootPath +File.separator+"PatchFrameInfo.json";
 //        String filePath="E:\\Workbench\\IDEA\\动漫大师\\AnimationMaster\\tools"+File.separator+"PatchFrameInfo.json";
