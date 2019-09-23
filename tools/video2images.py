@@ -1,6 +1,10 @@
 import cv2
 import os
 import argparse
+import subprocess
+import json
+import numpy as np
+import copy
 
 def readKey(keyTxt):
     key=set()
@@ -18,8 +22,33 @@ def readKey(keyTxt):
 
         f.close()
     return key
+
+#暂时无法获取视频的rotate属性，只能通过宽<高判断竖屏
+def isVertical(filename,toPath):
+    toFile=os.path.join(toPath,'tem.jpg')
+    shell="ffmpeg -i "+filename+" -y -f image2 -ss 1.0 -t 0.001 "+toFile #ffmpeg可获得高宽比例正确的图片，但不能按帧率拆视频
+    print(shell)
+    os.system(shell)
+    # img =  cv2.imread(toFile)#!!无法读取中文路径
+    img = cv2.imdecode(np.fromfile(toFile, dtype=np.uint8),-1)
+    os.remove(toFile)
+    return (img.shape[1]<img.shape[0])#宽，高
+
+#顺时针旋转矩阵90度
+# def reate90(frame):
+#     wl=len(frame[0])
+#     hl=len(frame)
+#     #for i in range(hl):
+#         #print(len(frame[i]))
+#     nframe=[0 for i in range(wl)]
+#     for i in range(wl):
+#         f=frame[:,i]
+#         nframe[i]=f
+#     return nframe
+
 #不补帧，全拆
 def getFrame(videoPath, svPath,numWidth):
+    isV = isVertical(videoPath, getPath(svPath))
     cap = cv2.VideoCapture(videoPath)
     fps = cap.get(cv2.CAP_PROP_FPS)#帧率
     print(fps)
@@ -34,12 +63,14 @@ def getFrame(videoPath, svPath,numWidth):
             else:
                 #cv2.imshow('video', frame)
                 numFrame += 1
-                
                 newPath =  os.path.join(svPath,("{:0>"+str(numWidth)+"d}").format(numFrame) + ".jpg")
+                if (isV):
+                    frame = np.rot90(frame, -1)  # 矩阵顺时针旋转90度
                 cv2.imencode('.jpg', frame)[1].tofile(newPath)
 
 #补帧，拆转场帧，#todo: 暂时没有转场判断，拆关键帧，需传关键帧记录
 def getFrame2(videoPath, svPath,numWidth,keyTxt,intervalNum,namesOutTxt):
+    isV = isVertical(videoPath, getPath(svPath))
     setKey=readKey(keyTxt)
     setKey.add(1)
     outNames = open(namesOutTxt, 'w')#输出帧名到文件
@@ -67,19 +98,40 @@ def getFrame2(videoPath, svPath,numWidth,keyTxt,intervalNum,namesOutTxt):
                     str0=("{:0>"+str(numWidth)+"d}").format(numFrame) + ".jpg"
                     newPath = os.path.join(svPath, str0)
                     outNames.write(str0+"\n")
+                    if (isV):
+                        frame = np.rot90(frame, -1)  # 矩阵顺时针旋转90度
                     cv2.imencode('.jpg', frame)[1].tofile(newPath)
                     lastFrame=numFrame
     outNames.close()
+#从文件路径中得到文件存储目录路径
+def getPath(file):
+    last=-1
+    for index in range(len(file)):
+        if file[index]=='\\' or file[index]=='/':
+            last=index
+    if last==-1:
+        return ""
+    else:
+        print(file[0:last])
+        return file[0:last]
 
 #只提取第一张图
 def getFrame3(videoPath, svFile):
+    #data=getLength(videoPath)
+    #print(data)
+    isV=isVertical(videoPath,getPath(svFile))
     cap = cv2.VideoCapture(videoPath)
     while cap.grab():  # 捕获下一帧，成功返回真
+        
         flag, frame = cap.retrieve()
         if not flag:
             break
         else:
-            cv2.imencode('.jpg', frame)[1].tofile(svFile)
+            #frame=reate90(frame)
+            if(isV):
+                frame = np.rot90(frame, -1)  # 矩阵顺时针旋转90度
+            # print(len(frame[0]), ":", frame[0][0])
+            cv2.imencode('.jpg', frame)[1].tofile(svFile)#！不能传参数组，frame是什么类型不知
             break
 
 def main():
@@ -103,4 +155,5 @@ def main():
         getFrame(opt.from_file, opt.to_path, opt.num_width)
 
 main()
+# getFrame("C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\testx.mp4","C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\test3x",6)
 print('finsh')

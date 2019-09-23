@@ -13,7 +13,7 @@ import java.util.List;
 public class VideoProcessing {
 
     //补帧时，间隔多少帧必有一帧
-    private static int intervalNum=8;
+    private static int intervalNum=6;
 
     /**
      * 视频拆分图片（全部帧）
