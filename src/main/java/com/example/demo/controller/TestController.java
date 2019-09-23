@@ -21,11 +21,18 @@ public class TestController {
     @Autowired
     private ImgProcessing imgProcessing;
 
-
     @Autowired
     public TestController(UserMapper userMapper) {
         this.userMapper = userMapper;
     }
+
+//    @ResponseBody//长久运行，保障通知测试网站人员
+//    @RequestMapping("/")
+//    public String main(){
+//        return "<h2>【第十七届山东省大学生软件设计大赛作品-动漫大师】 欢迎您的使用!</h2><br/>" +
+//                "\n软件服务器太贵了╮(╯﹏╰）╭，非评审时只能关着，如果您为评审老师" +
+//                "，要测试网站功能，请联系管理员开启正式服务器（QQ:1481440484 邮箱：1481440484@qq.com）";
+//    }
 
     @ResponseBody//返回字符串，而不是字符串对应名字的jsp
     @RequestMapping("test")
@@ -66,7 +73,6 @@ public class TestController {
         imgProcessing.ProcessSinglePic(initFile2,outputPath,outputFile2,style,longEdgeLength);
         return "1";
     }
-
 
     @ResponseBody
     @RequestMapping("/testImg3")
@@ -114,6 +120,5 @@ public class TestController {
     public String testvideo() throws Exception {
       return ""+VideoProcessing.videoAddAudio("/home/ubuntu/out_dmt.mp4","/home/ubuntu/dmt.wav","/home/ubuntu/output.mp4");
     }
-
 
 }

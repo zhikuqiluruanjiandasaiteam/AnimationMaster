@@ -17,7 +17,7 @@ mybatis:
   mapper-locations: classpath:mybatis/mapper/*.xml
 server:
   ##todo:改端口
-  port: 8080
+  port: 80
   tomcat:
       uri-encoding: UTF-8
   servlet:
@@ -40,7 +40,8 @@ ExecShellSinglePic: /home/ubuntu/CartoonGAN-Test-Pytorch-Torch/processSinglePic.
 #文件存储根目录
 fileRoot: /home/ubuntu/web
 #工具储存根目录
-toolsRoot: /home/ubuntu/web/tools
+#toolsRoot: /home/ubuntu/web/tools
+toolsRoot: E:\Workbench\IDEA\动漫大师\AnimationMaster\tools
 #补帧工程目录,主执行文件patch_frame.py的父目录
 pfRoot: /home/ubuntu/web/Super-SloMo-changing
 
