@@ -41,7 +41,6 @@ public class StyleController {
                 return re;
             }
             data.put("image",map);
-
         }
         if( type.equals( ParameterConfiguration.Type.video ) ){
             data.put("clarity",ParameterConfiguration.clarityV );
@@ -67,6 +66,7 @@ public class StyleController {
             data.put("patch_frame",map);
         }
         re.put("data",data);
+
         return re;
     }
 }

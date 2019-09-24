@@ -24,6 +24,7 @@ public class FilesController {
 
     @RequestMapping("/downloadfile")
     public void downloadfile(String fileId,HttpServletResponse response) throws Exception {
+        System.out.println("下载："+fileId);//////////////
         Files userFile = fileService.queryFileByID(Integer.parseInt(fileId));
         String originName = userFile.getOriginName();
         String storeName = userFile.getStoreName();
@@ -36,6 +37,5 @@ public class FilesController {
         os.flush();
         os.close();
     }
-
 
 }
