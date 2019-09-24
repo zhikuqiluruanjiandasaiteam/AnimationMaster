@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.config.ParameterConfiguration;
 
 import com.example.demo.entity.Task;
+import com.example.demo.entity.User;
 import com.example.demo.service.FilesService;
 import com.example.demo.service.TaskService;
 import com.example.demo.util.TaskQueue;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,7 +33,7 @@ public class TaskController {
     /**
      *创建任务
      * @param file
-     * @param userId
+     *
      * @param imsId
      * @param ausId
      * @param clarity
@@ -44,13 +46,12 @@ public class TaskController {
     @ResponseBody
     @RequestMapping(value = "create",method = RequestMethod.POST)
     public Map create(@RequestParam(value = "file", required = true) MultipartFile file,
-                      @RequestParam(value ="user_id", required = true) Integer userId,
                       @RequestParam(value ="ims_id", required = false) Integer imsId,
                       @RequestParam(value ="aus_id", required = false) Integer ausId,
-                      @RequestParam(value ="clarityV", required = false) Integer clarity,
+                      @RequestParam(value ="clarity", required = false) Integer clarity,
                       @RequestParam(value ="type", required = true) String type,
                       @RequestParam(value ="estimate_time", required = true)Integer estimateTime,
-                      @RequestParam(value ="is_frame_speed", required = false,defaultValue = "0")Boolean isFrameSpeed)
+                      @RequestParam(value ="is_frame_speed", required = false,defaultValue = "0")Boolean isFrameSpeed, HttpSession session)
             throws Exception {
         HashMap<String,Object> re=new HashMap<>(  );
         re.put("data","");
@@ -77,13 +78,14 @@ public class TaskController {
             re.put("error_msg","没有这种模式");
             return re;
         }
-        Files saveFiles=filesService.createFile( type,file,userId );
+        User currentUser=(User)session.getAttribute("currentUser");
+        Files saveFiles=filesService.createFile( type,file,currentUser.getUserId() );
         if(saveFiles==null){
             re.put("error_code",3);
             re.put("error_msg","上传失败或文件类型不符合选择转换模式要求");
             return re;
         }
-        Task task=taskService.createTask( userId, saveFiles.getFileId(), imsId, ausId, clarity, estimateTime,
+        Task task=taskService.createTask( currentUser.getUserId(), saveFiles.getFileId(), imsId, ausId, clarity, estimateTime,
                 isFrameSpeed, type);
         if(task==null){
             re.put("error_code",3);
@@ -103,18 +105,18 @@ public class TaskController {
 
     /**
      * 获取任务列表
-     * @param userId 用户id
-     * @param isDesc true("true"/1)：按创建时间倒序排序，false("false"/0)；正序排序
+     *
+     *@param isDesc true("true"/1)：按创建时间倒序排序，false("false"/0)；正序排序
      * @param finishState 1：完成，-1：未完成，0:全部
      * @return 任务列表
      */
     @ResponseBody
     @RequestMapping(value = "list")
-    public Map list(@RequestParam(value ="user_id", required = true) Integer userId,
-                    @RequestParam(value ="is_desc", required = false,defaultValue = "true") boolean isDesc,
-                    @RequestParam(value ="finish_state", required = false,defaultValue = "0") Integer finishState){
-        HashMap<String,Object> re=new HashMap<>(  );
-        Map[] data=taskService.getList( userId,isDesc,finishState==0,finishState==1 );
+    public Map list(@RequestParam(value ="is_desc", required = false,defaultValue = "true") boolean isDesc,
+                    @RequestParam(value ="finish_state", required = false,defaultValue = "0") Integer finishState,HttpSession session){
+        HashMap<String,Object> re=new HashMap<>();
+        User currentUser=(User)session.getAttribute("currentUser");
+        Map[] data=taskService.getList( currentUser.getUserId(),isDesc,finishState==0,finishState==1 );
         if(data==null){
             re.put("error_code",3);
             re.put("error_msg","查询失败");

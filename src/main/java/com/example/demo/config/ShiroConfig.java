@@ -47,6 +47,10 @@ public class ShiroConfig {
         filterChainDefinitionMap.put("/task/list", "authc");
         filterChainDefinitionMap.put("/task", "authc");
 
+        //暂时禁止注册
+        filterChainDefinitionMap.put("/user/register", "authc");
+        filterChainDefinitionMap.put("/register", "authc");
+
 
         shiroFilterFactoryBean.setFilterChainDefinitionMap(filterChainDefinitionMap);
         return shiroFilterFactoryBean;

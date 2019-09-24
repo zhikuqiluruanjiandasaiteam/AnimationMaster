@@ -30,6 +30,7 @@ public class UserController {
     @ResponseBody
     @RequestMapping("/login")
     public Map<String,Object> login(User user,  HttpServletRequest request)throws Exception{
+        System.out.println("登录");///////////////
         Map<String,Object> map=new HashMap<String,Object>();
         if(StringUtil.isEmpty(user.getUserName().trim())){
             map.put("error_code", -1);

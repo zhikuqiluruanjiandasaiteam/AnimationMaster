@@ -30,7 +30,7 @@ public class StyleService {
             if(imageStyle.getImsId()== ParameterConfiguration.patchFrameId)
                 continue;
             //视频这两种风格无法成功
-            if(type.equals( ParameterConfiguration.Type.video )
+            if(type.equals( ParameterConfiguration.Type.video )&&imageStyle.getImsParameterValues()!=null
                     &&(imageStyle.getImsParameterValues().equals( ParameterConfiguration.Style.imsLine )
                     ||imageStyle.getImsParameterValues().equals( ParameterConfiguration.Style.imsLine2 ))){
                 continue;
