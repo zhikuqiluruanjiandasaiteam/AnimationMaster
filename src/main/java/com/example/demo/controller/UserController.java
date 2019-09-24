@@ -44,6 +44,7 @@ public class UserController {
                 Subject subject = SecurityUtils.getSubject();
                 UsernamePasswordToken token=new UsernamePasswordToken(user.getUserName(), new Md5Hash(user.getPassword(),currentUser.getPasswordSalt()).toString());
                 subject.login(token);
+                SecurityUtils.getSubject().getSession().setTimeout(24*60*60*1000);
                 request.getSession().setAttribute("currentUser", currentUser);
                 User user1=new User();
                 user1.setUserName(currentUser.getUserName());
@@ -111,7 +112,11 @@ public class UserController {
     }
 
     @RequestMapping("/logout")
-    public String logout(){
+    public String logout(HttpSession session){
+        User currentUser = (User) session.getAttribute("currentUser");
+        if(currentUser==null||currentUser.getUserId()==null){
+            return "redirect:/";
+        }
         SecurityUtils.getSubject().logout();
         return "redirect:/";
     }

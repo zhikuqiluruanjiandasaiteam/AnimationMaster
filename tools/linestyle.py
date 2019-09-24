@@ -106,6 +106,6 @@ def main():
     else:
         change(opt.from_file,opt.to_file,int(opt.clearity),opt.suffix)
 
-all2('C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\newx','E:\\Workbench\\IDLE\\Python实验\\实验7\\w7-4out',720,'_line')
-# main()
+#all2('C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\newx','E:\\Workbench\\IDLE\\Python实验\\实验7\\w7-4out',720,'_line')
+main()
 print('finish')
