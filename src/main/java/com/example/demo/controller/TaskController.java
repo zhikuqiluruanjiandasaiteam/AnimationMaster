@@ -47,7 +47,7 @@ public class TaskController {
                       @RequestParam(value ="user_id", required = true) Integer userId,
                       @RequestParam(value ="ims_id", required = false) Integer imsId,
                       @RequestParam(value ="aus_id", required = false) Integer ausId,
-                      @RequestParam(value ="clarity", required = false) Integer clarity,
+                      @RequestParam(value ="clarityV", required = false) Integer clarity,
                       @RequestParam(value ="type", required = true) String type,
                       @RequestParam(value ="estimate_time", required = true)Integer estimateTime,
                       @RequestParam(value ="is_frame_speed", required = false,defaultValue = "0")Boolean isFrameSpeed)

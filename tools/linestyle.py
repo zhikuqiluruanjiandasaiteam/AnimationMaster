@@ -16,6 +16,7 @@ def draw(img,to_file,blur=25, alpha=1.0):
             b = img2.getpixel((x, y))
             img1.putpixel((x, y), dodge(a, b, alpha))
     img1.save(to_file)
+
 def fa2(img,to_file):
     img_all =  to_file
     new = Image.new("L", img.size, 255)
@@ -64,7 +65,6 @@ def fa2(img,to_file):
  
     new.save(img_all)
 
-
 def change(from_file,to_file,clearity,suffix):
     img = Image.open(from_file)
     h=img.size[0]#高
@@ -105,5 +105,7 @@ def main():
         all2(opt.from_file,opt.to_path,int(opt.clearity),opt.suffix)
     else:
         change(opt.from_file,opt.to_file,int(opt.clearity),opt.suffix)
-#all2('C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\newx','E:\\Workbench\\IDLE\\Python实验\\实验7\\w7-4out',720,'_line')
-main()
+
+all2('C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\newx','E:\\Workbench\\IDLE\\Python实验\\实验7\\w7-4out',720,'_line')
+# main()
+print('finish')

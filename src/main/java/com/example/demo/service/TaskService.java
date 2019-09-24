@@ -179,7 +179,6 @@ public class TaskService {
                 }
                 if(task.getIsFrameSpeed()){
                     //更新补帧变量值
-
                     int estimated_time=Integer.parseInt( mapInfo.get("estimated_time").toString());
                     int used_count=Integer.parseInt( mapInfo.get("used_count").toString());
                     float frame_patch_rate=Float.parseFloat( mapInfo.get("frame_patch_rate").toString());
@@ -239,6 +238,7 @@ public class TaskService {
         if(taskNum<0)
             taskNum=0;
         mapInfo.put("task_num",""+taskNum);
+        setPatchFrameInfo_Num( mapInfo );
         setPatchFrameInfo( mapInfo );
         //todo:删除中间文件，节省储存空间
     }

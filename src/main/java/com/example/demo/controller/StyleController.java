@@ -3,7 +3,6 @@ package com.example.demo.controller;
 import com.example.demo.config.ParameterConfiguration;
 import com.example.demo.service.StyleService;
 import com.example.demo.service.TaskService;
-import com.example.demo.util.VideoProcessing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -35,14 +34,19 @@ public class StyleController {
         re.put("data","");
         Map<String,Object> data=new HashMap<>(  );
         if(type.equals( ParameterConfiguration.Type.video )||type.equals( ParameterConfiguration.Type.image )) {
-            Map[] map= styleService.getImsList();
+            Map[] map= styleService.getImsList(type);
             if(map.length==0){
                 re.put("error_code",1);
                 re.put("error_msg","查询失败");
                 return re;
             }
             data.put("image",map);
-            data.put("clarity",ParameterConfiguration.clarity);
+
+        }
+        if( type.equals( ParameterConfiguration.Type.video ) ){
+            data.put("clarity",ParameterConfiguration.clarityV );
+        }else if(type.equals( ParameterConfiguration.Type.image )){
+            data.put("clarity",ParameterConfiguration.clarityI );
         }
         if(type.equals( ParameterConfiguration.Type.video )||type.equals( ParameterConfiguration.Type.audio )) {
             Map[] map= styleService.getAusList();

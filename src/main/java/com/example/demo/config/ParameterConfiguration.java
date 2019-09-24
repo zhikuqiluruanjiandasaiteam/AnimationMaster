@@ -33,7 +33,8 @@ public class ParameterConfiguration {
         Tools.pfMainFile=pfRoot+File.separator+"patch_frame.py";
     }
 
-    public static final int[] clarity= {720,480,360,240};
+    public static final int[] clarityV = {720,480,360,240};
+    public static final int[] clarityI= {1280,1080,720,480,240};
 
     /**数据库，任务类型枚举值
      */

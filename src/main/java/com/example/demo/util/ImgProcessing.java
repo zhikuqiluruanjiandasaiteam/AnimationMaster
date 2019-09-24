@@ -69,7 +69,7 @@ public class ImgProcessing {
      */
     public int ProcessSinglePic(String input_file,String outputPath,String output_file,String style,Integer longEdgeLength)throws Exception{
         if(style.equals( ParameterConfiguration.Style.imsLine )||style.equals( ParameterConfiguration.Style.imsLine2 )){
-            return changeLineO(input_file,outputPath,style,longEdgeLength);
+            return changeLineO(input_file,outputPath+File.separator+output_file,style,longEdgeLength);
         }
         RemoteShellExecutor executor = new RemoteShellExecutor(DLServerIP, DLServerUserName, DLServerPassword,new File(DLServerSecretKey));
         int re=executor.execProcessSinglePic(ExecShellSinglePic+" "+input_file+" "+outputPath+" "+output_file+" "+longEdgeLength+" "+style);

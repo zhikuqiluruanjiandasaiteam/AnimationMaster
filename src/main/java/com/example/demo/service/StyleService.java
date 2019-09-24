@@ -22,13 +22,19 @@ public class StyleService {
     @Autowired
     private AudioStyleMapper audioStyleMapper;
 
-    public Map[] getImsList(){
+    public Map[] getImsList(String type){
         List<ImageStyle> list=imageStyleMapper.selectAll();
         Map[] maps=new HashMap[list.size()-1];
         int i=0;
         for (ImageStyle imageStyle : list) {
             if(imageStyle.getImsId()== ParameterConfiguration.patchFrameId)
                 continue;
+            //视频这两种风格无法成功
+            if(type.equals( ParameterConfiguration.Type.video )
+                    &&(imageStyle.getImsParameterValues().equals( ParameterConfiguration.Style.imsLine )
+                    ||imageStyle.getImsParameterValues().equals( ParameterConfiguration.Style.imsLine2 ))){
+                continue;
+            }
             Map<String,Object> map=new HashMap<>();
             map.put("ims_id",imageStyle.getImsId());
             map.put("ims_name",imageStyle.getImsName());
