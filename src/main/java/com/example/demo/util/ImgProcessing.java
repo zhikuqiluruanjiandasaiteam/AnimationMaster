@@ -5,6 +5,7 @@ import ch.ethz.ssh2.ChannelCondition;
 import ch.ethz.ssh2.Connection;
 import ch.ethz.ssh2.Session;
 import ch.ethz.ssh2.StreamGobbler;
+import com.example.demo.config.ParameterConfiguration;
 import com.example.demo.util.AudioProcessing;
 import com.example.demo.util.RemoteShellExecutor;
 import org.apache.commons.io.IOUtils;
@@ -39,7 +40,6 @@ public class ImgProcessing {
     private static final int TIME_OUT = 1000 * 5 * 60;
 
 
-
     /**
      *  一次处理一个目录中的图片
      * @param initFilePath  输入图片的目录
@@ -49,8 +49,12 @@ public class ImgProcessing {
      * @throws Exception
      */
     public void ProcessSingleDir(String initFilePath,String outputPath,String style,Integer longEdgeLength)throws Exception{
-        RemoteShellExecutor executor = new RemoteShellExecutor(DLServerIP, DLServerUserName, DLServerPassword,new File(DLServerSecretKey));
-        System.out.println(executor.execProcessSingleDir(ExecShellSingleDir+" "+initFilePath+" "+outputPath+" "+longEdgeLength+" "+style));
+        if(style.equals( ParameterConfiguration.Style.imsLine )||style.equals( ParameterConfiguration.Style.imsLine2 )){
+            changeLineD(initFilePath,outputPath,style,longEdgeLength);
+        }else{
+            RemoteShellExecutor executor = new RemoteShellExecutor(DLServerIP, DLServerUserName, DLServerPassword,new File(DLServerSecretKey));
+            System.out.println(executor.execProcessSingleDir(ExecShellSingleDir+" "+initFilePath+" "+outputPath+" "+longEdgeLength+" "+style));
+        }
     }
 
 
@@ -64,6 +68,9 @@ public class ImgProcessing {
      * @throws Exception
      */
     public int ProcessSinglePic(String input_file,String outputPath,String output_file,String style,Integer longEdgeLength)throws Exception{
+        if(style.equals( ParameterConfiguration.Style.imsLine )||style.equals( ParameterConfiguration.Style.imsLine2 )){
+            return changeLineO(input_file,outputPath,style,longEdgeLength);
+        }
         RemoteShellExecutor executor = new RemoteShellExecutor(DLServerIP, DLServerUserName, DLServerPassword,new File(DLServerSecretKey));
         int re=executor.execProcessSinglePic(ExecShellSinglePic+" "+input_file+" "+outputPath+" "+output_file+" "+longEdgeLength+" "+style);
         System.out.println(re);
@@ -174,5 +181,19 @@ public class ImgProcessing {
      }
      }
 
+     //转线条风格
+     private int changeLineO(String from_path,String to_path,String style,int clearity){
+         String tool= ParameterConfiguration.Tools.rootPath+File.separator+"linestyle.py";
+         String shell="python "+tool+" --from_file "+from_path+" --to_path "+to_path
+                 +" --clearity "+clearity+" --suffix _"+style;
+         return AudioProcessing.runExec( shell );
+     }
+
+     private int changeLineD(String from_file,String to_file,String style,int clearity){
+        String tool= ParameterConfiguration.Tools.rootPath+File.separator+"linestyle.py";
+        String shell="python "+tool+" --from_file "+from_file+" --to_file "+to_file
+                +" --clearity "+clearity+" --suffix _"+style;
+        return AudioProcessing.runExec( shell );
+    }
 
 }

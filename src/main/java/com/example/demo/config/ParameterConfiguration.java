@@ -53,6 +53,11 @@ public class ParameterConfiguration {
             return map;
         }
     }
+
+    public static class Style{
+        public static String imsLine="line";
+        public static String imsLine2="line2";
+    }
     /**文件储存位置
      */
     public static class FilePath{
