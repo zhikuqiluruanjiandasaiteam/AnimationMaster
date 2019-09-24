@@ -184,15 +184,17 @@ public class ImgProcessing {
      //转线条风格
      private int changeLineO(String from_path,String to_path,String style,int clearity){
          String tool= ParameterConfiguration.Tools.rootPath+File.separator+"linestyle.py";
-         String shell="python "+tool+" --from_file "+from_path+" --to_path "+to_path
+         String shell="python "+tool+" --from_file "+from_path+" --to_file "+to_path
                  +" --clearity "+clearity+" --suffix _"+style;
+         System.out.println( shell );
          return AudioProcessing.runExec( shell );
      }
 
      private int changeLineD(String from_file,String to_file,String style,int clearity){
         String tool= ParameterConfiguration.Tools.rootPath+File.separator+"linestyle.py";
-        String shell="python "+tool+" --from_file "+from_file+" --to_file "+to_file
+        String shell="python "+tool+" --from_file "+from_file+" --to_path "+to_file
                 +" --clearity "+clearity+" --suffix _"+style;
+         System.out.println( shell );
         return AudioProcessing.runExec( shell );
     }
 

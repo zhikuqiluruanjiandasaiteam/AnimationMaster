@@ -20,6 +20,8 @@ public class StyleController {
 
     @Autowired
     private StyleService styleService;
+    @Autowired
+    private TaskService taskService;
 
     /**获取风格类型
      * @param type 转换类型：video,image,audio
@@ -52,7 +54,7 @@ public class StyleController {
             data.put("audio",map);
         }
         if(type.equals( ParameterConfiguration.Type.video )){
-            Map map=TaskService.getPatchFrameInfo();
+            Map map=taskService.getPatchFrameInfo();
             if(map==null){
                 re.put("error_code",1);
                 re.put("error_msg","查询失败");

@@ -31,7 +31,7 @@ public class TaskQueue {
                         }
                         continue;
                     }
-                    Map<String,String> map=TaskService.getPatchFrameInfo();
+                    Map<String,String> map=TaskService.getPatchFrameInfo_Num();
                     int taskNum=Integer.parseInt( map.get("task_num") );
                     if(taskNum<2){//最多两个任务执行
                         Task task=qTask.poll();//返回第一个元素，并在队列中删除
@@ -41,7 +41,7 @@ public class TaskQueue {
                         taskService.startTask( fileName, task);
                         taskNum++;
                         map.put("task_num",""+taskNum);
-                        TaskService.setPatchFrameInfo( map );
+                        TaskService.setPatchFrameInfo_Num( map );
                     }
                 }
                 isRun=false;

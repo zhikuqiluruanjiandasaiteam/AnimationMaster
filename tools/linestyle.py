@@ -73,7 +73,7 @@ def change(from_file,to_file,clearity,suffix):
         w=round(1.0*w/h*clearity)
         h=clearity
     else:
-        h=round(1.0*h/w*clearity)
+        h=int(1.0*h/w*clearity)
         w=clearity
     img = img.resize((h, w), Image.ANTIALIAS)
     if suffix=='_line':
@@ -102,8 +102,8 @@ def main():
     parser.add_argument('--to_file', default = None )
     opt = parser.parse_args()
     if opt.to_file==None:
-        all2(opt.from_file,opt.to_path,opt.clearity,opt.suffix)
+        all2(opt.from_file,opt.to_path,int(opt.clearity),opt.suffix)
     else:
-        change(opt.from_file,opt.to_file,opt.clearity,suffix)
+        change(opt.from_file,opt.to_file,int(opt.clearity),opt.suffix)
 #all2('C:\\Users\\Think\\Desktop\\智库齐软大赛\\工作台\\视频\\newx','E:\\Workbench\\IDLE\\Python实验\\实验7\\w7-4out',720,'_line')
 main()

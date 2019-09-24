@@ -599,7 +599,28 @@ public class TaskService {
         AudioProcessing.file2Wav( fileSuffix,ParameterConfiguration.FilePath.uploadSave +File.separator+fileName,"wav",toFile);
     }
 
-    public static Map<String,String> getPatchFrameInfo(){
+    public Map<String,String> getPatchFrameInfo(){
+        Map<String,String> map=new HashMap<String,String>(  );
+        ImageStyle imageStyle=imageStyleMapper.selectByPrimaryKey( ParameterConfiguration.patchFrameId );
+
+        map.put("estimated_time",""+imageStyle.getImsEstimatedTime( ));
+        map.put("used_count",""+imageStyle.getImsUsedCount());
+        map.put("frame_patch_rate",""+imageStyle.getImsShowPath());
+        map.put("task_num",""+imageStyle.getImsAortPriority());
+        return map;
+    }
+
+    public void  setPatchFrameInfo(Map<String,String> map){
+        ImageStyle imageStyle=imageStyleMapper.selectByPrimaryKey( ParameterConfiguration.patchFrameId );
+        imageStyle.setImsEstimatedTime( Integer.parseInt( map.get("estimated_time")) );
+        imageStyle.setImsUsedCount( Integer.parseInt( map.get("used_count")) );
+        imageStyle.setImsShowPath( map.get("frame_patch_rate") );
+        imageStyle.setImsAortPriority( Integer.parseInt( map.get("task_num")) );
+        imageStyleMapper.updateByPrimaryKey( imageStyle );
+    }
+
+    //过去的补帧数据存储方案（存储的json文件中），目前该为存在ims的一条记录中，此方法仍用于记录任务数
+    public static Map<String,String> getPatchFrameInfo_Num(){
         //to//do:测试临时改
         String filePath=ParameterConfiguration.Tools.rootPath +File.separator+"PatchFrameInfo.json";
 //        String filePath="E:\\Workbench\\IDEA\\动漫大师\\AnimationMaster\\tools"+File.separator+"PatchFrameInfo.json";
@@ -626,7 +647,7 @@ public class TaskService {
         return map;
     }
 
-    public static void  setPatchFrameInfo(Map<String,String> map){
+    public static void  setPatchFrameInfo_Num(Map<String,String> map){
         //to//do:测试临时改
         String filePath=ParameterConfiguration.Tools.rootPath +File.separator+"PatchFrameInfo.json";
 //        String filePath="E:\\Workbench\\IDEA\\动漫大师\\AnimationMaster\\tools"+File.separator+"PatchFrameInfo.json";
@@ -649,6 +670,7 @@ public class TaskService {
             e.printStackTrace();
         }
     }
+
 
 //
 //    public static  void test(Integer a,Boolean b){

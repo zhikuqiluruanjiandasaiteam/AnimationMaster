@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.config.ParameterConfiguration;
 import com.example.demo.dao.AudioStyleMapper;
 import com.example.demo.dao.ImageStyleMapper;
 import com.example.demo.entity.AudioStyle;
@@ -23,9 +24,11 @@ public class StyleService {
 
     public Map[] getImsList(){
         List<ImageStyle> list=imageStyleMapper.selectAll();
-        Map[] maps=new HashMap[list.size()];
+        Map[] maps=new HashMap[list.size()-1];
         int i=0;
         for (ImageStyle imageStyle : list) {
+            if(imageStyle.getImsId()== ParameterConfiguration.patchFrameId)
+                continue;
             Map<String,Object> map=new HashMap<>();
             map.put("ims_id",imageStyle.getImsId());
             map.put("ims_name",imageStyle.getImsName());
