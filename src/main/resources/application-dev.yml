@@ -1,6 +1,7 @@
 spring:
   datasource:
     ##todo:改数据库用户，只附一个库的权限
+    type: com.alibaba.druid.pool.DruidDataSource
     url: jdbc:mysql://cdb-nj2smsfc.bj.tencentcdb.com:10001/animationmaster?characterEncoding=utf-8&serverTimezone=GMT%2b8
     username: root
     password: train_60321

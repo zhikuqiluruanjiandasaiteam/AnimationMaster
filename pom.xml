@@ -74,6 +74,12 @@
             <version>1.0.2</version>
         </dependency>
 
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid</artifactId>
+            <version>1.1.10</version>
+        </dependency>
+
         <!--使用opencv处理视频-->
         <!--&lt;!&ndash;todo:jar包只有windows安装的opencv目录下自带，linux不知如何使用&ndash;&gt;-->
         <!--<dependency>-->
