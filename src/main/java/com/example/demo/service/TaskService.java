@@ -123,18 +123,24 @@ public class TaskService {
                         initialRecord( task );
                         if(runVideo(fileName,task)){
                             finishRecord( task,fileName );
+                        }else{
+                            ParameterConfiguration.taskNum--;
                         }
                         break;
                     case ParameterConfiguration.Type.image:
                         initialRecord( task );
                         if (runImage( fileName, task.getImsId(), task.getClarity(), task.getTaskId() )) {
                             finishRecord( task, fileName );
+                        }else{
+                            ParameterConfiguration.taskNum--;
                         }
                         break;
                     case ParameterConfiguration.Type.audio:
                         initialRecord( task );
                         if (runAudio( fileName, task.getAusId() )) {
                             finishRecord( task, fileName );
+                        }else{
+                            ParameterConfiguration.taskNum--;
                         }
                         break;
                 }
@@ -146,8 +152,10 @@ public class TaskService {
      * 任务完成后处理
      */
     private void finishRecord(Task task,String fileName) {
-        if(task==null)
+        if(task==null) {
+            ParameterConfiguration.taskNum--;
             return;
+        }
         task.setFinishTime( new Date(  ) );
         taskMapper.updateByPrimaryKey( task );
         //调整风格平均耗时//java中date精确到毫秒，mysql中只精确到秒，不能从数据库中查询后做差
