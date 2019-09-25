@@ -233,12 +233,10 @@ public class TaskService {
                 audioStyleMapper.updateByPrimaryKey( audioStyle );
                 break;
         }
-        int taskNum=Integer.parseInt( mapInfo.get("task_num"));
-        taskNum--;
-        if(taskNum<0)
-            taskNum=0;
-        mapInfo.put("task_num",""+taskNum);
-        setPatchFrameInfo_Num( mapInfo );
+        ParameterConfiguration.taskNum--;
+        if(ParameterConfiguration.taskNum<0)
+            ParameterConfiguration.taskNum=0;
+        mapInfo.put("task_num",""+ParameterConfiguration.taskNum);
         setPatchFrameInfo( mapInfo );
         //todo:删除中间文件，节省储存空间
     }

@@ -93,7 +93,7 @@ public class TaskController {
             return re;
         }
         //开启任务//任务过多需要排队
-        System.out.println("任务排队"+saveFiles.getStoreName());/////
+        System.out.println("加入任务"+saveFiles.getStoreName());/////
         System.out.println(task.toString());
         TaskQueue.add(saveFiles.getStoreName(),task,taskService);
         TaskQueue.run();

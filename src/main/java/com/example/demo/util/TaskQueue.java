@@ -1,5 +1,6 @@
 package com.example.demo.util;
 
+import com.example.demo.config.ParameterConfiguration;
 import com.example.demo.entity.Task;
 import com.example.demo.service.TaskService;
 
@@ -32,19 +33,14 @@ public class TaskQueue {
                         }
                         continue;
                     }
-                    Map<String,String> map=TaskService.getPatchFrameInfo_Num();
-                    int taskNum=Integer.parseInt( map.get("task_num") );
-                    if(taskNum<2){//最多两个任务执行
+                    if(ParameterConfiguration.taskNum<2){//最多两个任务执行
                         Task task=qTask.poll();//返回第一个元素，并在队列中删除
                         String fileName=qFName.poll();
-                        if(task==null||fileName==null)
-                            continue;
                         TaskService taskService=qTakeS.poll();
-                        assert taskService != null;
+                        if(task==null||fileName==null||taskService==null)
+                            continue;
                         taskService.startTask( fileName, task);
-                        taskNum++;
-                        map.put("task_num",""+taskNum);
-                        TaskService.setPatchFrameInfo_Num( map );
+                        ParameterConfiguration.taskNum++;
                     }
                 }
                 isRun=false;

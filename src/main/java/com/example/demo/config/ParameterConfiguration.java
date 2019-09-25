@@ -16,6 +16,8 @@ public class ParameterConfiguration {
 
     //补帧数据存放于ims表，id为patchFrameId的记录中
     public static int patchFrameId=0;
+    //当前执行任务数
+    public static int taskNum=0;
 
     // 静态变量不能直接value,必须先建立一个对象
     //todo：不知原因，但经测试，FilePath.root静态变量不会先于这个创建（如果先于就会null/Ad...；目前没问题，如果出错，可能这里有问题）
