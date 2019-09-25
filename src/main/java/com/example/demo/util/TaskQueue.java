@@ -36,6 +36,8 @@ public class TaskQueue {
                     if(taskNum<2){//最多两个任务执行
                         Task task=qTask.poll();//返回第一个元素，并在队列中删除
                         String fileName=qFName.poll();
+                        if(task==null||fileName==null)
+                            continue;
                         TaskService taskService=qTakeS.poll();
                         assert taskService != null;
                         taskService.startTask( fileName, task);
