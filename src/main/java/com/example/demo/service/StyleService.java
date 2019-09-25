@@ -24,8 +24,20 @@ public class StyleService {
 
     public Map[] getImsList(String type){
         List<ImageStyle> list=imageStyleMapper.selectAll();
-        Map[] maps=new HashMap[list.size()-1];
         int i=0;
+        for (ImageStyle imageStyle : list) {
+            if(imageStyle.getImsId()== ParameterConfiguration.patchFrameId)
+                continue;
+            //视频这两种风格无法成功
+            if(type.equals( ParameterConfiguration.Type.video )&&imageStyle.getImsParameterValues()!=null
+                    &&(imageStyle.getImsParameterValues().equals( ParameterConfiguration.Style.imsLine )
+                    ||imageStyle.getImsParameterValues().equals( ParameterConfiguration.Style.imsLine2 ))){
+                continue;
+            }
+            i++;
+        }
+        Map[] maps=new HashMap[i];
+        i=0;
         for (ImageStyle imageStyle : list) {
             if(imageStyle.getImsId()== ParameterConfiguration.patchFrameId)
                 continue;
