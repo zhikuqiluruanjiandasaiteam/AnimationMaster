@@ -32,9 +32,11 @@ public class FilesController {
         ServletOutputStream os = response.getOutputStream();
         String path= ParameterConfiguration.FilePath.finalSave;
         File file = new File(path, storeName);
-        byte[] bytes = FileUtils.readFileToByteArray(file);
-        os.write(bytes);
-        os.flush();
+        if(file.exists()){
+            byte[] bytes = FileUtils.readFileToByteArray(file);
+            os.write(bytes);
+            os.flush();
+        }
         os.close();
     }
 
