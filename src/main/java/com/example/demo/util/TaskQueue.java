@@ -24,7 +24,7 @@ public class TaskQueue {
             public void run() {
                 isRun=true;
                 while(canAdd ||qTask.peek()!=null) {//返回第一个元素
-                    if(qTask.peek()==null){
+                    if(qTask.peek()==null||ParameterConfiguration.taskNum>1){
                         try {
                             Thread.sleep(500);
                         } catch (InterruptedException e) {
@@ -33,15 +33,13 @@ public class TaskQueue {
                         }
                         continue;
                     }
-                    if(ParameterConfiguration.taskNum<2){//最多两个任务执行
-                        Task task=qTask.poll();//返回第一个元素，并在队列中删除
-                        String fileName=qFName.poll();
-                        TaskService taskService=qTakeS.poll();
-                        if(task==null||fileName==null||taskService==null)
-                            continue;
-                        taskService.startTask( fileName, task);
-                        ParameterConfiguration.taskNum++;
-                    }
+                    Task task=qTask.poll();//返回第一个元素，并在队列中删除
+                    String fileName=qFName.poll();
+                    TaskService taskService=qTakeS.poll();
+                    if(task==null||fileName==null||taskService==null)
+                        continue;
+                    taskService.startTask( fileName, task);
+                    ParameterConfiguration.taskNum++;
                 }
                 isRun=false;
             }
