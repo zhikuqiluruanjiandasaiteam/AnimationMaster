@@ -19,7 +19,6 @@ public class FilesController {
     @Autowired
     private FilesService fileService;
 
-
     @RequestMapping("/downloadfile")
     public void downloadfile(String fileId,HttpServletResponse response) throws Exception {
         System.out.println("下载："+fileId);//////////////
