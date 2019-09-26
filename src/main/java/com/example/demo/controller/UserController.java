@@ -53,7 +53,8 @@ public class UserController {
                 map.put("error_msg","登录成功");
                 map.put("data",user1);
             }catch(Exception e){
-                e.printStackTrace();
+//                e.printStackTrace();
+                System.out.println(user.getUserName()+"密码错误，登陆失败");
                 map.put("error_code", -3);
                 map.put("error_msg", "用户名或者密码错误！");
             }

@@ -24,6 +24,9 @@ public class TaskQueue {
             public void run() {
                 isRun=true;
                 while(canAdd ||qTask.peek()!=null) {//返回第一个元素
+                    //todo:防止任务执行，待删除
+                    ParameterConfiguration.taskNum=2;
+                    //////
                     if(qTask.peek()==null||ParameterConfiguration.taskNum>1){
                         try {
                             Thread.sleep(500);
